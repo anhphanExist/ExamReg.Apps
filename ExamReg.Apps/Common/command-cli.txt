@@ -1,0 +1,2 @@
+dotnet ef dbcontext scaffold "Host=localhost;Database=ExamReg;Username=postgres;Password=12345678" Npgsql.EntityFrameworkCore.PostgreSQL -c ExamRegContext -o Repositories/Models -f --no-build --use-database-names --json
+
