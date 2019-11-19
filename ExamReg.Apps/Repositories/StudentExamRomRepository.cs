@@ -5,11 +5,7 @@ using System.Threading.Tasks;
 
 namespace ExamReg.Apps.Repositories
 {
-    public interface IStudentExamRoomRepository
-    {
-
-    }
-    public class StudentExamRoomRepository : IStudentExamRoomRepository
+    public class StudentExamRomRepository
     {
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ExamReg.Apps.Repositories.Models
 {
-    public partial class ExamPeriod
+    public partial class ExamPeriodDAO
     {
         public Guid Id { get; set; }
         public DateTime ExamDate { get; set; }

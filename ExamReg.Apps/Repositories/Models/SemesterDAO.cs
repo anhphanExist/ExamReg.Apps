@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace ExamReg.Apps.Repositories.Models
 {
-    public partial class ExamRoom
+    public partial class SemesterDAO
     {
         public Guid Id { get; set; }
-        public short RoomNumber { get; set; }
-        public string AmphitheaterName { get; set; }
-        public int ComputerNumber { get; set; }
+        public short StartYear { get; set; }
+        public short EndYear { get; set; }
+        public bool IsFirstHalf { get; set; }
         public long CX { get; set; }
     }
 }

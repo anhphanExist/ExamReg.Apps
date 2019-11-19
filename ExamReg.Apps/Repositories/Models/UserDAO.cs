@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ExamReg.Apps.Repositories.Models
 {
-    public partial class User
+    public partial class UserDAO
     {
         public Guid Id { get; set; }
         public string Username { get; set; }

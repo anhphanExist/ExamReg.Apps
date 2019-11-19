@@ -6,26 +6,21 @@ namespace ExamReg.Apps.Repositories.Models
 {
     public partial class ExamRegContext : DbContext
     {
-        public ExamRegContext()
+        public virtual DbSet<ExamPeriodDAO> ExamPeriod { get; set; }
+        public virtual DbSet<ExamProgramDAO> ExamProgram { get; set; }
+        public virtual DbSet<ExamRoomDAO> ExamRoom { get; set; }
+        public virtual DbSet<ExamRoomExamPeriodDAO> ExamRoomExamPeriod { get; set; }
+        public virtual DbSet<SemesterDAO> Semester { get; set; }
+        public virtual DbSet<StudentDAO> Student { get; set; }
+        public virtual DbSet<StudentExamPeriodDAO> StudentExamPeriod { get; set; }
+        public virtual DbSet<StudentExamRoomDAO> StudentExamRoom { get; set; }
+        public virtual DbSet<StudentTermDAO> StudentTerm { get; set; }
+        public virtual DbSet<TermDAO> Term { get; set; }
+        public virtual DbSet<UserDAO> User { get; set; }
+
+        public ExamRegContext(DbContextOptions<ExamRegContext> options) : base(options)
         {
         }
-
-        public ExamRegContext(DbContextOptions<ExamRegContext> options)
-            : base(options)
-        {
-        }
-
-        public virtual DbSet<ExamPeriod> ExamPeriod { get; set; }
-        public virtual DbSet<ExamProgram> ExamProgram { get; set; }
-        public virtual DbSet<ExamRoom> ExamRoom { get; set; }
-        public virtual DbSet<ExamRoomExamPeriod> ExamRoomExamPeriod { get; set; }
-        public virtual DbSet<Semester> Semester { get; set; }
-        public virtual DbSet<Student> Student { get; set; }
-        public virtual DbSet<StudentExamPeriod> StudentExamPeriod { get; set; }
-        public virtual DbSet<StudentExamRoom> StudentExamRoom { get; set; }
-        public virtual DbSet<StudentTerm> StudentTerm { get; set; }
-        public virtual DbSet<Term> Term { get; set; }
-        public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -40,7 +35,7 @@ namespace ExamReg.Apps.Repositories.Models
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
-            modelBuilder.Entity<ExamPeriod>(entity =>
+            modelBuilder.Entity<ExamPeriodDAO>(entity =>
             {
                 entity.HasIndex(e => e.CX)
                     .HasName("examperiod_un")
@@ -53,7 +48,7 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.ExamDate).HasColumnType("date");
             });
 
-            modelBuilder.Entity<ExamProgram>(entity =>
+            modelBuilder.Entity<ExamProgramDAO>(entity =>
             {
                 entity.HasIndex(e => e.CX)
                     .HasName("examprogram_un")
@@ -68,7 +63,7 @@ namespace ExamReg.Apps.Repositories.Models
                     .HasMaxLength(500);
             });
 
-            modelBuilder.Entity<ExamRoom>(entity =>
+            modelBuilder.Entity<ExamRoomDAO>(entity =>
             {
                 entity.HasIndex(e => e.CX)
                     .HasName("examroom_un")
@@ -83,7 +78,7 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<ExamRoomExamPeriod>(entity =>
+            modelBuilder.Entity<ExamRoomExamPeriodDAO>(entity =>
             {
                 entity.HasKey(e => new { e.ExamRoomId, e.ExamPeriodId })
                     .HasName("examroomexamperiod_pk");
@@ -95,7 +90,7 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<Semester>(entity =>
+            modelBuilder.Entity<SemesterDAO>(entity =>
             {
                 entity.HasIndex(e => e.CX)
                     .HasName("semester_un")
@@ -106,7 +101,7 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<Student>(entity =>
+            modelBuilder.Entity<StudentDAO>(entity =>
             {
                 entity.HasIndex(e => new { e.StudentNumber, e.CX })
                     .HasName("student_un")
@@ -131,7 +126,7 @@ namespace ExamReg.Apps.Repositories.Models
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<StudentExamPeriod>(entity =>
+            modelBuilder.Entity<StudentExamPeriodDAO>(entity =>
             {
                 entity.HasKey(e => new { e.StudentId, e.ExamPeriodId })
                     .HasName("studentexamperiod_pk");
@@ -143,7 +138,7 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<StudentExamRoom>(entity =>
+            modelBuilder.Entity<StudentExamRoomDAO>(entity =>
             {
                 entity.HasKey(e => new { e.ExamRoomId, e.StudentId })
                     .HasName("studentexamroom_pk");
@@ -155,7 +150,7 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<StudentTerm>(entity =>
+            modelBuilder.Entity<StudentTermDAO>(entity =>
             {
                 entity.HasKey(e => new { e.StudentId, e.TermId })
                     .HasName("studentterm_pk");
@@ -167,7 +162,7 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<Term>(entity =>
+            modelBuilder.Entity<TermDAO>(entity =>
             {
                 entity.HasIndex(e => e.CX)
                     .HasName("term_cx_idx")
@@ -182,7 +177,7 @@ namespace ExamReg.Apps.Repositories.Models
                     .HasMaxLength(500);
             });
 
-            modelBuilder.Entity<User>(entity =>
+            modelBuilder.Entity<UserDAO>(entity =>
             {
                 entity.HasIndex(e => e.CX)
                     .HasName("user_un")
@@ -200,6 +195,10 @@ namespace ExamReg.Apps.Repositories.Models
                     .IsRequired()
                     .HasMaxLength(500);
             });
+
+            OnModelCreatingExt(modelBuilder);
         }
+
+        partial void OnModelCreatingExt(ModelBuilder modelBuilder);
     }
 }

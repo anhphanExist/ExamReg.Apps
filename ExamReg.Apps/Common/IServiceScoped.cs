@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExamReg.Apps.Repositories
+namespace ExamReg.Apps.Common
 {
-    public class TermRepository
+    public interface IServiceScoped
     {
     }
 }
