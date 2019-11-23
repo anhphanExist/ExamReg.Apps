@@ -19,9 +19,10 @@ namespace ExamReg.Apps.Entities
     }
     public class ExamPeriodFilter : FilterEntity
     {
-        public Guid Id { get; set; }
-        public string SubjectName { get; set; }
-        public string Name { get; set; }
+        public GuidFilter Id { get; set; }
+        public DateTimeFilter ExamDate { get; set; }
+        public GuidFilter TermId { get; set; }
+        public GuidFilter ExamProgramId { get; set; }
         public ExamPeriodOrder OrderBy { get; set; }
         public ExamPeriodFilter() : base()
         {
@@ -30,6 +31,6 @@ namespace ExamReg.Apps.Entities
     }
     public enum ExamPeriodOrder
     {
-        Id
+        Id,
     }
 }

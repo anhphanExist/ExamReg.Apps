@@ -1,6 +1,5 @@
 ﻿using ExamReg.Apps.Entities;
 using ExamReg.Apps.Common;
-using ExamReg.Apps.Entities;
 using ExamReg.Apps.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 using System;

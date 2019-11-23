@@ -13,4 +13,13 @@ namespace ExamReg.Apps.Entities
         public short EndYear { get; set; }
         public bool IsFirstHalf { get; set; }
     }
+    public class SemesterFilter : FilterEntity
+    {
+        public GuidFilter Id { get; set; }
+        public bool IsFirstHalf { get; set; }
+        public SemesterFilter() : base()
+        {
+
+        }
+    }
 }

@@ -17,9 +17,9 @@ namespace ExamReg.Apps.Entities
     {
         public GuidFilter Id { get; set; }
         public List<Guid> Ids { get; set; }
-        public short RoomNumber { get; set; }
         public StringFilter AmphitheaterName { get; set; }
         public IntFilter ComputerNumber { get; set; }
+        public ExamRoomOrder OrderBy { get; set; }
         public ExamRoomFilter() : base()
         {
 
