@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 
 namespace ExamReg.Apps.Repositories
 {
-    public interface IUserRepository
+    public interface IStudentExamRoomRepository
     {
-        /*Task<User> Get(Guid Id);
-        Task<User> Get(UserFilter filter);*/
+
     }
-    public class UserRepository : IUserRepository
+    public class StudentExamRoomRepository : IStudentExamRoomRepository
     {
         private ExamRegContext examRegContext;
-        public UserRepository(ExamRegContext examReg)
+        public StudentExamRoomRepository(ExamRegContext examReg)
         {
             this.examRegContext = examReg;
         }

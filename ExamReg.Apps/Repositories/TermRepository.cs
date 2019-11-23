@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExamReg.Apps.Repositories
 {
-    public interface ITermRrepository
+    public interface ITermRepository
     {
         Task<Term> Get(Guid Id);
         Task<Term> Get(TermFilter filter);
@@ -19,7 +19,7 @@ namespace ExamReg.Apps.Repositories
         Task<int> Count(TermFilter filter);
         Task<List<Term>> List(TermFilter filter);
     }
-    public class TermRepository : ITermRrepository
+    public class TermRepository : ITermRepository
     {
         private ExamRegContext examRegContext;
         public TermRepository(ExamRegContext examReg)
