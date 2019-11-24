@@ -35,13 +35,24 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(Term term)
         {
-            TermDAO termDAO = new TermDAO()
+            TermDAO termDAO = examRegContext.Term.Where(t => t.Id.Equals(term.Id)).FirstOrDefault();
+            if(termDAO == null)
             {
-                Id = term.Id,
-                SubjectName = term.SubjectName,
-                SemesterId = term.SemesterId
+                termDAO = new TermDAO()
+                {
+                    Id = term.Id,
+                    SubjectName = term.SubjectName,
+                    SemesterId = term.SemesterId
+                };
+                await examRegContext.Term.AddAsync(termDAO);
+            }
+            else
+            {
+                termDAO.Id = term.Id;
+                termDAO.SubjectName = term.SubjectName;
+                termDAO.SemesterId = term.SemesterId;
             };
-            await examRegContext.Term.AddAsync(termDAO);
+
             await examRegContext.SaveChangesAsync();
             return true;
         }
@@ -50,7 +61,16 @@ namespace ExamReg.Apps.Repositories
         {
             try
             {
-                // ràng buộc (?)
+                await examRegContext.StudentTerm
+                .Where(t => t.TermId.Equals(term.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
+                await examRegContext.ExamPeriod
+                .Where(t => t.TermId.Equals(term.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
                 TermDAO termDAO = examRegContext.Term
                     .Where(s => s.Id.Equals(term.Id))
                     .AsNoTracking()
@@ -116,20 +136,19 @@ namespace ExamReg.Apps.Repositories
                 SubjectName = term.SubjectName,
                 SemesterId = term.SemesterId
             });
+
+            await examRegContext.SaveChangesAsync();
             return true;
         }
         private IQueryable<TermDAO> DynamicFilter(IQueryable<TermDAO> query, TermFilter filter)
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            // nối ràng buộc (?)
-            //query = query.Where(q => q.Id, filter.Id);
+            query = query.Where(q => q.SemesterId, filter.SemesterId);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.SubjectName != null)
-                query = query.Where(q => q.SubjectName, filter.SubjectName);
-            if (filter.SemesterId != null)
-                query = query.Where(q => q.SemesterId, filter.SemesterId);
+                query = query.Where(q => q.SubjectName, filter.SubjectName);   
             
             return query;
         }

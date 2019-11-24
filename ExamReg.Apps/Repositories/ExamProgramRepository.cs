@@ -35,13 +35,24 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(ExamProgram examProgram)
         {
-            ExamProgramDAO examProgramDAO = new ExamProgramDAO()
+            ExamProgramDAO examProgramDAO = examRegContext.ExamProgram.Where(e => e.Id.Equals(examProgram.Id)).FirstOrDefault();
+            if(examProgramDAO == null)
             {
-                Id = examProgram.Id,
-                Name = examProgram.Name,
-                SemesterId = examProgram.SemesterId
+                examProgramDAO = new ExamProgramDAO()
+                {
+                    Id = examProgram.Id,
+                    Name = examProgram.Name,
+                    SemesterId = examProgram.SemesterId
+                };
+                await examRegContext.ExamProgram.AddAsync(examProgramDAO);
+            }
+            else
+            {
+                examProgramDAO.Id = examProgram.Id;
+                examProgramDAO.Name = examProgram.Name;
+                examProgramDAO.SemesterId = examProgram.SemesterId;
             };
-            await examRegContext.ExamProgram.AddAsync(examProgramDAO);
+
             await examRegContext.SaveChangesAsync();
             return true;
         }
@@ -50,7 +61,11 @@ namespace ExamReg.Apps.Repositories
         {
             try
             {
-                // ràng buộc (?)
+                await examRegContext.ExamPeriod
+                .Where(t => t.ExamProgramId.Equals(examProgram.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
                 ExamProgramDAO examProgramDAO = examRegContext.ExamProgram
                     .Where(e => e.Id.Equals(examProgram.Id))
                     .AsNoTracking()
@@ -99,6 +114,7 @@ namespace ExamReg.Apps.Repositories
             IQueryable<ExamProgramDAO> query = examRegContext.ExamProgram;
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
+
             List<ExamProgram> list = await query.Select(e => new ExamProgram()
             {
                 Id = e.Id,
@@ -116,14 +132,15 @@ namespace ExamReg.Apps.Repositories
                 Name = examProgram.Name,
                 SemesterId = examProgram.SemesterId
             });
+
+            await examRegContext.SaveChangesAsync();
             return true;
         }
         private IQueryable<ExamProgramDAO> DynamicFilter(IQueryable<ExamProgramDAO> query, ExamProgramFilter filter)
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            // nối ràng buộc (?)
-            //query = query.Where(q => q.Id, filter.Id);
+            query = query.Where(q => q.SemesterId, filter.SemesterId);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.Name != null)

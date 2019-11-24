@@ -36,17 +36,26 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(Semester semester)
         {
-            SemesterDAO semesterDAO = new SemesterDAO()
+            SemesterDAO semesterDAO = examRegContext.Semester.Where(s => s.Id.Equals(semester.Id)).FirstOrDefault();
+            if(semesterDAO == null)
             {
-                Id = semester.Id,
-                StartYear = semester.StartYear,
-                EndYear = semester.EndYear,
-                IsFirstHalf = semester.IsFirstHalf
+                semesterDAO = new SemesterDAO()
+                {
+                    Id = semester.Id,
+                    StartYear = semester.StartYear,
+                    EndYear = semester.EndYear,
+                    IsFirstHalf = semester.IsFirstHalf
+                };
+
+                await examRegContext.Semester.AddAsync(semesterDAO);
+            }
+            else
+            {
+                semesterDAO.StartYear = semester.StartYear;
+                semesterDAO.EndYear = semester.EndYear;
+                semesterDAO.IsFirstHalf = semester.IsFirstHalf;
             };
-
-            await examRegContext.Semester.AddAsync(semesterDAO);
             await examRegContext.SaveChangesAsync();
-
             return true;
         }
 
@@ -54,7 +63,16 @@ namespace ExamReg.Apps.Repositories
         {
             try
             {
-                // ràng buộc (?)
+                await examRegContext.Term
+                .Where(t => t.SemesterId.Equals(semester.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
+                await examRegContext.ExamProgram
+                .Where(t => t.SemesterId.Equals(semester.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
                 SemesterDAO semesterDAO = examRegContext.Semester
                     .Where(s => s.Id.Equals(semester.Id))
                     .AsNoTracking()
@@ -106,6 +124,7 @@ namespace ExamReg.Apps.Repositories
 
             IQueryable<SemesterDAO> query = examRegContext.Semester;
             query = DynamicFilter(query, filter);
+            query = DynamicOrder(query, filter);
 
             List<Semester> list = await query.Select(s => new Semester()
             {
@@ -128,6 +147,8 @@ namespace ExamReg.Apps.Repositories
                 EndYear = semester.EndYear,
                 IsFirstHalf = semester.IsFirstHalf
             });
+
+            await examRegContext.SaveChangesAsync();
             return true;
         }
         private IQueryable<SemesterDAO> DynamicFilter(IQueryable<SemesterDAO> query, SemesterFilter filter)
@@ -136,10 +157,48 @@ namespace ExamReg.Apps.Repositories
                 return query.Where(q => 1 == 0);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
-            /*if(filter.IsFirstHalf.HasValue)
-                query = query.Where(q => q.Id, filter.IsFirstHalf.HasValue);*/
+            if (filter.IsFirstHalf != null)
+                query = query.Where(c => c.IsFirstHalf == filter.IsFirstHalf);      
 
             return query;
+        }
+        private IQueryable<SemesterDAO> DynamicOrder(IQueryable<SemesterDAO> query, SemesterFilter filter)
+        {
+            switch (filter.OrderType)
+            {
+                case OrderType.ASC:
+                    switch (filter.OrderBy)
+                    {
+                        case SemesterOrder.Id:
+                            query = query.OrderBy(q => q.Id);
+                            break;
+                        case SemesterOrder.IsFirstHalf:
+                            query = query.OrderBy(q => q.IsFirstHalf);
+                            break;
+                        default:
+                            query = query.OrderBy(q => q.CX);
+                            break;
+                    }
+                    break;
+                case OrderType.DESC:
+                    switch (filter.OrderBy)
+                    {
+                        case SemesterOrder.Id:
+                            query = query.OrderByDescending(q => q.Id);
+                            break;
+                        case SemesterOrder.IsFirstHalf:
+                            query = query.OrderByDescending(q => q.IsFirstHalf);
+                            break;
+                        default:
+                            query = query.OrderByDescending(q => q.CX);
+                            break;
+                    }
+                    break;
+                default:
+                    query = query.OrderBy(q => q.CX);
+                    break;
+            }
+            return query.Skip(filter.Skip).Take(filter.Take);
         }
     }
 }

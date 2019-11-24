@@ -35,14 +35,26 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(ExamRoom examRoom)
         {
-            ExamRoomDAO examRoomDAO = new ExamRoomDAO()
+            ExamRoomDAO examRoomDAO = examRegContext.ExamRoom.Where(e => e.Id.Equals(examRoom.Id)).FirstOrDefault();
+            if(examRoomDAO == null)
             {
-                Id = examRoom.Id,
-                AmphitheaterName = examRoom.AmphitheaterName,
-                ComputerNumber = examRoom.ComputerNumber,
-                RoomNumber = examRoom.RoomNumber
+                examRoomDAO = new ExamRoomDAO()
+                {
+                    Id = examRoom.Id,
+                    AmphitheaterName = examRoom.AmphitheaterName,
+                    ComputerNumber = examRoom.ComputerNumber,
+                    RoomNumber = examRoom.RoomNumber
+                };
+                await examRegContext.ExamRoom.AddAsync(examRoomDAO);
+            }
+            else
+            {
+                examRoomDAO.Id = examRoom.Id;
+                examRoomDAO.AmphitheaterName = examRoom.AmphitheaterName;
+                examRoomDAO.ComputerNumber = examRoom.ComputerNumber;
+                examRoomDAO.RoomNumber = examRoom.RoomNumber;
             };
-            await examRegContext.ExamRoom.AddAsync(examRoomDAO);
+
             await examRegContext.SaveChangesAsync();
             return true;
         }
@@ -51,7 +63,16 @@ namespace ExamReg.Apps.Repositories
         {
             try
             {
-                // ràng buộc (?)
+                await examRegContext.ExamRoomExamPeriod
+               .Where(t => t.ExamRoomId.Equals(examRoom.Id))
+               .AsNoTracking()
+               .DeleteFromQueryAsync();
+
+                await examRegContext.StudentExamRoom
+                .Where(t => t.ExamRoomId.Equals(examRoom.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
                 ExamRoomDAO examRoomDAO = examRegContext.ExamRoom
                     .Where(s => s.Id.Equals(examRoom.Id))
                     .AsNoTracking()
@@ -122,6 +143,8 @@ namespace ExamReg.Apps.Repositories
                 ComputerNumber = examRoom.ComputerNumber,
                 RoomNumber = examRoom.RoomNumber
             });
+
+            await examRegContext.SaveChangesAsync();
             return true;
         }
 
@@ -129,8 +152,6 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            // nối ràng buộc (?)
-            //query = query.Where(q => q.Id, filter.Id);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.AmphitheaterName != null)
