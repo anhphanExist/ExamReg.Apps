@@ -128,7 +128,6 @@ namespace ExamReg.Apps.Repositories
         {
             await examRegContext.ExamProgram.Where(t => t.Id.Equals(examProgram.Id)).UpdateFromQueryAsync(t => new ExamProgramDAO
             {
-                Id = examProgram.Id,
                 Name = examProgram.Name,
                 SemesterId = examProgram.SemesterId
             });

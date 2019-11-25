@@ -32,5 +32,6 @@ namespace ExamReg.Apps.Entities
     public enum ExamPeriodOrder
     {
         Id,
+        ExamDate
     }
 }

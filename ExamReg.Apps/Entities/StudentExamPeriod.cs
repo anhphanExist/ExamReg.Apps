@@ -11,4 +11,10 @@ namespace ExamReg.Apps.Entities
         public Guid StudentId { get; set; }
         public Guid ExamPeriodId { get; set; }
     }
+    public class StudentExamPeriodFilter : FilterEntity
+    {
+        public GuidFilter StudentId { get; set; }
+        public GuidFilter ExamPeriodId { get; set; }
+        public StudentExamPeriodFilter() : base() { }
+    }
 }

@@ -53,7 +53,16 @@ namespace ExamReg.Apps.Repositories
         {
             try
             {
-                // ràng buộc (?)
+                await examRegContext.StudentExamPeriod
+                .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
+                await examRegContext.ExamRoomExamPeriod
+                .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
                 ExamPeriodDAO examPeriodDAO = examRegContext.ExamPeriod
                     .Where(e => e.Id.Equals(examPeriod.Id))
                     .AsNoTracking()
@@ -88,8 +97,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamPeriod> Get(ExamPeriodFilter filter)
         {
-            IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod;
-            ExamPeriodDAO examPeriodDAO = DynamicFilter(query, filter).FirstOrDefault();
+            IQueryable<ExamPeriodDAO> examPeriodDAOs = examRegContext.ExamPeriod;
+            ExamPeriodDAO examPeriodDAO = DynamicFilter(examPeriodDAOs, filter).FirstOrDefault();
 
             return new ExamPeriod()
             {
@@ -124,29 +133,26 @@ namespace ExamReg.Apps.Repositories
         {
             await examRegContext.ExamPeriod.Where(t => t.Id.Equals(examPeriod.Id)).UpdateFromQueryAsync(t => new ExamPeriodDAO
             {
-                Id = examPeriod.Id,
                 ExamDate = examPeriod.ExamDate,
                 StartHour = examPeriod.StartHour,
                 FinishHour = examPeriod.FinishHour,
                 TermId = examPeriod.TermId,
                 ExamProgramId = examPeriod.ExamProgramId
             });
+
+            await examRegContext.SaveChangesAsync();
             return true;
         }
         private IQueryable<ExamPeriodDAO> DynamicFilter(IQueryable<ExamPeriodDAO> query, ExamPeriodFilter filter)
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            // nối ràng buộc (?)
-            query = query.Where(q => q.Id, filter.Id);
+            query = query.Where(q => q.TermId, filter.TermId);
+            query = query.Where(q => q.ExamProgramId, filter.ExamProgramId);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.ExamDate != null)
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
-            if (filter.TermId != null)
-                query = query.Where(q => q.TermId, filter.TermId);
-            if (filter.ExamProgramId != null)
-                query = query.Where(q => q.ExamProgramId, filter.ExamProgramId);
 
             return query;
         }
@@ -161,6 +167,9 @@ namespace ExamReg.Apps.Repositories
                         case ExamPeriodOrder.Id:
                             query = query.OrderBy(q => q.Id);
                             break;
+                        case ExamPeriodOrder.ExamDate:
+                            query = query.OrderBy(q => q.ExamDate);
+                            break;
                         default:
                             query = query.OrderBy(q => q.CX);
                             break;
@@ -171,6 +180,9 @@ namespace ExamReg.Apps.Repositories
                     {
                         case ExamPeriodOrder.Id:
                             query = query.OrderByDescending(q => q.Id);
+                            break;
+                        case ExamPeriodOrder.ExamDate:
+                            query = query.OrderByDescending(q => q.ExamDate);
                             break;
                         default:
                             query = query.OrderByDescending(q => q.CX);

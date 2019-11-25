@@ -53,16 +53,29 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(Student student)
         {
-            StudentDAO studentDAO = new StudentDAO()
+            StudentDAO studentDAO = examRegContext.Student.Where(s => s.Id.Equals(student.Id)).FirstOrDefault();
+            if(studentDAO == null)
             {
-                Id = student.Id,
-                StudentNumber = student.StudentNumber,
-                LastName = student.LastName,
-                GivenName = student.GivenName,
-                Birthday = student.Birthday,
-                Email = student.Email
+                studentDAO = new StudentDAO()
+                {
+                    Id = student.Id,
+                    StudentNumber = student.StudentNumber,
+                    LastName = student.LastName,
+                    GivenName = student.GivenName,
+                    Birthday = student.Birthday,
+                    Email = student.Email
+                };
+                await examRegContext.Student.AddAsync(studentDAO);
+            }
+            else
+            {
+                studentDAO.StudentNumber = student.StudentNumber;
+                studentDAO.LastName = student.LastName;
+                studentDAO.GivenName = student.GivenName;
+                studentDAO.Birthday = student.Birthday;
+                studentDAO.Email = student.Email;
             };
-            await examRegContext.Student.AddAsync(studentDAO);
+
             await examRegContext.SaveChangesAsync();
             return true;
         }
@@ -111,7 +124,7 @@ namespace ExamReg.Apps.Repositories
             Student student = await examRegContext.Student.Where(s => s.Id == Id).Select(s => new Student()
             {
                 Id = s.Id,
-                //Username = s.User.Select(u => u.Username).FirstOrDefault(),
+                Username = examRegContext.User.Select(u => u.Username).FirstOrDefault(),
                 StudentNumber = s.StudentNumber,
                 LastName = s.LastName,
                 GivenName = s.GivenName,
@@ -125,6 +138,7 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Student> Get(StudentFilter filter)
         {
+            if (filter == null) return null;
             IQueryable<StudentDAO> students = examRegContext.Student.AsNoTracking();
             StudentDAO studentDAO = DynamicFilter(students, filter).FirstOrDefault();
             return new Student()
@@ -161,7 +175,6 @@ namespace ExamReg.Apps.Repositories
         {
             await examRegContext.Student.Where(s => s.Id.Equals(student.Id)).UpdateFromQueryAsync(s => new StudentDAO
             {
-                Id = student.Id,
                 StudentNumber = student.StudentNumber,
                 LastName = student.LastName,
                 GivenName = student.GivenName,

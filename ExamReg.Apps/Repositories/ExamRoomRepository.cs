@@ -138,7 +138,6 @@ namespace ExamReg.Apps.Repositories
         {
             await examRegContext.ExamRoom.Where(e => e.Id.Equals(examRoom.Id)).UpdateFromQueryAsync(e => new ExamRoomDAO()
             {
-                Id = examRoom.Id,
                 AmphitheaterName = examRoom.AmphitheaterName,
                 ComputerNumber = examRoom.ComputerNumber,
                 RoomNumber = examRoom.RoomNumber
