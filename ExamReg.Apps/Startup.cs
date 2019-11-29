@@ -97,7 +97,7 @@ namespace ExamReg.Apps
                         new StudentRequirement()));
 
                 options.AddPolicy(
-                    "CanManageEverything",
+                    "CanManage",
                     policyBuilder => policyBuilder.AddRequirements(
                         new AdminRequirement()));
             });
