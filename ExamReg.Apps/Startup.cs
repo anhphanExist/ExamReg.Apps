@@ -89,6 +89,19 @@ namespace ExamReg.Apps
                 };
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    "CanRegisterExam",
+                    policyBuilder => policyBuilder.AddRequirements(
+                        new StudentRequirement()));
+
+                options.AddPolicy(
+                    "CanManageEverything",
+                    policyBuilder => policyBuilder.AddRequirements(
+                        new AdminRequirement()));
+            });
+
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
