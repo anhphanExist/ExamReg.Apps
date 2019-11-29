@@ -46,6 +46,18 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.ExamDate).HasColumnType("date");
+
+                entity.HasOne(d => d.ExamProgram)
+                    .WithMany(p => p.ExamPeriods)
+                    .HasForeignKey(d => d.ExamProgramId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examperiod_fk_1");
+
+                entity.HasOne(d => d.Term)
+                    .WithMany(p => p.ExamPeriods)
+                    .HasForeignKey(d => d.TermId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examperiod_fk");
             });
 
             modelBuilder.Entity<ExamProgramDAO>(entity =>
@@ -61,6 +73,12 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.HasOne(d => d.Semester)
+                    .WithMany(p => p.ExamPrograms)
+                    .HasForeignKey(d => d.SemesterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examprogram_fk");
             });
 
             modelBuilder.Entity<ExamRoomDAO>(entity =>
@@ -88,6 +106,18 @@ namespace ExamReg.Apps.Repositories.Models
                     .IsUnique();
 
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.ExamPeriod)
+                    .WithMany(p => p.ExamRoomExamPeriods)
+                    .HasForeignKey(d => d.ExamPeriodId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examroomexamperiod_fk_1");
+
+                entity.HasOne(d => d.ExamRoom)
+                    .WithMany(p => p.ExamRoomExamPeriods)
+                    .HasForeignKey(d => d.ExamRoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examroomexamperiod_fk");
             });
 
             modelBuilder.Entity<SemesterDAO>(entity =>
@@ -136,6 +166,18 @@ namespace ExamReg.Apps.Repositories.Models
                     .IsUnique();
 
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.ExamPeriod)
+                    .WithMany(p => p.StudentExamPeriods)
+                    .HasForeignKey(d => d.ExamPeriodId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("studentexamperiod_fk_1");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.StudentExamPeriods)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("studentexamperiod_fk");
             });
 
             modelBuilder.Entity<StudentExamRoomDAO>(entity =>
@@ -148,6 +190,18 @@ namespace ExamReg.Apps.Repositories.Models
                     .IsUnique();
 
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.ExamRoom)
+                    .WithMany(p => p.StudentExamRooms)
+                    .HasForeignKey(d => d.ExamRoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examroom_studentexamroom_fk");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.StudentExamRooms)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("student_studentexamroom_fk");
             });
 
             modelBuilder.Entity<StudentTermDAO>(entity =>
@@ -160,6 +214,18 @@ namespace ExamReg.Apps.Repositories.Models
                     .IsUnique();
 
                 entity.Property(e => e.CX).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.StudentTerms)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("student_studentterm_fk");
+
+                entity.HasOne(d => d.Term)
+                    .WithMany(p => p.StudentTerms)
+                    .HasForeignKey(d => d.TermId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("term_studentterm_fk");
             });
 
             modelBuilder.Entity<TermDAO>(entity =>
@@ -175,6 +241,12 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.SubjectName)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.HasOne(d => d.Semester)
+                    .WithMany(p => p.Terms)
+                    .HasForeignKey(d => d.SemesterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("term_fk");
             });
 
             modelBuilder.Entity<UserDAO>(entity =>
@@ -194,6 +266,11 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.Username)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.StudentId)
+                    .HasConstraintName("user_fk");
             });
 
             OnModelCreatingExt(modelBuilder);

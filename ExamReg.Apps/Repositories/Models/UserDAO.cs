@@ -11,5 +11,7 @@ namespace ExamReg.Apps.Repositories.Models
         public bool IsAdmin { get; set; }
         public Guid? StudentId { get; set; }
         public long CX { get; set; }
+
+        public virtual StudentDAO Student { get; set; }
     }
 }

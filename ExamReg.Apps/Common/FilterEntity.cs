@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace ExamReg.Apps
+namespace ExamReg.Apps.Common
 {
     public class FilterEntity
     {

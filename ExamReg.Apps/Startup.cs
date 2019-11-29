@@ -131,6 +131,12 @@ namespace ExamReg.Apps
                 app.UseHsts();
             }
 
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();

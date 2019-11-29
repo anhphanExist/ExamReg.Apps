@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace ExamReg.Apps
+namespace ExamReg.Apps.Common
 {
     public class MyDesignTimeService : IDesignTimeServices
     {
