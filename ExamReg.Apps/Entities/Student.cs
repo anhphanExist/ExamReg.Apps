@@ -16,7 +16,6 @@ namespace ExamReg.Apps.Entities
         public string GivenName { get; set; }
         public DateTime Birthday { get; set; }
         public string Email { get; set; }
-        public User user { get; set; }
     }
     public class StudentFilter : FilterEntity
     {

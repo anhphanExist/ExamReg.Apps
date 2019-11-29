@@ -40,8 +40,14 @@ namespace ExamReg.Apps.Common
                 context.Fail();
                 return Task.CompletedTask;
             }
+            if (!context.User.HasClaim(c => c.Type == "StudentId"))
+            {
+                context.Fail();
+                return Task.CompletedTask;
+            }
             CurrentContext.UserId = Guid.TryParse(context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value, out Guid u) ? u : Guid.Empty;
             CurrentContext.Username = context.User.FindFirstValue(ClaimTypes.Name);
+            CurrentContext.StudentId = Guid.TryParse(context.User.FindFirst(c => c.Type == "StudentId").Value, out Guid s) ? s : Guid.Empty;
             context.Succeed(requirement);
             return Task.CompletedTask;
         }
