@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ExamReg.Apps.Common;
 using ExamReg.Apps.Repositories.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -102,6 +103,8 @@ namespace ExamReg.Apps
                         new AdminRequirement()));
             });
 
+            services.AddSingleton<IAuthorizationHandler, StudentHandler>();
+            services.AddSingleton<IAuthorizationHandler, AdminHandler>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExamReg.Apps.Services.Student
+namespace ExamReg.Apps.Services.MStudent
 {
-    public interface IStudentService : IServiceScoped
+    public interface IStudentValidator : IServiceScoped
     {
 
     }
-    public class StudentService : IStudentService
+    public class StudentValidator : IStudentValidator
     {
     }
 }

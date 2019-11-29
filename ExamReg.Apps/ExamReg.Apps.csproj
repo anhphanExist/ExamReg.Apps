@@ -19,7 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="Services\MExamProgram\" />
+    <Folder Include="Services\MExamPeriod\" />
+    <Folder Include="Services\MExamRoom\" />
+    <Folder Include="Services\MTerm\" />
   </ItemGroup>
 
 </Project>
