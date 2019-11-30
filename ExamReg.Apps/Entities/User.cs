@@ -13,10 +13,22 @@ namespace ExamReg.Apps.Entities
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
         public Guid? StudentId { get; set; }
+        public string StudentLastName { get; set; }
+        public string StudentGivenName { get; set; }
     }
     public class UserFilter : FilterEntity
     {
         public GuidFilter Id { get; set; }
         public StringFilter Username { get; set; }
+        public StringFilter Password { get; set; }
+        public StringFilter StudentLastName { get; set; }
+        public StringFilter StudentGivenName { get; set; }
+        public UserOrder OrderBy { get; set; }
+    }
+    public enum UserOrder
+    {
+        Username,
+        StudentGivenName,
+        StudentLastName
     }
 }
