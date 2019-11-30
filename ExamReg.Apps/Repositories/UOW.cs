@@ -21,7 +21,7 @@ namespace ExamReg.Apps.Repositories
         IStudentExamRoomRepository StudentExamRoomRepository { get; }
         IStudentRepository StudentRepository { get; }
         IStudentTermRepository StudentTermRepository { get; }
-        ITermRrepository TermRrepository { get; }
+        ITermRepository TermRepository { get; }
         IUserRepository UserRepository { get; }
 
     }
@@ -47,7 +47,7 @@ namespace ExamReg.Apps.Repositories
 
         public IStudentTermRepository StudentTermRepository { get; private set; }
 
-        public ITermRrepository TermRrepository { get; private set; }
+        public ITermRepository TermRepository { get; private set; }
 
         public IUserRepository UserRepository { get; private set; }
         public UOW(ExamRegContext examRegContext,
@@ -60,7 +60,7 @@ namespace ExamReg.Apps.Repositories
             IStudentExamRoomRepository StudentExamRoomRepository,
             IStudentRepository StudentRepository,
             IStudentTermRepository StudentTermRepository,
-            ITermRrepository TermRrepository,
+            ITermRepository TermRepository,
             IUserRepository UserRepository)
         {
             this.examRegContext = examRegContext;
@@ -73,7 +73,7 @@ namespace ExamReg.Apps.Repositories
             this.StudentExamRoomRepository = StudentExamRoomRepository;
             this.StudentRepository = StudentRepository;
             this.StudentTermRepository = StudentTermRepository;
-            this.TermRrepository = TermRrepository;
+            this.TermRepository = TermRepository;
             this.UserRepository = UserRepository;
         }
 

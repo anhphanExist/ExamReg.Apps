@@ -11,6 +11,7 @@ namespace ExamReg.Apps.Entities
         public Guid Id { get; set; }
         public string SubjectName { get; set; }
         public Guid SemesterId { get; set; }
+        public string SemesterCode { get; set; }
     }
     public class TermFilter : FilterEntity
     {
