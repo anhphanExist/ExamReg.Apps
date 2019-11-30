@@ -28,6 +28,7 @@ namespace ExamReg.Apps.Repositories
     public class UOW : IUOW
     {
         private ExamRegContext examRegContext;
+        private ICurrentContext CurrentContext;
         public IUserRepository UserRepository { get; }
         public IExamPeriodRepository ExamPeriodRepository { get; }
         public IExamProgramRepository ExamProgramRepository { get; }
@@ -39,10 +40,11 @@ namespace ExamReg.Apps.Repositories
         public IStudentRepository StudentRepository { get; }
         public IStudentTermRepository StudentTermRepository { get; }
         public ITermRepository TermRepository { get; }
-        public UOW(ExamRegContext examReg)
+        public UOW(ExamRegContext examReg, ICurrentContext CurrentContext)
         {
             this.examRegContext = examReg;
-            UserRepository = new UserRepository(this.examRegContext);
+            this.CurrentContext = CurrentContext;
+            UserRepository = new UserRepository(this.examRegContext, CurrentContext);
             ExamPeriodRepository = new ExamPeriodRepository(this.examRegContext);
             ExamProgramRepository = new ExamProgramRepository(this.examRegContext);
             ExamRoomExamPeriodRepository = new ExamRoomExamPeriodRepository(this.examRegContext);
@@ -50,9 +52,9 @@ namespace ExamReg.Apps.Repositories
             SemesterRepository = new SemesterRepository(this.examRegContext);
             StudentExamPeriodRepository = new StudentExamPeriodRepository(this.examRegContext);
             StudentExamRoomRepository = new StudentExamRoomRepository(this.examRegContext);
-            StudentRepository = new StudentRepository(this.examRegContext);
-            StudentTermRepository = new StudentTermRepository(this.examRegContext);
-            TermRepository = new TermRepository(this.examRegContext);
+            StudentRepository = new StudentRepository(this.examRegContext, CurrentContext);
+            StudentTermRepository = new StudentTermRepository(this.examRegContext, CurrentContext);
+            TermRepository = new TermRepository(this.examRegContext, CurrentContext);
         }
 
         public async Task Begin()
