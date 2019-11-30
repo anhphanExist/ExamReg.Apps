@@ -14,6 +14,16 @@ namespace ExamReg.Apps.Repositories
         Task Commit();
         Task Rollback();
         IUserRepository UserRepository { get; }
+        IExamPeriodRepository ExamPeriodRepository { get; }
+        IExamProgramRepository ExamProgramRepository { get; }
+        IExamRoomExamPeriodRepository ExamRoomExamPeriodRepository { get; }
+        IExamRoomRepository ExamRoomRepository { get; }
+        ISemesterRepository SemesterRepository { get; }
+        IStudentExamPeriodRepository StudentExamPeriodRepository { get; }
+        IStudentExamRoomRepository StudentExamRoomRepository { get; }
+        IStudentRepository StudentRepository { get; }
+        IStudentTermRepository StudentTermRepository { get; }
+        ITermRepository TermRepository { get; }
     }
     public class UOW : IUOW
     {

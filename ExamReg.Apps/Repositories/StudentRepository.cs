@@ -18,6 +18,7 @@ namespace ExamReg.Apps.Repositories
         Task<bool> Delete(Student student);
         Task<int> Count(StudentFilter filter);
         Task<List<Student>> List(StudentFilter filter);
+        Task<int> GetMaxStudentNumber();
         Task<bool> BulkInsert(List<Student> students);
     }
     public class StudentRepository : IStudentRepository
@@ -150,6 +151,12 @@ namespace ExamReg.Apps.Repositories
                 Birthday = studentDAO.Birthday,
                 Email = studentDAO.Email
             };
+        }
+
+        public async Task<int> GetMaxStudentNumber()
+        {
+            int count = await examRegContext.Student.CountAsync();
+            return count;
         }
 
         public async Task<List<Student>> List(StudentFilter filter)

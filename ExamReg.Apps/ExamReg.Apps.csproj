@@ -18,6 +18,12 @@
 
   <ItemGroup>
     <Folder Include="Common\" />
+    <Folder Include="Service\MExamProgram\" />
+    <Folder Include="Service\MExamRoom\" />
+    <Folder Include="Service\MSemester\" />
+    <Folder Include="Service\MTerm\" />
+    <Folder Include="Service\MUser\" />
+    <Folder Include="Service\MExamPeriod\" />
   </ItemGroup>
 
 </Project>
