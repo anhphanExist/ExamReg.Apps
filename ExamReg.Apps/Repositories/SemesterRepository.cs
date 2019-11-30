@@ -80,6 +80,7 @@ namespace ExamReg.Apps.Repositories
             return new Semester()
             {
                 Id = semesterDAO.Id,
+                Code = string.Format(semesterDAO.StartYear + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
                 StartYear = semesterDAO.StartYear,
                 EndYear = semesterDAO.EndYear,
                 IsFirstHalf = semesterDAO.IsFirstHalf
@@ -94,6 +95,7 @@ namespace ExamReg.Apps.Repositories
             return new Semester()
             {
                 Id = semesterDAO.Id,
+                Code = string.Format(semesterDAO.StartYear + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
                 StartYear = semesterDAO.StartYear,
                 EndYear = semesterDAO.EndYear,
                 IsFirstHalf = semesterDAO.IsFirstHalf
@@ -107,13 +109,13 @@ namespace ExamReg.Apps.Repositories
             IQueryable<SemesterDAO> query = examRegContext.Semester;
             query = DynamicFilter(query, filter);
 
-            List<Semester> list = await query.Select(s => new Semester()
+            List<Semester> list = await query.Select(s => new Semester
             {
                 Id = s.Id,
+                Code = string.Format(s.StartYear + s.EndYear + "_" + (s.IsFirstHalf ? 1 : 2)),
                 StartYear = s.StartYear,
                 EndYear = s.EndYear,
                 IsFirstHalf = s.IsFirstHalf
-
             }).ToListAsync();
             return list;
 
@@ -130,6 +132,7 @@ namespace ExamReg.Apps.Repositories
             });
             return true;
         }
+
         private IQueryable<SemesterDAO> DynamicFilter(IQueryable<SemesterDAO> query, SemesterFilter filter)
         {
             if (filter == null)
