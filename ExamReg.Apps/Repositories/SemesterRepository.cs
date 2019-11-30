@@ -18,6 +18,7 @@ namespace ExamReg.Apps.Repositories
         Task<bool> Delete(Semester semester);
         Task<int> Count(SemesterFilter filter);
         Task<List<Semester>> List(SemesterFilter filter);
+        Task<List<Semester>> BulkInsert(List<Semester> semesters);
     }
     public class SemesterRepository : ISemesterRepository
     {
@@ -80,7 +81,7 @@ namespace ExamReg.Apps.Repositories
             return new Semester()
             {
                 Id = semesterDAO.Id,
-                Code = string.Format(semesterDAO.StartYear + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
+                Code = string.Format(semesterDAO.StartYear + "_" + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
                 StartYear = semesterDAO.StartYear,
                 EndYear = semesterDAO.EndYear,
                 IsFirstHalf = semesterDAO.IsFirstHalf
@@ -95,7 +96,7 @@ namespace ExamReg.Apps.Repositories
             return new Semester()
             {
                 Id = semesterDAO.Id,
-                Code = string.Format(semesterDAO.StartYear + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
+                Code = string.Format(semesterDAO.StartYear + "_" + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
                 StartYear = semesterDAO.StartYear,
                 EndYear = semesterDAO.EndYear,
                 IsFirstHalf = semesterDAO.IsFirstHalf
@@ -113,7 +114,7 @@ namespace ExamReg.Apps.Repositories
             List<Semester> list = await query.Select(s => new Semester
             {
                 Id = s.Id,
-                Code = string.Format(s.StartYear + s.EndYear + "_" + (s.IsFirstHalf ? 1 : 2)),
+                Code = string.Format(s.StartYear + "_" + s.EndYear + "_" + (s.IsFirstHalf ? 1 : 2)),
                 StartYear = s.StartYear,
                 EndYear = s.EndYear,
                 IsFirstHalf = s.IsFirstHalf
@@ -132,6 +133,11 @@ namespace ExamReg.Apps.Repositories
                 IsFirstHalf = semester.IsFirstHalf
             });
             return true;
+        }
+
+        public async Task<List<Semester>> BulkInsert(List<Semester> semesters)
+        {
+            throw new NotImplementedException();
         }
 
         private IQueryable<SemesterDAO> DynamicFilter(IQueryable<SemesterDAO> query, SemesterFilter filter)

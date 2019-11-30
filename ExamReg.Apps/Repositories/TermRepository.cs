@@ -18,13 +18,16 @@ namespace ExamReg.Apps.Repositories
         Task<bool> Delete(Term term);
         Task<int> Count(TermFilter filter);
         Task<List<Term>> List(TermFilter filter);
+        Task<bool> BulkInsert(List<Term> terms);
     }
     public class TermRepository : ITermRepository
     {
         private ExamRegContext examRegContext;
-        public TermRepository(ExamRegContext examReg)
+        private ICurrentContext CurrentContext;
+        public TermRepository(ExamRegContext examReg, ICurrentContext CurrentContext)
         {
             this.examRegContext = examReg;
+            this.CurrentContext = CurrentContext;
         }
         public async Task<int> Count(TermFilter filter)
         {
@@ -118,6 +121,20 @@ namespace ExamReg.Apps.Repositories
             });
             return true;
         }
+
+        public async Task<bool> BulkInsert(List<Term> terms)
+        {
+            List<TermDAO> termDAOs = terms.Select(s => new TermDAO()
+            {
+                Id = s.Id,
+                SubjectName = s.SubjectName,
+                SemesterId = s.SemesterId
+            }).ToList();
+
+            await examRegContext.Term.BulkInsertAsync(termDAOs);
+            return true;
+        }
+
         private IQueryable<TermDAO> DynamicFilter(IQueryable<TermDAO> query, TermFilter filter)
         {
             if (filter == null)
@@ -128,8 +145,8 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
-            if (filter.SemesterId != null)
-                query = query.Where(q => q.SemesterId, filter.SemesterId);
+            if (filter.SemesterCode != null)
+                query = query.Where(q => q.Semester.StartYear, filter.SemesterCode);
             
             return query;
         }

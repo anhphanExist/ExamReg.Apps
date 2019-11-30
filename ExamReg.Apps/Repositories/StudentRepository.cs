@@ -18,16 +18,18 @@ namespace ExamReg.Apps.Repositories
         Task<bool> Delete(Student student);
         Task<int> Count(StudentFilter filter);
         Task<List<Student>> List(StudentFilter filter);
-        Task<bool> BulkInsert(List<Student> students);
+        Task<bool> BulkMerge(List<Student> students);
     }
     public class StudentRepository : IStudentRepository
     {
         private ExamRegContext examRegContext;
-        public StudentRepository(ExamRegContext examReg)
+        private ICurrentContext CurrentContext;
+        public StudentRepository(ExamRegContext examReg, ICurrentContext CurrentContext)
         {
             this.examRegContext = examReg;
+            this.CurrentContext = CurrentContext;
         }
-        public async Task<bool> BulkInsert(List<Student> students)
+        public async Task<bool> BulkMerge(List<Student> students)
         {
             List<StudentDAO> studentDAOs = students.Select(s => new StudentDAO()
             {
@@ -39,8 +41,14 @@ namespace ExamReg.Apps.Repositories
                 Email = s.Email
             }).ToList();
 
-            await examRegContext.Student.BulkMergeAsync(studentDAOs);
-            await examRegContext.SaveChangesAsync();
+            await examRegContext.Student.BulkMergeAsync(studentDAOs, options => 
+                {
+                    options.IgnoreOnMergeUpdateExpression = column => new
+                    {
+                        column.Id,
+                        column.StudentNumber
+                    };
+                });
             return true;
         }
 
