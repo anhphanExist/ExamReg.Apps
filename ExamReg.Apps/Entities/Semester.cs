@@ -28,6 +28,7 @@ namespace ExamReg.Apps.Entities
 
     public enum SemesterOrder
     {
-        Code
+        Code,
+        IsFirstHalf
     }
 }

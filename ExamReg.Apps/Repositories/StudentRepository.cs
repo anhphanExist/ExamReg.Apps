@@ -223,9 +223,6 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.ASC:
                     switch (filter.OrderBy)
                     {
-                        case StudentOrder.Id:
-                            query = query.OrderBy(q => q.Id);
-                            break;
                         case StudentOrder.StudentNumber:
                             query = query.OrderBy(q => q.StudentNumber);
                             break;
@@ -243,9 +240,6 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.DESC:           
                     switch (filter.OrderBy)
                     {
-                        case StudentOrder.Id:
-                            query = query.OrderByDescending(q => q.Id);
-                            break;
                         case StudentOrder.StudentNumber:
                             query = query.OrderByDescending(q => q.StudentNumber);
                             break;
