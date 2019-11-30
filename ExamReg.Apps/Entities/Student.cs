@@ -33,7 +33,6 @@ namespace ExamReg.Apps.Entities
     }
     public enum StudentOrder
     {
-        Id,
         StudentNumber,
         LastName,
         GivenName

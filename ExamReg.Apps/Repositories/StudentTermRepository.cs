@@ -143,7 +143,7 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.StudentId, filter.StudentId);
             if (filter.TermId != null)
                 query = query.Where(q => q.TermId, filter.TermId);
-            //if (filter.IsQualified != null)
+            if (filter.IsQualified != null)
                 query = query.Where(c => c.IsQualified == filter.IsQualified);
 
             return query;

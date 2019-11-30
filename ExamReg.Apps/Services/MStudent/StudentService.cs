@@ -309,8 +309,8 @@ namespace ExamReg.Apps.Services.MStudent
                     {
                         StudentId = student.Id,
                         StudentNumber = student.StudentNumber,
-                        LastName = student.LastName,
-                        GivenName = student.GivenName,
+                        StudentLastName = student.LastName,
+                        StudentGivenName = student.GivenName,
                         TermId = term.Id,
                         SubjectName = term.SubjectName,
                         IsQualified = template.IsQualified
@@ -367,8 +367,8 @@ namespace ExamReg.Apps.Services.MStudent
                         StudentTerm excelTemplate = new StudentTerm
                         {
                             StudentNumber = int.Parse(studentNumber),
-                            LastName = lastName,
-                            GivenName = givenName,
+                            StudentLastName = lastName,
+                            StudentGivenName = givenName,
                             SubjectName = subjectName,
                             IsQualified = !string.IsNullOrEmpty(isQualified)
                         };
