@@ -22,7 +22,7 @@ namespace ExamReg.Apps.Repositories
     {
         private ExamRegContext examRegContext;
         private ICurrentContext CurrentContext;
-        public StudentStudentTermRepository(ExamRegContext examRegContext, ICurrentContext CurrentContext)
+        public StudentTermRepository(ExamRegContext examRegContext, ICurrentContext CurrentContext)
         {
             this.examRegContext = examRegContext;
             this.CurrentContext = CurrentContext;

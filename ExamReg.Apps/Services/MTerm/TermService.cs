@@ -22,7 +22,7 @@ namespace ExamReg.Apps.Services.MTerm
         Task<byte[]> Export();
     }
 
-    public class TermService :ITermService
+    public class TermService : ITermService
     {
         private IUOW UOW;
 
@@ -192,6 +192,11 @@ namespace ExamReg.Apps.Services.MTerm
                 // trả về dữ liệu dạng byte của excelPackage để xuất ra file thật
                 return excel.GetAsByteArray();
             }
+        }
+
+        public async Task<byte[]> Export()
+        {
+            throw new NotImplementedException();
         }
     }
 }
