@@ -59,6 +59,16 @@ namespace ExamReg.Apps.Common
         public int? GreaterEqual { get; set; }
     }
 
+    public class ShortFilter
+    {
+        public short? Equal { get; set; }
+        public short? NotEqual { get; set; }
+        public short? Less { get; set; }
+        public short? LessEqual { get; set; }
+        public short? Greater { get; set; }
+        public short? GreaterEqual { get; set; }
+    }
+
     public class LongFilter
     {
         public long? Equal { get; set; }
@@ -236,7 +246,23 @@ namespace ExamReg.Apps.Common
 
             return source;
         }
+        public static IQueryable<TSource> Where<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> propertyName, ShortFilter filter)
+        {
+            if (filter.Equal.HasValue)
+                source = source.Where(BuildPredicate(propertyName, "==", filter.Equal.Value.ToString()));
+            if (filter.NotEqual.HasValue)
+                source = source.Where(BuildPredicate(propertyName, "!=", filter.NotEqual.Value.ToString()));
+            if (filter.Less.HasValue)
+                source = source.Where(BuildPredicate(propertyName, "<", filter.Less.Value.ToString()));
+            if (filter.LessEqual.HasValue)
+                source = source.Where(BuildPredicate(propertyName, "<=", filter.LessEqual.Value.ToString()));
+            if (filter.Greater.HasValue)
+                source = source.Where(BuildPredicate(propertyName, ">", filter.Greater.Value.ToString()));
+            if (filter.GreaterEqual.HasValue)
+                source = source.Where(BuildPredicate(propertyName, ">=", filter.GreaterEqual.Value.ToString()));
 
+            return source;
+        }
         public static IQueryable<TSource> Where<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> propertyName, LongFilter filter)
         {
             if (filter.Equal.HasValue)

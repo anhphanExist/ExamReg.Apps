@@ -23,8 +23,7 @@ namespace ExamReg.Apps.Entities
     }
     public enum TermOrder
     {
-        Id,
         SubjectName,
-        SemesterId
+        SemesterCode
     }
 }

@@ -17,10 +17,17 @@ namespace ExamReg.Apps.Entities
     public class SemesterFilter : FilterEntity
     {
         public GuidFilter Id { get; set; }
+        public ShortFilter StartYear { get; set; }
         public bool IsFirstHalf { get; set; }
+        public SemesterOrder OrderBy { get; set; }
         public SemesterFilter() : base()
         {
 
         }
+    }
+
+    public enum SemesterOrder
+    {
+        Code
     }
 }

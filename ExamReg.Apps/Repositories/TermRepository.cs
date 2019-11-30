@@ -141,14 +141,11 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.ASC:
                     switch (filter.OrderBy)
                     {
-                        case TermOrder.Id:
-                            query = query.OrderBy(q => q.Id);
-                            break;
                         case TermOrder.SubjectName:
                             query = query.OrderBy(q => q.SubjectName);
                             break;
-                        case TermOrder.SemesterId:
-                            query = query.OrderBy(q => q.SemesterId);
+                        case TermOrder.SemesterCode:
+                            query = query.OrderBy(q => q.Semester.StartYear);
                             break;
                         default:
                             query = query.OrderBy(q => q.CX);
@@ -158,14 +155,11 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.DESC:
                     switch (filter.OrderBy)
                     {
-                        case TermOrder.Id:
-                            query = query.OrderByDescending(q => q.Id);
-                            break;
                         case TermOrder.SubjectName:
                             query = query.OrderByDescending(q => q.SubjectName);
                             break;
-                        case TermOrder.SemesterId:
-                            query = query.OrderByDescending(q => q.SemesterId);
+                        case TermOrder.SemesterCode:
+                            query = query.OrderByDescending(q => q.Semester.StartYear);
                             break;
                         default:
                             query = query.OrderByDescending(q => q.CX);

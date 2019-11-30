@@ -108,6 +108,7 @@ namespace ExamReg.Apps.Repositories
 
             IQueryable<SemesterDAO> query = examRegContext.Semester;
             query = DynamicFilter(query, filter);
+            query = DynamicOrder(query, filter);
 
             List<Semester> list = await query.Select(s => new Semester
             {
@@ -139,10 +140,45 @@ namespace ExamReg.Apps.Repositories
                 return query.Where(q => 1 == 0);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
+            if (filter.StartYear != null)
+                query = query.Where(q => q.StartYear, filter.StartYear);
             /*if(filter.IsFirstHalf.HasValue)
                 query = query.Where(q => q.Id, filter.IsFirstHalf.HasValue);*/
 
             return query;
+        }
+
+        private IQueryable<SemesterDAO> DynamicOrder(IQueryable<SemesterDAO> query, SemesterFilter filter)
+        {
+            switch (filter.OrderType)
+            {
+                case OrderType.ASC:
+                    switch (filter.OrderBy)
+                    {
+                        case SemesterOrder.Code:
+                            query = query.OrderBy(q => q.StartYear);
+                            break;
+                        default:
+                            query = query.OrderBy(q => q.CX);
+                            break;
+                    }
+                    break;
+                case OrderType.DESC:
+                    switch (filter.OrderBy)
+                    {
+                        case SemesterOrder.Code:
+                            query = query.OrderByDescending(q => q.StartYear);
+                            break;
+                        default:
+                            query = query.OrderByDescending(q => q.CX);
+                            break;
+                    }
+                    break;
+                default:
+                    query = query.OrderBy(q => q.CX);
+                    break;
+            }
+            return query.Skip(filter.Skip).Take(filter.Take);
         }
     }
 }
