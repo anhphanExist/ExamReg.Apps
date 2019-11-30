@@ -1,5 +1,6 @@
 ﻿using ExamReg.Apps.Common;
 using ExamReg.Apps.Repositories.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace ExamReg.Apps.Repositories
         Task Begin();
         Task Commit();
         Task Rollback();
+        IUserRepository UserRepository { get; }
         IExamPeriodRepository ExamPeriodRepository { get; }
         IExamProgramRepository ExamProgramRepository { get; }
         IExamRoomExamPeriodRepository ExamRoomExamPeriodRepository { get; }
@@ -22,62 +24,36 @@ namespace ExamReg.Apps.Repositories
         IStudentRepository StudentRepository { get; }
         IStudentTermRepository StudentTermRepository { get; }
         ITermRepository TermRepository { get; }
-        IUserRepository UserRepository { get; }
-
     }
-
     public class UOW : IUOW
     {
         private ExamRegContext examRegContext;
-        public IExamPeriodRepository ExamPeriodRepository { get; private set; }
-
-        public IExamProgramRepository ExamProgramRepository { get; private set; }
-
-        public IExamRoomExamPeriodRepository ExamRoomExamPeriodRepository { get; private set; }
-
-        public IExamRoomRepository ExamRoomRepository { get; private set; }
-
-        public ISemesterRepository SemesterRepository { get; private set; }
-
-        public IStudentExamPeriodRepository StudentExamPeriodRepository { get; private set; }
-
-        public IStudentExamRoomRepository StudentExamRoomRepository { get; private set; }
-
-        public IStudentRepository StudentRepository { get; private set; }
-
-        public IStudentTermRepository StudentTermRepository { get; private set; }
-
-        public ITermRepository TermRepository { get; private set; }
-
-        public IUserRepository UserRepository { get; private set; }
-        public UOW(ExamRegContext examRegContext,
-            IExamPeriodRepository ExamPeriodRepository,
-            IExamProgramRepository ExamProgramRepository,
-            IExamRoomExamPeriodRepository ExamRoomExamPeriodRepository,
-            IExamRoomRepository ExamRoomRepository,
-            ISemesterRepository SemesterRepository,
-            IStudentExamPeriodRepository StudentExamPeriodRepository,
-            IStudentExamRoomRepository StudentExamRoomRepository,
-            IStudentRepository StudentRepository,
-            IStudentTermRepository StudentTermRepository,
-            ITermRepository TermRepository,
-            IUserRepository UserRepository)
+        public IUserRepository UserRepository { get; }
+        public IExamPeriodRepository ExamPeriodRepository { get; }
+        public IExamProgramRepository ExamProgramRepository { get; }
+        public IExamRoomExamPeriodRepository ExamRoomExamPeriodRepository { get; }
+        public IExamRoomRepository ExamRoomRepository { get; }
+        public ISemesterRepository SemesterRepository { get; }
+        public IStudentExamPeriodRepository StudentExamPeriodRepository { get; }
+        public IStudentExamRoomRepository StudentExamRoomRepository { get; }
+        public IStudentRepository StudentRepository { get; }
+        public IStudentTermRepository StudentTermRepository { get; }
+        public ITermRepository TermRepository { get; }
+        public UOW(ExamRegContext examReg)
         {
-            this.examRegContext = examRegContext;
-            this.ExamPeriodRepository = ExamPeriodRepository;
-            this.ExamProgramRepository = ExamProgramRepository;
-            this.ExamRoomExamPeriodRepository = ExamRoomExamPeriodRepository;
-            this.ExamRoomRepository = ExamRoomRepository;
-            this.SemesterRepository = SemesterRepository;
-            this.StudentExamPeriodRepository = StudentExamPeriodRepository;
-            this.StudentExamRoomRepository = StudentExamRoomRepository;
-            this.StudentRepository = StudentRepository;
-            this.StudentTermRepository = StudentTermRepository;
-            this.TermRepository = TermRepository;
-            this.UserRepository = UserRepository;
+            this.examRegContext = examReg;
+            UserRepository = new UserRepository(this.examRegContext);
+            ExamPeriodRepository = new ExamPeriodRepository(this.examRegContext);
+            ExamProgramRepository = new ExamProgramRepository(this.examRegContext);
+            ExamRoomExamPeriodRepository = new ExamRoomExamPeriodRepository(this.examRegContext);
+            ExamRoomRepository = new ExamRoomRepository(this.examRegContext);
+            SemesterRepository = new SemesterRepository(this.examRegContext);
+            StudentExamPeriodRepository = new StudentExamPeriodRepository(this.examRegContext);
+            StudentExamRoomRepository = new StudentExamRoomRepository(this.examRegContext);
+            StudentRepository = new StudentRepository(this.examRegContext);
+            StudentTermRepository = new StudentTermRepository(this.examRegContext);
+            TermRepository = new TermRepository(this.examRegContext);
         }
-
-
 
         public async Task Begin()
         {

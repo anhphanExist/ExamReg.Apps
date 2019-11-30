@@ -37,17 +37,26 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(Semester semester)
         {
-            SemesterDAO semesterDAO = new SemesterDAO()
+            SemesterDAO semesterDAO = examRegContext.Semester.Where(s => s.Id.Equals(semester.Id)).FirstOrDefault();
+            if(semesterDAO == null)
             {
-                Id = semester.Id,
-                StartYear = semester.StartYear,
-                EndYear = semester.EndYear,
-                IsFirstHalf = semester.IsFirstHalf
+                semesterDAO = new SemesterDAO()
+                {
+                    Id = semester.Id,
+                    StartYear = semester.StartYear,
+                    EndYear = semester.EndYear,
+                    IsFirstHalf = semester.IsFirstHalf
+                };
+
+                await examRegContext.Semester.AddAsync(semesterDAO);
+            }
+            else
+            {
+                semesterDAO.StartYear = semester.StartYear;
+                semesterDAO.EndYear = semester.EndYear;
+                semesterDAO.IsFirstHalf = semester.IsFirstHalf;
             };
-
-            await examRegContext.Semester.AddAsync(semesterDAO);
             await examRegContext.SaveChangesAsync();
-
             return true;
         }
 
@@ -55,7 +64,16 @@ namespace ExamReg.Apps.Repositories
         {
             try
             {
-                // ràng buộc (?)
+                await examRegContext.Term
+                .Where(t => t.SemesterId.Equals(semester.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
+                await examRegContext.ExamProgram
+                .Where(t => t.SemesterId.Equals(semester.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
                 SemesterDAO semesterDAO = examRegContext.Semester
                     .Where(s => s.Id.Equals(semester.Id))
                     .AsNoTracking()
@@ -148,8 +166,8 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.StartYear != null)
                 query = query.Where(q => q.StartYear, filter.StartYear);
-            /*if(filter.IsFirstHalf.HasValue)
-                query = query.Where(q => q.Id, filter.IsFirstHalf.HasValue);*/
+            if (filter.IsFirstHalf != null)
+                query = query.Where(c => c.IsFirstHalf == filter.IsFirstHalf);      
 
             return query;
         }
@@ -164,6 +182,9 @@ namespace ExamReg.Apps.Repositories
                         case SemesterOrder.Code:
                             query = query.OrderBy(q => q.StartYear);
                             break;
+                        case SemesterOrder.IsFirstHalf:
+                            query = query.OrderBy(q => q.IsFirstHalf);
+                            break;
                         default:
                             query = query.OrderBy(q => q.CX);
                             break;
@@ -174,6 +195,9 @@ namespace ExamReg.Apps.Repositories
                     {
                         case SemesterOrder.Code:
                             query = query.OrderByDescending(q => q.StartYear);
+                            break;
+                        case SemesterOrder.IsFirstHalf:
+                            query = query.OrderByDescending(q => q.IsFirstHalf);
                             break;
                         default:
                             query = query.OrderByDescending(q => q.CX);

@@ -19,6 +19,7 @@ namespace ExamReg.Apps.Repositories
         Task<int> Count(StudentFilter filter);
         Task<List<Student>> List(StudentFilter filter);
         Task<bool> BulkMerge(List<Student> students);
+        Task<int> GetMaxStudentNumber();
     }
     public class StudentRepository : IStudentRepository
     {
@@ -61,16 +62,29 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(Student student)
         {
-            StudentDAO studentDAO = new StudentDAO()
+            StudentDAO studentDAO = examRegContext.Student.Where(s => s.Id.Equals(student.Id)).FirstOrDefault();
+            if(studentDAO == null)
             {
-                Id = student.Id,
-                StudentNumber = student.StudentNumber,
-                LastName = student.LastName,
-                GivenName = student.GivenName,
-                Birthday = student.Birthday,
-                Email = student.Email
+                studentDAO = new StudentDAO()
+                {
+                    Id = student.Id,
+                    StudentNumber = student.StudentNumber,
+                    LastName = student.LastName,
+                    GivenName = student.GivenName,
+                    Birthday = student.Birthday,
+                    Email = student.Email
+                };
+                await examRegContext.Student.AddAsync(studentDAO);
+            }
+            else
+            {
+                studentDAO.StudentNumber = student.StudentNumber;
+                studentDAO.LastName = student.LastName;
+                studentDAO.GivenName = student.GivenName;
+                studentDAO.Birthday = student.Birthday;
+                studentDAO.Email = student.Email;
             };
-            await examRegContext.Student.AddAsync(studentDAO);
+
             await examRegContext.SaveChangesAsync();
             return true;
         }
@@ -79,7 +93,26 @@ namespace ExamReg.Apps.Repositories
         {
             try
             {
-                // ràng buộc (?)
+                await examRegContext.User
+                .Where(s => s.StudentId.Equals(student.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
+                await examRegContext.StudentExamPeriod
+                .Where(s => s.StudentId.Equals(student.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
+                await examRegContext.StudentExamRoom
+                .Where(s => s.StudentId.Equals(student.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
+                await examRegContext.StudentTerm
+                .Where(s => s.StudentId.Equals(student.Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+
                 StudentDAO studentDAO = examRegContext.Student
                     .Where(s => s.Id.Equals(student.Id))
                     .AsNoTracking()
@@ -97,24 +130,24 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Student> Get(Guid Id)
         {
-            StudentDAO studentDAO = examRegContext.Student
-                .Where(s => s.Id.Equals(Id))
-                .AsNoTracking()
-                .FirstOrDefault();
-
-            return new Student()
+            Student student = await examRegContext.Student.Where(s => s.Id == Id).Select(s => new Student()
             {
-                Id = studentDAO.Id,
-                StudentNumber = studentDAO.StudentNumber,
-                LastName = studentDAO.LastName,
-                GivenName = studentDAO.GivenName,
-                Birthday = studentDAO.Birthday,
-                Email = studentDAO.Email
-            };
+                Id = s.Id,
+                Username = examRegContext.User.Select(u => u.Username).FirstOrDefault(),
+                StudentNumber = s.StudentNumber,
+                LastName = s.LastName,
+                GivenName = s.GivenName,
+                Birthday = s.Birthday,
+                Email = s.Email
+            }).FirstOrDefaultAsync();
+
+            if (student == null) return null;
+            return student;
         }
 
         public async Task<Student> Get(StudentFilter filter)
         {
+            if (filter == null) return null;
             IQueryable<StudentDAO> students = examRegContext.Student.AsNoTracking();
             StudentDAO studentDAO = DynamicFilter(students, filter).FirstOrDefault();
             return new Student()
@@ -126,6 +159,12 @@ namespace ExamReg.Apps.Repositories
                 Birthday = studentDAO.Birthday,
                 Email = studentDAO.Email
             };
+        }
+
+        public async Task<int> GetMaxStudentNumber()
+        {
+            int count = await examRegContext.Student.CountAsync();
+            return count;
         }
 
         public async Task<List<Student>> List(StudentFilter filter)
@@ -151,7 +190,6 @@ namespace ExamReg.Apps.Repositories
         {
             await examRegContext.Student.Where(s => s.Id.Equals(student.Id)).UpdateFromQueryAsync(s => new StudentDAO
             {
-                Id = student.Id,
                 StudentNumber = student.StudentNumber,
                 LastName = student.LastName,
                 GivenName = student.GivenName,
@@ -164,8 +202,6 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            // nối ràng buộc (?)
-            //query = query.Where(q => q.Id, filter.Id);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.StudentNumber != null)

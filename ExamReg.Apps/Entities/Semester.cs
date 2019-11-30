@@ -18,7 +18,7 @@ namespace ExamReg.Apps.Entities
     {
         public GuidFilter Id { get; set; }
         public ShortFilter StartYear { get; set; }
-        public bool IsFirstHalf { get; set; }
+        public bool? IsFirstHalf { get; set; }
         public SemesterOrder OrderBy { get; set; }
         public SemesterFilter() : base()
         {

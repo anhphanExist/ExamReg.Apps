@@ -16,6 +16,7 @@ namespace ExamReg.Apps.Entities
     {
         public GuidFilter Id { get; set; }
         public StringFilter Name { get; set; }
+        public GuidFilter SemesterId { get; set; }
         public ExamProgramOrder OrderBy { get; set; }
         public ExamProgramFilter() : base()
         {
