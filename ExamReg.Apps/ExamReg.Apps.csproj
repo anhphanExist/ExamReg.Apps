@@ -20,10 +20,4 @@
     <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="2.7.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\MExamProgram\" />
-    <Folder Include="Services\MExamPeriod\" />
-    <Folder Include="Services\MExamRoom\" />
-  </ItemGroup>
-
 </Project>

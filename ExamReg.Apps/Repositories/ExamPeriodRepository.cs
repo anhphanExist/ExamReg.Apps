@@ -91,7 +91,9 @@ namespace ExamReg.Apps.Repositories
                 StartHour = examPeriodDAO.StartHour,
                 FinishHour = examPeriodDAO.FinishHour,
                 TermId = examPeriodDAO.TermId,
-                ExamProgramId = examPeriodDAO.ExamProgramId
+                SubjectName = examPeriodDAO.Term.SubjectName,
+                ExamProgramId = examPeriodDAO.ExamProgramId,
+                ExamProgramName = examPeriodDAO.ExamProgram.Name
             };
         }
 
@@ -107,7 +109,9 @@ namespace ExamReg.Apps.Repositories
                 StartHour = examPeriodDAO.StartHour,
                 FinishHour = examPeriodDAO.FinishHour,
                 TermId = examPeriodDAO.TermId,
-                ExamProgramId = examPeriodDAO.ExamProgramId
+                SubjectName = examPeriodDAO.Term.SubjectName,
+                ExamProgramId = examPeriodDAO.ExamProgramId,
+                ExamProgramName = examPeriodDAO.ExamProgram.Name
             };
         }
 
@@ -124,7 +128,9 @@ namespace ExamReg.Apps.Repositories
                 StartHour = e.StartHour,
                 FinishHour = e.FinishHour,
                 TermId = e.TermId,
-                ExamProgramId = e.ExamProgramId
+                SubjectName = e.Term.SubjectName,
+                ExamProgramId = e.ExamProgramId,
+                ExamProgramName = e.ExamProgram.Name
             }).ToListAsync();
             return list;
         }
@@ -147,13 +153,12 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            query = query.Where(q => q.TermId, filter.TermId);
-            query = query.Where(q => q.ExamProgramId, filter.ExamProgramId);
-            if (filter.Id != null)
-                query = query.Where(q => q.Id, filter.Id);
             if (filter.ExamDate != null)
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
-
+            if (filter.SubjectName != null)
+                query = query.Where(q => q.Term.SubjectName, filter.SubjectName);
+            if (filter.ExamProgramName != null)
+                query = query.Where(q => q.ExamProgram.Name, filter.ExamProgramName);
             return query;
         }
 
@@ -164,11 +169,14 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.ASC:
                     switch (filter.OrderBy)
                     {
-                        case ExamPeriodOrder.Id:
-                            query = query.OrderBy(q => q.Id);
-                            break;
                         case ExamPeriodOrder.ExamDate:
                             query = query.OrderBy(q => q.ExamDate);
+                            break;
+                        case ExamPeriodOrder.SubjectName:
+                            query = query.OrderBy(q => q.Term.SubjectName);
+                            break;
+                        case ExamPeriodOrder.ExamProgramName:
+                            query = query.OrderBy(q => q.ExamProgram.Name);
                             break;
                         default:
                             query = query.OrderBy(q => q.CX);
@@ -178,11 +186,14 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.DESC:
                     switch (filter.OrderBy)
                     {
-                        case ExamPeriodOrder.Id:
-                            query = query.OrderByDescending(q => q.Id);
-                            break;
                         case ExamPeriodOrder.ExamDate:
                             query = query.OrderByDescending(q => q.ExamDate);
+                            break;
+                        case ExamPeriodOrder.SubjectName:
+                            query = query.OrderByDescending(q => q.Term.SubjectName);
+                            break;
+                        case ExamPeriodOrder.ExamProgramName:
+                            query = query.OrderByDescending(q => q.ExamProgram.Name);
                             break;
                         default:
                             query = query.OrderByDescending(q => q.CX);

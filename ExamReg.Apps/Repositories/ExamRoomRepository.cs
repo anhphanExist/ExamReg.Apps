@@ -151,13 +151,12 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            if (filter.Id != null)
-                query = query.Where(q => q.Id, filter.Id);
             if (filter.AmphitheaterName != null)
                 query = query.Where(q => q.AmphitheaterName, filter.AmphitheaterName);
             if (filter.ComputerNumber != null)
                 query = query.Where(q => q.Id, filter.ComputerNumber);
-
+            if (filter.RoomNumber != null)
+                query = query.Where(q => q.RoomNumber, filter.RoomNumber);
             return query;
         }
         private IQueryable<ExamRoomDAO> DynamicOrder(IQueryable<ExamRoomDAO> query, ExamRoomFilter filter)
@@ -167,11 +166,14 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.ASC:
                     switch (filter.OrderBy)
                     {
-                        case ExamRoomOrder.Id:
-                            query = query.OrderBy(q => q.Id);
-                            break;
                         case ExamRoomOrder.ComputerNumber:
                             query = query.OrderBy(q => q.ComputerNumber);
+                            break;
+                        case ExamRoomOrder.AmphitheaterName:
+                            query = query.OrderBy(q => q.AmphitheaterName);
+                            break;
+                        case ExamRoomOrder.RoomNumber:
+                            query = query.OrderBy(q => q.RoomNumber);
                             break;
                         default:
                             query = query.OrderBy(q => q.CX);
@@ -181,11 +183,14 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.DESC:
                     switch (filter.OrderBy)
                     {
-                        case ExamRoomOrder.Id:
-                            query = query.OrderByDescending(q => q.Id);
-                            break;
                         case ExamRoomOrder.ComputerNumber:
                             query = query.OrderByDescending(q => q.ComputerNumber);
+                            break;
+                        case ExamRoomOrder.AmphitheaterName:
+                            query = query.OrderByDescending(q => q.AmphitheaterName);
+                            break;
+                        case ExamRoomOrder.RoomNumber:
+                            query = query.OrderByDescending(q => q.RoomNumber);
                             break;
                         default:
                             query = query.OrderByDescending(q => q.CX);

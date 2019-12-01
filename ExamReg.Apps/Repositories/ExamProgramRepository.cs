@@ -91,7 +91,8 @@ namespace ExamReg.Apps.Repositories
             {
                 Id = examProgramDAO.Id,
                 Name = examProgramDAO.Name,
-                SemesterId = examProgramDAO.SemesterId
+                SemesterId = examProgramDAO.SemesterId,
+                SemesterCode = string.Format(examProgramDAO.Semester.StartYear + "_" + examProgramDAO.Semester.EndYear + "_" + (examProgramDAO.Semester.IsFirstHalf ? 1 : 2))
             };
         }
 
@@ -104,7 +105,8 @@ namespace ExamReg.Apps.Repositories
             {
                 Id = examProgramDAO.Id,
                 Name = examProgramDAO.Name,
-                SemesterId = examProgramDAO.SemesterId
+                SemesterId = examProgramDAO.SemesterId,
+                SemesterCode = string.Format(examProgramDAO.Semester.StartYear + "_" + examProgramDAO.Semester.EndYear + "_" + (examProgramDAO.Semester.IsFirstHalf ? 1 : 2))
             };
         }
 
@@ -119,7 +121,8 @@ namespace ExamReg.Apps.Repositories
             {
                 Id = e.Id,
                 Name = e.Name,
-                SemesterId = e.SemesterId
+                SemesterId = e.SemesterId,
+                SemesterCode = string.Format(e.Semester.StartYear + "_" + e.Semester.EndYear + "_" + (e.Semester.IsFirstHalf ? 1 : 2))
             }).ToListAsync();
             return list;
         }
@@ -139,12 +142,15 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            query = query.Where(q => q.SemesterId, filter.SemesterId);
-            if (filter.Id != null)
-                query = query.Where(q => q.Id, filter.Id);
             if (filter.Name != null)
                 query = query.Where(q => q.Name, filter.Name);
-
+            if (filter.SemesterCode != null)
+            {
+                string[] codeData = filter.SemesterCode.Equal.Split(".");
+                query = query.Where(q => q.Semester.StartYear, new ShortFilter { Equal = short.Parse(codeData[0]) });
+                query = query.Where(q => q.Semester.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
+                query = query.Where(q => q.Semester.IsFirstHalf == (codeData[2] == "1" ? true : false));
+            }
             return query;
         }
 
@@ -155,11 +161,11 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.ASC:
                     switch (filter.OrderBy)
                     {
-                        case ExamProgramOrder.Id:
-                            query = query.OrderBy(q => q.Id);
-                            break;
                         case ExamProgramOrder.Name:
                             query = query.OrderBy(q => q.Name);
+                            break;
+                        case ExamProgramOrder.SemesterCode:
+                            query = query.OrderBy(q => q.Semester.StartYear);
                             break;
                         default:
                             query = query.OrderBy(q => q.CX);
@@ -169,11 +175,11 @@ namespace ExamReg.Apps.Repositories
                 case OrderType.DESC:
                     switch (filter.OrderBy)
                     {
-                        case ExamProgramOrder.Id:
-                            query = query.OrderByDescending(q => q.Id);
-                            break;
                         case ExamProgramOrder.Name:
                             query = query.OrderByDescending(q => q.Name);
+                            break;
+                        case ExamProgramOrder.SemesterCode:
+                            query = query.OrderByDescending(q => q.Semester.StartYear);
                             break;
                         default:
                             query = query.OrderByDescending(q => q.CX);

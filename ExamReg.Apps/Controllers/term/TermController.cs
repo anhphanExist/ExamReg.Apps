@@ -36,25 +36,66 @@ namespace ExamReg.Apps.Controllers.term
         [Route(TermRoute.List), HttpPost]
         public async Task<List<TermDTO>> List()
         {
-            throw new NotImplementedException();
+            List<Term> terms = await TermService.List(new TermFilter());
+            List<TermDTO> res = new List<TermDTO>();
+            terms.ForEach(t => res.Add(new TermDTO
+            {
+                SemesterCode = t.SemesterCode,
+                SubjectName = t.SubjectName,
+                Errors = t.Errors
+            }));
+            return res;
         }
 
         [Route(TermRoute.Create), HttpPost]
         public async Task<TermDTO> Create([FromBody] TermDTO termRequestDTO)
         {
-            throw new NotImplementedException();
+            Term newTerm = new Term
+            {
+                SemesterCode = termRequestDTO.SemesterCode,
+                SubjectName = termRequestDTO.SubjectName
+            };
+            Term res = await TermService.Create(newTerm);
+            return new TermDTO
+            {
+                SemesterCode = res.SemesterCode,
+                SubjectName = res.SubjectName,
+                Errors = res.Errors
+            };
         }
 
         [Route(TermRoute.Update), HttpPost]
         public async Task<TermDTO> Update([FromBody] TermDTO termRequestDTO)
         {
-            throw new NotImplementedException();
+            Term term = new Term
+            {
+                SemesterCode = termRequestDTO.SemesterCode,
+                SubjectName = termRequestDTO.SubjectName
+            };
+            Term res = await TermService.Update(term);
+            return new TermDTO
+            {
+                SemesterCode = res.SemesterCode,
+                SubjectName = res.SubjectName,
+                Errors = res.Errors
+            };
         }
 
         [Route(TermRoute.Delete), HttpPost]
         public async Task<TermDTO> Delete([FromBody] TermDTO termRequestDTO)
         {
-            throw new NotImplementedException();
+            Term term = new Term
+            {
+                SemesterCode = termRequestDTO.SemesterCode,
+                SubjectName = termRequestDTO.SubjectName
+            };
+            Term res = await TermService.Delete(term);
+            return new TermDTO
+            {
+                SemesterCode = res.SemesterCode,
+                SubjectName = res.SubjectName,
+                Errors = res.Errors
+            };
         }
 
         [Route(TermRoute.Import), HttpPost]

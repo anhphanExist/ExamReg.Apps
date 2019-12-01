@@ -99,7 +99,8 @@ namespace ExamReg.Apps.Repositories
             {
                 Id = termDAO.Id,
                 SubjectName = termDAO.SubjectName,
-                SemesterId = termDAO.SemesterId
+                SemesterId = termDAO.SemesterId,
+                SemesterCode = string.Format(termDAO.Semester.StartYear + "_" + termDAO.Semester.EndYear + "_" + (termDAO.Semester.IsFirstHalf ? 1 : 2))
             };
         }
 
@@ -112,7 +113,8 @@ namespace ExamReg.Apps.Repositories
             {
                 Id = termDAO.Id,
                 SubjectName = termDAO.SubjectName,
-                SemesterId = termDAO.SemesterId
+                SemesterId = termDAO.SemesterId,
+                SemesterCode = string.Format(termDAO.Semester.StartYear + "_" + termDAO.Semester.EndYear + "_" + (termDAO.Semester.IsFirstHalf ? 1 : 2))
             };
         }
 
@@ -126,7 +128,8 @@ namespace ExamReg.Apps.Repositories
             {
                 Id = t.Id,
                 SubjectName = t.SubjectName,
-                SemesterId = t.SemesterId
+                SemesterId = t.SemesterId,
+                SemesterCode = string.Format(t.Semester.StartYear + "_" + t.Semester.EndYear + "_" + (t.Semester.IsFirstHalf ? 1 : 2))
             }).ToListAsync();
             return list;
         }
@@ -158,15 +161,15 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            // nối ràng buộc (?)
-            //query = query.Where(q => q.Id, filter.Id);
-            if (filter.Id != null)
-                query = query.Where(q => q.Id, filter.Id);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
             if (filter.SemesterCode != null)
-                query = query.Where(q => q.Semester.StartYear, filter.SemesterCode);
-            
+            {
+                string[] codeData = filter.SemesterCode.Equal.Split(".");
+                query = query.Where(q => q.Semester.StartYear, new ShortFilter { Equal = short.Parse(codeData[0]) });
+                query = query.Where(q => q.Semester.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
+                query = query.Where(q => q.Semester.IsFirstHalf == (codeData[2] == "1" ? true : false));
+            }
             return query;
         }
 

@@ -11,12 +11,12 @@ namespace ExamReg.Apps.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public Guid SemesterId { get; set; }
+        public string SemesterCode { get; set; }
     }
     public class ExamProgramFilter : FilterEntity
     {
-        public GuidFilter Id { get; set; }
         public StringFilter Name { get; set; }
-        public GuidFilter SemesterId { get; set; }
+        public StringFilter SemesterCode { get; set; }
         public ExamProgramOrder OrderBy { get; set; }
         public ExamProgramFilter() : base()
         {
@@ -25,7 +25,7 @@ namespace ExamReg.Apps.Entities
     }
     public enum ExamProgramOrder
     {
-        Id,
-        Name
+        Name,
+        SemesterCode
     }
 }
