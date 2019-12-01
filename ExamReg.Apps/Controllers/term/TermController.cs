@@ -3,6 +3,7 @@ using ExamReg.Apps.Entities;
 using ExamReg.Apps.Services.MTerm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ namespace ExamReg.Apps.Controllers.term
     {
         private const string Default = Base + "/term";
         public const string List = Default + "/list";
-        public const string Count = Default + "/count";
         public const string Create = Default + "/create";
         public const string Update = Default + "/update";
         public const string Delete = Default + "/delete";
@@ -31,6 +31,30 @@ namespace ExamReg.Apps.Controllers.term
             ) : base(CurrentContext)
         {
             this.TermService = TermService;
+        }
+
+        [Route(TermRoute.List), HttpPost]
+        public async Task<List<TermDTO>> List()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Route(TermRoute.Create), HttpPost]
+        public async Task<TermDTO> Create([FromBody] TermDTO termRequestDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        [Route(TermRoute.Update), HttpPost]
+        public async Task<TermDTO> Update([FromBody] TermDTO termRequestDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        [Route(TermRoute.Delete), HttpPost]
+        public async Task<TermDTO> Delete([FromBody] TermDTO termRequestDTO)
+        {
+            throw new NotImplementedException();
         }
 
         [Route(TermRoute.Import), HttpPost]

@@ -133,7 +133,8 @@ namespace ExamReg.Apps.Repositories
             Student student = await examRegContext.Student.Where(s => s.Id == Id).Select(s => new Student()
             {
                 Id = s.Id,
-                Username = examRegContext.User.Select(u => u.Username).FirstOrDefault(),
+                Username = s.Users.FirstOrDefault().Username,
+                Password = s.Users.FirstOrDefault().Password,
                 StudentNumber = s.StudentNumber,
                 LastName = s.LastName,
                 GivenName = s.GivenName,
@@ -153,6 +154,8 @@ namespace ExamReg.Apps.Repositories
             return new Student()
             {
                 Id = studentDAO.Id,
+                Username = studentDAO.Users.FirstOrDefault().Username,
+                Password = studentDAO.Users.FirstOrDefault().Password,
                 StudentNumber = studentDAO.StudentNumber,
                 LastName = studentDAO.LastName,
                 GivenName = studentDAO.GivenName,
@@ -177,6 +180,8 @@ namespace ExamReg.Apps.Repositories
             {
                 Id = s.Id,
                 StudentNumber = s.StudentNumber,
+                Username = s.Users.FirstOrDefault().Username,
+                Password = s.Users.FirstOrDefault().Password,
                 LastName = s.LastName,
                 GivenName = s.GivenName,
                 Birthday = s.Birthday,

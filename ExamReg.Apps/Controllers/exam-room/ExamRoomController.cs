@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ExamReg.Apps.Controllers.exam_room
 {
-    public class Route : Root
+    public class ExamRoomRoute : Root
     {
         private const string Default = Base + "/exam-room";
     }

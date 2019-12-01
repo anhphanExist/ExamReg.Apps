@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ExamReg.Apps.Controllers.exam_period
 {
-    public class Route : Root
+    public class ExamPeriodRoute : Root
     {
         private const string Default = Base + "/exam-period";
     }

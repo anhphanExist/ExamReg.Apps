@@ -114,7 +114,7 @@ namespace ExamReg.Apps.Services.MTerm
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    throw new MessageException(e);
                 }
             }
 
@@ -129,10 +129,10 @@ namespace ExamReg.Apps.Services.MTerm
                     await UOW.Commit();
                     return excelTemplates;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     await UOW.Rollback();
-                    throw e;
+                    throw new MessageException("TermService.ImportExcel.SystemError");
                 }
             }
         }

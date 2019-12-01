@@ -17,6 +17,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<Student> Create(Student student);
         Task<Student> Update(Student student);
         Task<Student> Delete(Student student);
+        Task<Student> ResetPassword(Student student);
         Task<List<Student>> ImportExcelStudent(byte[] file);
         Task<byte[]> GenerateStudentTemplate();
         Task<byte[]> ExportStudent();
@@ -54,6 +55,33 @@ namespace ExamReg.Apps.Services.MStudent
         public async Task<Student> Update(Student student)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Student> ResetPassword(Student student)
+        {
+            // Note: Thêm student Validator vào đây
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    StudentFilter filter = new StudentFilter
+                    {
+                        StudentNumber = new IntFilter { Equal = student.StudentNumber }
+                    };
+                    Student existingStudent = await UOW.StudentRepository.Get(filter);
+                    existingStudent.Password = student.StudentNumber.ToString();
+                    await UOW.StudentRepository.Update(existingStudent);
+                    await UOW.Commit();
+                    return existingStudent;
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    student.AddError(nameof(StudentService), nameof(ResetPassword), CommonEnum.ErrorCode.SystemError);
+                    return student;
+                }
+            }
         }
 
         public async Task<List<Student>> ImportExcelStudent(byte[] file)
@@ -129,7 +157,7 @@ namespace ExamReg.Apps.Services.MStudent
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    throw new MessageException(e);
                 }
             }
 
@@ -144,10 +172,10 @@ namespace ExamReg.Apps.Services.MStudent
                     await UOW.Commit();
                     return excelTemplates;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     await UOW.Rollback();
-                    throw e;
+                    throw new MessageException("StudentService.ImportExcel.SystemError");
                 }
             }
         }
@@ -407,6 +435,7 @@ namespace ExamReg.Apps.Services.MStudent
                 return excel.GetAsByteArray();
             }
         }
+
         public async Task<byte[]> ExportStudentTerm()
         {
             // Lấy dữ liệu trong database

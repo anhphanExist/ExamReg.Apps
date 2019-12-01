@@ -138,7 +138,7 @@ namespace ExamReg.Apps
                 .AllowAnyHeader());
 
             app.UseHttpsRedirection();
-
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseAuthentication();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
