@@ -36,6 +36,7 @@ namespace ExamReg.Apps.Entities
         StudentNumber,
         SubjectName,
         StudentLastName,
-        StudentGivenName
+        StudentGivenName,
+        IsQualified
     }
 }

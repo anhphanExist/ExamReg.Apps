@@ -18,10 +18,12 @@ namespace ExamReg.Apps.Controllers.student
         public const string Create = Default + "/create";
         public const string Update = Default + "/update";
         public const string Delete = Default + "/delete";
-        public const string Import = Default + "/import";
-        public const string Export = Default + "/export";
-        public const string DownloadTemplate = Default + "/download-template";
+        public const string ImportStudent = Default + "/import-student";
+        public const string DownloadStudentTemplate = Default + "/download-student-template";
+        public const string ExportStudent = Default + "/export-student";
         public const string ImportStudentTerm = Default + "/import-student-term";
+        public const string DownloadStudentTermTemplate = Default + "/download-student-term-template";
+        public const string ExportStudentTerm = Default + "/export-student-term";
     }
 
     [Authorize(Policy = "CanManage")]
@@ -36,7 +38,7 @@ namespace ExamReg.Apps.Controllers.student
         }
 
 
-        [Route(StudentRoute.Import), HttpPost]
+        [Route(StudentRoute.ImportStudent), HttpPost]
         public async Task<List<Student>> ImportExcelStudent()
         {
             MemoryStream memoryStream = new MemoryStream();
@@ -44,18 +46,18 @@ namespace ExamReg.Apps.Controllers.student
             return await StudentService.ImportExcelStudent(memoryStream.ToArray());
         }
 
-        [Route(StudentRoute.Export), HttpGet]
-        public async Task<FileResult> Export()
-        {
-            byte[] data = await StudentService.ExportStudent();
-            return File(data, "application/octet-stream", "Student.xlsx");
-        }
-
-        [Route(StudentRoute.DownloadTemplate), HttpGet]
-        public async Task<FileResult> GetTemplate()
+        [Route(StudentRoute.DownloadStudentTemplate), HttpGet]
+        public async Task<FileResult> GetStudentTemplate()
         {
             byte[] data = await StudentService.GenerateStudentTemplate();
             return File(data, "application/octet-stream", "Student Template.xlsx");
+        }
+
+        [Route(StudentRoute.ExportStudent), HttpGet]
+        public async Task<FileResult> ExportStudent()
+        {
+            byte[] data = await StudentService.ExportStudent();
+            return File(data, "application/octet-stream", "Student.xlsx");
         }
 
         [Route(StudentRoute.ImportStudentTerm), HttpPost]
@@ -64,6 +66,20 @@ namespace ExamReg.Apps.Controllers.student
             MemoryStream memoryStream = new MemoryStream();
             Request.Body.CopyTo(memoryStream);
             return await StudentService.ImportExcelStudentTerm(memoryStream.ToArray());
+        }
+
+        [Route(StudentRoute.DownloadStudentTermTemplate), HttpGet]
+        public async Task<FileResult> GetStudentTermTemplate()
+        {
+            byte[] data = await StudentService.GenerateStudentTermTemplate();
+            return File(data, "application/octet-stream", "StudentTerm Template.xlsx");
+        }
+
+        [Route(StudentRoute.ExportStudentTerm), HttpGet]
+        public async Task<FileResult> ExportStudentTerm()
+        {
+            byte[] data = await StudentService.ExportStudentTerm();
+            return File(data, "application/octet-stream", "StudentTerm.xlsx");
         }
     }
 }

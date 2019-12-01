@@ -409,7 +409,47 @@ namespace ExamReg.Apps.Services.MStudent
         }
         public async Task<byte[]> ExportStudentTerm()
         {
-            throw new NotImplementedException();
+            // Lấy dữ liệu trong database
+            StudentTermFilter studentTermFilter = new StudentTermFilter()
+            {
+                OrderBy = StudentTermOrder.StudentNumber
+            };
+            List<StudentTerm> studentTerms = await UOW.StudentTermRepository.List(studentTermFilter);
+
+            // Mở excelPackage
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                // đặt header
+                var studentTermHeaders = new List<string[]>()
+                {
+                    new string[]
+                    {
+                        "STT",
+                        "Mã số sinh viên",
+                        "Họ",
+                        "Tên",
+                        "Tên môn học",
+                        "Đủ điều kiện dự thi"
+                    }
+                };
+                // tạo data
+                List<object[]> data = new List<object[]>();
+                for (int i = 0; i < studentTerms.Count; i++)
+                {
+                    data.Add(new object[] {
+                        i + 1,
+                        studentTerms[i].StudentNumber,
+                        studentTerms[i].StudentLastName,
+                        studentTerms[i].StudentGivenName,
+                        studentTerms[i].SubjectName,
+                        studentTerms[i].IsQualified
+                    });
+                }
+                // tạo worksheet
+                excel.GenerateWorksheet("Sinh viên - Môn học", studentTermHeaders, data);
+                // trả về dữ liệu dạng byte
+                return excel.GetAsByteArray();
+            }
         }
     }
 }

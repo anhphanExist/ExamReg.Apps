@@ -131,6 +131,7 @@ namespace ExamReg.Apps.Services.MTerm
                 }
                 catch (Exception e)
                 {
+                    await UOW.Rollback();
                     throw e;
                 }
             }
@@ -196,7 +197,41 @@ namespace ExamReg.Apps.Services.MTerm
 
         public async Task<byte[]> Export()
         {
-            throw new NotImplementedException();
+            // Lấy dữ liệu trong database
+            TermFilter termFilter = new TermFilter
+            {
+                OrderBy = TermOrder.SubjectName
+            };
+            List<Term> terms = await UOW.TermRepository.List(termFilter);
+
+            // Mở excelPackage
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                // đặt header
+                var termHeaders = new List<string[]>()
+                {
+                    new string[]
+                    {
+                        "STT",
+                        "Tên môn học",
+                        "Mã kì học"
+                    }
+                };
+                // tạo data
+                List<object[]> data = new List<object[]>();
+                for (int i = 0; i < terms.Count; i++)
+                {
+                    data.Add(new object[] {
+                        i + 1,
+                        terms[i].SubjectName,
+                        terms[i].SemesterCode
+                    }); ;
+                }
+                // tạo worksheet
+                excel.GenerateWorksheet("Môn học", termHeaders, data);
+                // trả về dữ liệu dạng byte
+                return excel.GetAsByteArray();
+            }
         }
     }
 }

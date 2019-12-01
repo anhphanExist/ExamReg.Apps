@@ -89,7 +89,7 @@ namespace ExamReg.Apps.Repositories
 
             IQueryable<StudentTermDAO> query = examRegContext.StudentTerm;
             query = DynamicFilter(query, filter);
-
+            query = DynamicOrder(query, filter);
             List<StudentTerm> list = await query.Select(s => new StudentTerm()
             {
                 StudentId = s.StudentId,
@@ -147,6 +147,63 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(c => c.IsQualified == filter.IsQualified);
 
             return query;
+        }
+
+        private IQueryable<StudentTermDAO> DynamicOrder(IQueryable<StudentTermDAO> query, StudentTermFilter filter)
+        {
+            switch (filter.OrderType)
+            {
+                case OrderType.ASC:
+                    switch (filter.OrderBy)
+                    {
+                        case StudentTermOrder.StudentNumber:
+                            query = query.OrderBy(q => q.Student.StudentNumber);
+                            break;
+                        case StudentTermOrder.SubjectName:
+                            query = query.OrderBy(q => q.Term.SubjectName);
+                            break;
+                        case StudentTermOrder.StudentLastName:
+                            query = query.OrderBy(q => q.Student.LastName);
+                            break;
+                        case StudentTermOrder.StudentGivenName:
+                            query = query.OrderBy(q => q.Student.GivenName);
+                            break;
+                        case StudentTermOrder.IsQualified:
+                            query = query.OrderBy(q => q.IsQualified);
+                            break;
+                        default:
+                            query = query.OrderBy(q => q.CX);
+                            break;
+                    }
+                    break;
+                case OrderType.DESC:
+                    switch (filter.OrderBy)
+                    {
+                        case StudentTermOrder.StudentNumber:
+                            query = query.OrderByDescending(q => q.Student.StudentNumber);
+                            break;
+                        case StudentTermOrder.SubjectName:
+                            query = query.OrderByDescending(q => q.Term.SubjectName);
+                            break;
+                        case StudentTermOrder.StudentLastName:
+                            query = query.OrderByDescending(q => q.Student.LastName);
+                            break;
+                        case StudentTermOrder.StudentGivenName:
+                            query = query.OrderByDescending(q => q.Student.GivenName);
+                            break;
+                        case StudentTermOrder.IsQualified:
+                            query = query.OrderByDescending(q => q.IsQualified);
+                            break;
+                        default:
+                            query = query.OrderByDescending(q => q.CX);
+                            break;
+                    }
+                    break;
+                default:
+                    query = query.OrderBy(q => q.CX);
+                    break;
+            }
+            return query.Skip(filter.Skip).Take(filter.Take);
         }
     }
 }
