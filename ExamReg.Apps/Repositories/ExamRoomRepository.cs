@@ -124,7 +124,7 @@ namespace ExamReg.Apps.Repositories
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
 
-            List < ExamRoom> list = await query.Select(e => new ExamRoom()
+            List<ExamRoom> list = await query.Select(e => new ExamRoom()
             {
                 Id = e.Id,
                 RoomNumber = e.RoomNumber,
