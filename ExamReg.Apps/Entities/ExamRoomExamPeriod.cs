@@ -10,7 +10,7 @@ namespace ExamReg.Apps.Entities
     {
         public Guid ExamRoomId { get; set; }
         public Guid ExamPeriodId { get; set; }
-        public string ExamRoomNumber { get; set; }
+        public short ExamRoomNumber { get; set; }
         public string ExamRoomAmphitheaterName { get; set; }
         public int CurrentNumberOfStudentRegistered { get; set; }
         public int ExamRoomComputerNumber { get; set; }
@@ -22,7 +22,7 @@ namespace ExamReg.Apps.Entities
     }
     public class ExamRoomExamPeriodFilter : FilterEntity
     {
-        public StringFilter ExamRoomNumber { get; set; }
+        public ShortFilter ExamRoomNumber { get; set; }
         public StringFilter ExamRoomAmphitheaterName { get; set; }
         public IntFilter CurrentNumberOfStudentRegistered { get; set; }
         public DateTimeFilter ExamDate { get; set; }

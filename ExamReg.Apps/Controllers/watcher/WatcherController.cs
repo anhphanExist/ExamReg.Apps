@@ -15,9 +15,6 @@ namespace ExamReg.Apps.Controllers.watcher
     {
         private const string Default = Base + "/watcher";
         public const string List = Default + "/list";
-        public const string Create = Default + "/create";
-        public const string Update = Default + "/update";
-        public const string Delete = Default + "/delete";
         public const string ExportStudent = Default + "/export-student";
     }
     [Authorize(Policy = "CanManage")]
@@ -51,103 +48,21 @@ namespace ExamReg.Apps.Controllers.watcher
             return res;
         }
 
-        [Route(WatcherRoute.Create), HttpPost]
-        public async Task<WatcherDTO> Create([FromBody] WatcherDTO watcherRequestDTO)
-        {
-            ExamRoomExamPeriod newWatcher = new ExamRoomExamPeriod
-            {
-                ExamProgramName = watcherRequestDTO.ExamProgramName,
-                ExamRoomNumber = watcherRequestDTO.ExamRoomNumber,
-                ExamRoomAmphitheaterName = watcherRequestDTO.ExamRoomAmphitheaterName,
-                ExamRoomComputerNumber = watcherRequestDTO.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = watcherRequestDTO.CurrentNumberOfStudentRegistered,
-                ExamDate = watcherRequestDTO.ExamDate,
-                StartHour = watcherRequestDTO.StartHour,
-                FinishHour = watcherRequestDTO.FinishHour,
-                SubjectName = watcherRequestDTO.SubjectName,
-            };
-            ExamRoomExamPeriod res = await ExamRoomExamPeriodService.Create(newWatcher);
-            return new WatcherDTO
-            {
-                ExamProgramName = res.ExamProgramName,
-                ExamRoomNumber = res.ExamRoomNumber,
-                ExamRoomAmphitheaterName = res.ExamRoomAmphitheaterName,
-                ExamRoomComputerNumber = res.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = res.CurrentNumberOfStudentRegistered,
-                ExamDate = res.ExamDate,
-                StartHour = res.StartHour,
-                FinishHour = res.FinishHour,
-                SubjectName = res.SubjectName,
-                Errors = res.Errors
-            };
-        }
-
-        [Route(WatcherRoute.Update), HttpPost]
-        public async Task<WatcherDTO> Update([FromBody] WatcherDTO watcherRequestDTO)
-        {
-            ExamRoomExamPeriod newWatcher = new ExamRoomExamPeriod
-            {
-                ExamProgramName = watcherRequestDTO.ExamProgramName,
-                ExamRoomNumber = watcherRequestDTO.ExamRoomNumber,
-                ExamRoomAmphitheaterName = watcherRequestDTO.ExamRoomAmphitheaterName,
-                ExamRoomComputerNumber = watcherRequestDTO.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = watcherRequestDTO.CurrentNumberOfStudentRegistered,
-                ExamDate = watcherRequestDTO.ExamDate,
-                StartHour = watcherRequestDTO.StartHour,
-                FinishHour = watcherRequestDTO.FinishHour,
-                SubjectName = watcherRequestDTO.SubjectName,
-            };
-            ExamRoomExamPeriod res = await ExamRoomExamPeriodService.Update(newWatcher);
-            return new WatcherDTO
-            {
-                ExamProgramName = res.ExamProgramName,
-                ExamRoomNumber = res.ExamRoomNumber,
-                ExamRoomAmphitheaterName = res.ExamRoomAmphitheaterName,
-                ExamRoomComputerNumber = res.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = res.CurrentNumberOfStudentRegistered,
-                ExamDate = res.ExamDate,
-                StartHour = res.StartHour,
-                FinishHour = res.FinishHour,
-                SubjectName = res.SubjectName,
-                Errors = res.Errors
-            };
-        }
-
-        [Route(WatcherRoute.Delete), HttpPost]
-        public async Task<WatcherDTO> Delete([FromBody] WatcherDTO watcherRequestDTO)
-        {
-            ExamRoomExamPeriod newWatcher = new ExamRoomExamPeriod
-            {
-                ExamProgramName = watcherRequestDTO.ExamProgramName,
-                ExamRoomNumber = watcherRequestDTO.ExamRoomNumber,
-                ExamRoomAmphitheaterName = watcherRequestDTO.ExamRoomAmphitheaterName,
-                ExamRoomComputerNumber = watcherRequestDTO.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = watcherRequestDTO.CurrentNumberOfStudentRegistered,
-                ExamDate = watcherRequestDTO.ExamDate,
-                StartHour = watcherRequestDTO.StartHour,
-                FinishHour = watcherRequestDTO.FinishHour,
-                SubjectName = watcherRequestDTO.SubjectName,
-            };
-            ExamRoomExamPeriod res = await ExamRoomExamPeriodService.Delete(newWatcher);
-            return new WatcherDTO
-            {
-                ExamProgramName = res.ExamProgramName,
-                ExamRoomNumber = res.ExamRoomNumber,
-                ExamRoomAmphitheaterName = res.ExamRoomAmphitheaterName,
-                ExamRoomComputerNumber = res.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = res.CurrentNumberOfStudentRegistered,
-                ExamDate = res.ExamDate,
-                StartHour = res.StartHour,
-                FinishHour = res.FinishHour,
-                SubjectName = res.SubjectName,
-                Errors = res.Errors
-            };
-        }
-
         [Route(WatcherRoute.ExportStudent), HttpPost]
-        public async Task<WatcherDTO> ExportStudent([FromBody] WatcherDTO watcherRequestDTO)
+        public async Task<FileResult> ExportStudent([FromBody] WatcherDTO watcherRequestDTO)
         {
-            throw new NotImplementedException();
+            ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
+            {
+                ExamRoomNumber = new ShortFilter { Equal = watcherRequestDTO.ExamRoomNumber },
+                ExamRoomAmphitheaterName = new StringFilter { Equal = watcherRequestDTO.ExamRoomAmphitheaterName },
+                ExamProgramName = new StringFilter { Equal = watcherRequestDTO.ExamProgramName },
+                SubjectName = new StringFilter { Equal = watcherRequestDTO.SubjectName },
+                ExamDate = new DateTimeFilter { Equal = watcherRequestDTO.ExamDate },
+                StartHour = new ShortFilter { Equal = watcherRequestDTO.StartHour },
+                FinishHour = new ShortFilter { Equal = watcherRequestDTO.FinishHour }
+            };
+            byte[] data = await ExamRoomExamPeriodService.ExportStudent(filter);
+            return File(data, "application/octet-stream", "StudentRoomPeriod.xlsx");
         }
     }
 }

@@ -5,7 +5,7 @@ namespace ExamReg.Apps.Controllers.watcher
 {
     public class WatcherDTO : DataDTO
     {
-        public string ExamRoomNumber { get; set; }
+        public short ExamRoomNumber { get; set; }
         public string ExamRoomAmphitheaterName { get; set; }
         public int CurrentNumberOfStudentRegistered { get; set; }
         public int ExamRoomComputerNumber { get; set; }

@@ -12,11 +12,9 @@ namespace ExamReg.Apps.Repositories
     public interface IExamRoomExamPeriodRepository
     {
         Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter);
-        //Task<bool> Create(ExamRoomExamPeriod ExamRoomExamPeriod);
-        //Task<bool> Update(ExamRoomExamPeriod ExamRoomExamPeriod);
-        //Task<bool> Delete(ExamRoomExamPeriod ExamRoomExamPeriod);
-        //Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter);
-        Task<List<ExamRoomExamPeriod>> List();
+        Task<bool> Create(ExamRoomExamPeriod ExamRoomExamPeriod);
+        Task<bool> Delete(ExamRoomExamPeriod ExamRoomExamPeriod);
+        Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter);
     }
     public class ExamRoomExamPeriodRepository : IExamRoomExamPeriodRepository
     {
@@ -50,80 +48,79 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(ExamRoomExamPeriod ExamRoomExamPeriod)
         {
-            try
-            {
-                ExamRoomExamPeriodDAO ExamRoomExamPeriodDAO = examRegContext.ExamRoomExamPeriod
-                    .Where(s => (s.ExamRoomId.Equals(ExamRoomExamPeriod.ExamRoomId) && s.ExamPeriodId.Equals(ExamRoomExamPeriod.ExamPeriodId)))
-                    .AsNoTracking()
-                    .FirstOrDefault();
+            ExamRoomExamPeriodDAO ExamRoomExamPeriodDAO = examRegContext.ExamRoomExamPeriod
+                .Where(s => (s.ExamRoomId.Equals(ExamRoomExamPeriod.ExamRoomId) && s.ExamPeriodId.Equals(ExamRoomExamPeriod.ExamPeriodId)))
+                .AsNoTracking()
+                .FirstOrDefault();
 
-                examRegContext.ExamRoomExamPeriod.Remove(ExamRoomExamPeriodDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            examRegContext.ExamRoomExamPeriod.Remove(ExamRoomExamPeriodDAO);
+            await examRegContext.SaveChangesAsync();
+            return true;
+            
         }
 
         public async Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter)
         {
-            IQueryable<ExamRoomExamPeriodDAO> ExamRoomExamPeriodDAOs = examRegContext.ExamRoomExamPeriod;
-            ExamRoomExamPeriodDAO ExamRoomExamPeriodDAO = DynamicFilter(ExamRoomExamPeriodDAOs, filter).FirstOrDefault();
+            IQueryable<ExamRoomExamPeriodDAO> examRoomExamPeriodDAOs = examRegContext.ExamRoomExamPeriod;
+            ExamRoomExamPeriodDAO examRoomExamPeriodDAO = DynamicFilter(examRoomExamPeriodDAOs, filter).FirstOrDefault();
 
             return new ExamRoomExamPeriod()
             {
-                ExamRoomId = ExamRoomExamPeriodDAO.ExamRoomId,
-                ExamPeriodId = ExamRoomExamPeriodDAO.ExamPeriodId
+                ExamRoomId = examRoomExamPeriodDAO.ExamRoomId,
+                ExamPeriodId = examRoomExamPeriodDAO.ExamPeriodId,
+                ExamProgramName = examRoomExamPeriodDAO.ExamPeriod.ExamProgram.Name,
+                ExamDate = examRoomExamPeriodDAO.ExamPeriod.ExamDate,
+                StartHour = examRoomExamPeriodDAO.ExamPeriod.StartHour,
+                FinishHour = examRoomExamPeriodDAO.ExamPeriod.FinishHour,
+                SubjectName = examRoomExamPeriodDAO.ExamPeriod.Term.SubjectName,
+                ExamRoomNumber = examRoomExamPeriodDAO.ExamRoom.RoomNumber,
+                ExamRoomAmphitheaterName = examRoomExamPeriodDAO.ExamRoom.AmphitheaterName,
+                ExamRoomComputerNumber = examRoomExamPeriodDAO.ExamRoom.ComputerNumber
             };
-        }
-        public async Task<List<ExamRoomExamPeriod>> List()
-        {
-            List<ExamRoomExamPeriod> list = await examRegContext.ExamRoomExamPeriod.Select(s => new ExamRoomExamPeriod()
-            {
-                ExamRoomId = s.ExamRoomId,
-                ExamPeriodId = s.ExamPeriodId
-            }).ToListAsync();
-            return list;
         }
 
         public async Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter)
         {
-            if (filter == null) return new List<ExamRoomExamPeriod>();
+            if (filter == null)
+                return new List<ExamRoomExamPeriod>();
 
-            IQueryable<ExamRoomExamPeriodDAO> query = examRegContext.ExamRoomExamPeriod;
+            IQueryable<ExamRoomExamPeriodDAO> query = examRegContext.ExamRoomExamPeriod.AsNoTracking();
             query = DynamicFilter(query, filter);
 
             List<ExamRoomExamPeriod> list = await query.Select(s => new ExamRoomExamPeriod()
             {
                 ExamRoomId = s.ExamRoomId,
-                ExamPeriodId = s.ExamPeriodId
-
+                ExamPeriodId = s.ExamPeriodId,
+                ExamProgramName = s.ExamPeriod.ExamProgram.Name,
+                ExamDate = s.ExamPeriod.ExamDate,
+                StartHour = s.ExamPeriod.StartHour,
+                FinishHour = s.ExamPeriod.FinishHour,
+                SubjectName = s.ExamPeriod.Term.SubjectName,
+                ExamRoomNumber = s.ExamRoom.RoomNumber,
+                ExamRoomAmphitheaterName = s.ExamRoom.AmphitheaterName,
+                ExamRoomComputerNumber = s.ExamRoom.ComputerNumber
             }).ToListAsync();
             return list;
-
         }
 
-        public async Task<bool> Update(ExamRoomExamPeriod ExamRoomExamPeriod)
-        {
-            await examRegContext.ExamRoomExamPeriod
-                .Where(s => (s.ExamRoomId.Equals(ExamRoomExamPeriod.ExamRoomId) && s.ExamPeriodId.Equals(ExamRoomExamPeriod.ExamPeriodId)))
-                .UpdateFromQueryAsync(s => new ExamRoomExamPeriodDAO()
-                {
-                    //
-                });
-
-            await examRegContext.SaveChangesAsync();
-            return true;
-        }
         private IQueryable<ExamRoomExamPeriodDAO> DynamicFilter(IQueryable<ExamRoomExamPeriodDAO> query, ExamRoomExamPeriodFilter filter)
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            query = query.Where(q => q.ExamRoomId, filter.ExamRoomId);
-            query = query.Where(q => q.ExamPeriodId, filter.ExamPeriodId);
-
+            if (filter.ExamProgramName != null)
+                query = query.Where(q => q.ExamPeriod.ExamProgram.Name, filter.ExamProgramName);
+            if (filter.SubjectName != null)
+                query = query.Where(q => q.ExamPeriod.Term.SubjectName, filter.SubjectName);
+            if (filter.ExamDate != null)
+                query = query.Where(q => q.ExamPeriod.ExamDate, filter.ExamDate);
+            if (filter.StartHour != null)
+                query = query.Where(q => q.ExamPeriod.StartHour, filter.ExamDate);
+            if (filter.FinishHour != null)
+                query = query.Where(q => q.ExamPeriod.FinishHour, filter.ExamDate);
+            if (filter.ExamRoomNumber != null)
+                query = query.Where(q => q.ExamRoom.RoomNumber, filter.ExamRoomNumber);
+            if (filter.ExamRoomAmphitheaterName != null)
+                query = query.Where(q => q.ExamRoom.AmphitheaterName, filter.ExamRoomAmphitheaterName);
             return query;
         }
     }
