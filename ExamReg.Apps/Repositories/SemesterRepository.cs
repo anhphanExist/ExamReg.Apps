@@ -18,7 +18,7 @@ namespace ExamReg.Apps.Repositories
         Task<bool> Delete(Semester semester);
         Task<int> Count(SemesterFilter filter);
         Task<List<Semester>> List(SemesterFilter filter);
-        Task<List<Semester>> BulkInsert(List<Semester> semesters);
+        Task<bool> BulkInsert(List<Semester> semesters);
     }
     public class SemesterRepository : ISemesterRepository
     {
@@ -153,9 +153,17 @@ namespace ExamReg.Apps.Repositories
             return true;
         }
 
-        public async Task<List<Semester>> BulkInsert(List<Semester> semesters)
+        public async Task<bool> BulkInsert(List<Semester> semesters)
         {
-            throw new NotImplementedException();
+            List<SemesterDAO> semesterDAOs = semesters.Select(s => new SemesterDAO
+            {
+                Id = s.Id,
+                StartYear = s.StartYear,
+                EndYear = s.EndYear,
+                IsFirstHalf = s.IsFirstHalf
+            }).ToList();
+            await examRegContext.Semester.BulkInsertAsync(semesterDAOs);
+            return true;
         }
 
         private IQueryable<SemesterDAO> DynamicFilter(IQueryable<SemesterDAO> query, SemesterFilter filter)
