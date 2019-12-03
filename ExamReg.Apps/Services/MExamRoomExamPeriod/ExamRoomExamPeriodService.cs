@@ -41,6 +41,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
             {
                 StudentFilter studentFilter = new StudentFilter
                 {
+                    StudentNumber = filter.StudentNumber,
                     ExamProgramName = new StringFilter { Equal = examRoomExamPeriod.ExamProgramName },
                     SubjectName = new StringFilter { Equal = examRoomExamPeriod.SubjectName },
                     ExamDate = new DateTimeFilter { Equal = examRoomExamPeriod.ExamDate },
@@ -50,7 +51,8 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                     ExamRoomAmphitheaterName = new StringFilter { Equal = examRoomExamPeriod.ExamRoomAmphitheaterName },
                     OrderBy = StudentOrder.GivenName
                 };
-                examRoomExamPeriod.CurrentNumberOfStudentRegistered = await UOW.StudentRepository.Count(studentFilter);
+                examRoomExamPeriod.Students = await UOW.StudentRepository.List(studentFilter);
+                examRoomExamPeriod.CurrentNumberOfStudentRegistered = examRoomExamPeriod.Students.Count;
             });
             return examRoomExamPeriods;
         }
@@ -70,8 +72,8 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                 ExamRoomAmphitheaterName = filter.ExamRoomAmphitheaterName,
                 OrderBy = StudentOrder.GivenName
             };
-            List<Student> studentsInExamRoomExamPeriod = await UOW.StudentRepository.List(studentFilter);
-            examRoomExamPeriod.CurrentNumberOfStudentRegistered = studentsInExamRoomExamPeriod.Count();
+            examRoomExamPeriod.Students = await UOW.StudentRepository.List(studentFilter);
+            examRoomExamPeriod.CurrentNumberOfStudentRegistered = examRoomExamPeriod.Students.Count;
             // Mở excelPackage
             using (ExcelPackage excel = new ExcelPackage())
             {
@@ -113,14 +115,14 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                 };
                 // tạo data
                 List<object[]> data = new List<object[]>();
-                for (int i = 0; i < studentsInExamRoomExamPeriod.Count; i++)
+                for (int i = 0; i < examRoomExamPeriod.Students.Count; i++)
                 {
                     data.Add(new object[] {
                         i + 1,
-                        studentsInExamRoomExamPeriod[i].StudentNumber,
-                        studentsInExamRoomExamPeriod[i].LastName,
-                        studentsInExamRoomExamPeriod[i].GivenName,
-                        studentsInExamRoomExamPeriod[i].Birthday
+                        examRoomExamPeriod.Students[i].StudentNumber,
+                        examRoomExamPeriod.Students[i].LastName,
+                        examRoomExamPeriod.Students[i].GivenName,
+                        examRoomExamPeriod.Students[i].Birthday
                     });
                 }
                 // tạo worksheet

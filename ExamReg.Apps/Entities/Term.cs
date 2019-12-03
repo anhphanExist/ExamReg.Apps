@@ -12,9 +12,11 @@ namespace ExamReg.Apps.Entities
         public string SubjectName { get; set; }
         public Guid SemesterId { get; set; }
         public string SemesterCode { get; set; }
+        public List<ExamPeriod> ExamPeriods { get; set; }
     }
     public class TermFilter : FilterEntity
     {
+        public IntFilter StudentNumber { get; set; }
         public StringFilter SubjectName { get; set; }
         public StringFilter SemesterCode { get; set; }
         public TermOrder OrderBy { get; set;  }

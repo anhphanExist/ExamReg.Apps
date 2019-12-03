@@ -153,6 +153,8 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
+            if (filter.StudentNumber != null)
+                query = query.Where(q => q.StudentExamPeriods.Select(s => s.Student.StudentNumber), filter.StudentNumber);
             if (filter.ExamDate != null)
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
             if (filter.SubjectName != null)

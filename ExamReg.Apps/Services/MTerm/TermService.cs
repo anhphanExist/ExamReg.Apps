@@ -38,7 +38,7 @@ namespace ExamReg.Apps.Services.MTerm
 
         public async Task<List<Term>> List(TermFilter filter)
         {
-            throw new NotImplementedException();
+            return await UOW.TermRepository.List(filter);
         }
 
         public async Task<Term> Create(Term term)

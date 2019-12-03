@@ -100,7 +100,18 @@ namespace ExamReg.Apps.Repositories
                 Id = termDAO.Id,
                 SubjectName = termDAO.SubjectName,
                 SemesterId = termDAO.SemesterId,
-                SemesterCode = string.Format(termDAO.Semester.StartYear + "_" + termDAO.Semester.EndYear + "_" + (termDAO.Semester.IsFirstHalf ? 1 : 2))
+                SemesterCode = string.Format(termDAO.Semester.StartYear + "_" + termDAO.Semester.EndYear + "_" + (termDAO.Semester.IsFirstHalf ? 1 : 2)),
+                ExamPeriods = termDAO.ExamPeriods.Select(e => new ExamPeriod
+                {
+                    Id = e.Id,
+                    ExamDate = e.ExamDate,
+                    ExamProgramId = e.ExamProgramId,
+                    ExamProgramName = e.ExamProgram.Name,
+                    FinishHour = e.FinishHour,
+                    StartHour = e.StartHour,
+                    TermId = e.TermId,
+                    SubjectName = e.Term.SubjectName
+                }).ToList()
             };
         }
 
@@ -114,7 +125,18 @@ namespace ExamReg.Apps.Repositories
                 Id = termDAO.Id,
                 SubjectName = termDAO.SubjectName,
                 SemesterId = termDAO.SemesterId,
-                SemesterCode = string.Format(termDAO.Semester.StartYear + "_" + termDAO.Semester.EndYear + "_" + (termDAO.Semester.IsFirstHalf ? 1 : 2))
+                SemesterCode = string.Format(termDAO.Semester.StartYear + "_" + termDAO.Semester.EndYear + "_" + (termDAO.Semester.IsFirstHalf ? 1 : 2)),
+                ExamPeriods = termDAO.ExamPeriods.Select(e => new ExamPeriod
+                {
+                    Id = e.Id,
+                    ExamDate = e.ExamDate,
+                    ExamProgramId = e.ExamProgramId,
+                    ExamProgramName = e.ExamProgram.Name,
+                    FinishHour = e.FinishHour,
+                    StartHour = e.StartHour,
+                    TermId = e.TermId,
+                    SubjectName = e.Term.SubjectName
+                }).ToList()
             };
         }
 
@@ -129,7 +151,18 @@ namespace ExamReg.Apps.Repositories
                 Id = t.Id,
                 SubjectName = t.SubjectName,
                 SemesterId = t.SemesterId,
-                SemesterCode = string.Format(t.Semester.StartYear + "_" + t.Semester.EndYear + "_" + (t.Semester.IsFirstHalf ? 1 : 2))
+                SemesterCode = string.Format(t.Semester.StartYear + "_" + t.Semester.EndYear + "_" + (t.Semester.IsFirstHalf ? 1 : 2)),
+                ExamPeriods = t.ExamPeriods.Select(e => new ExamPeriod
+                {
+                    Id = e.Id,
+                    ExamDate = e.ExamDate,
+                    ExamProgramId = e.ExamProgramId,
+                    ExamProgramName = e.ExamProgram.Name,
+                    FinishHour = e.FinishHour,
+                    StartHour = e.StartHour,
+                    TermId = e.TermId,
+                    SubjectName = e.Term.SubjectName
+                }).ToList()
             }).ToListAsync();
             return list;
         }
@@ -161,6 +194,8 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
+            if (filter.StudentNumber != null)
+                query = query.Where(q => q.StudentTerms.Select(s => s.Student.StudentNumber), filter.StudentNumber);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
             if (filter.SemesterCode != null)

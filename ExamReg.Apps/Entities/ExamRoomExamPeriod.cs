@@ -19,9 +19,15 @@ namespace ExamReg.Apps.Entities
         public short FinishHour { get; set; }
         public string SubjectName { get; set; }
         public string ExamProgramName { get; set; }
+        public List<Student> Students { get; set; }
+        public ExamRoomExamPeriod()
+        {
+            Students = new List<Student>();
+        }
     }
     public class ExamRoomExamPeriodFilter : FilterEntity
     {
+        public IntFilter StudentNumber { get; set; }
         public ShortFilter ExamRoomNumber { get; set; }
         public StringFilter ExamRoomAmphitheaterName { get; set; }
         public IntFilter CurrentNumberOfStudentRegistered { get; set; }

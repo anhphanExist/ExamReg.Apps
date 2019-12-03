@@ -14,6 +14,7 @@ namespace ExamReg.Apps.Services.MStudent
     {
         Task<int> Count(StudentFilter filter);
         Task<List<Student>> List(StudentFilter filter);
+        Task<Student> Get(Guid Id);
         Task<Student> Create(Student student);
         Task<Student> Update(Student student);
         Task<Student> Delete(Student student);
@@ -35,6 +36,11 @@ namespace ExamReg.Apps.Services.MStudent
         public async Task<int> Count(StudentFilter filter)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Student> Get(Guid Id)
+        {
+            return await UOW.StudentRepository.Get(Id);
         }
 
         public async Task<Student> Create(Student student)
@@ -362,7 +368,7 @@ namespace ExamReg.Apps.Services.MStudent
                 catch(Exception e)
                 {
                     await UOW.Rollback();
-                    throw e;
+                    throw new MessageException(e);
                 }
             }
             throw new NotImplementedException();
