@@ -31,14 +31,16 @@ namespace ExamReg.Apps.Repositories
         }
         public async Task<int> Count(TermFilter filter)
         {
-            IQueryable<TermDAO> termDAOs = examRegContext.Term;
+            IQueryable<TermDAO> termDAOs = examRegContext.Term.AsNoTracking();
             termDAOs = DynamicFilter(termDAOs, filter);
             return await termDAOs.CountAsync();
         }
 
         public async Task<bool> Create(Term term)
         {
-            TermDAO termDAO = examRegContext.Term.Where(t => t.Id.Equals(term.Id)).FirstOrDefault();
+            TermDAO termDAO = examRegContext.Term
+                .Where(t => t.Id.Equals(term.Id))
+                .FirstOrDefault();
             if(termDAO == null)
             {
                 termDAO = new TermDAO()
@@ -62,39 +64,31 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Term term)
         {
-            try
-            {
-                await examRegContext.StudentTerm
-                .Where(t => t.TermId.Equals(term.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.StudentTerm
+            .Where(t => t.TermId.Equals(term.Id))
+            .DeleteFromQueryAsync();
 
-                await examRegContext.ExamPeriod
-                .Where(t => t.TermId.Equals(term.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.ExamPeriod
+            .Where(t => t.TermId.Equals(term.Id))
+            .DeleteFromQueryAsync();
 
-                TermDAO termDAO = examRegContext.Term
-                    .Where(s => s.Id.Equals(term.Id))
-                    .AsNoTracking()
-                    .FirstOrDefault();
+            TermDAO termDAO = examRegContext.Term
+                .Where(s => s.Id.Equals(term.Id))
+                .FirstOrDefault();
 
-                examRegContext.Term.Remove(termDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            examRegContext.Term.Remove(termDAO);
+            await examRegContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Term> Get(Guid Id)
         {
             TermDAO termDAO = examRegContext.Term
-                .Where(t => t.Id.Equals(Id))
                 .AsNoTracking()
+                .Where(t => t.Id.Equals(Id))
                 .FirstOrDefault();
+            if (termDAO == null)
+                return null;
             return new Term()
             {
                 Id = termDAO.Id,
@@ -126,9 +120,10 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Term> Get(TermFilter filter)
         {
-            IQueryable<TermDAO> query = examRegContext.Term;
+            IQueryable<TermDAO> query = examRegContext.Term.AsNoTracking();
             TermDAO termDAO = DynamicFilter(query, filter).FirstOrDefault();
-
+            if (termDAO == null)
+                return null;
             return new Term()
             {
                 Id = termDAO.Id,
@@ -161,7 +156,7 @@ namespace ExamReg.Apps.Repositories
         public async Task<List<Term>> List(TermFilter filter)
         {
             if (filter == null) return new List<Term>();
-            IQueryable<TermDAO> query = examRegContext.Term;
+            IQueryable<TermDAO> query = examRegContext.Term.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
             List<Term> list = await query.Select(t => new Term()

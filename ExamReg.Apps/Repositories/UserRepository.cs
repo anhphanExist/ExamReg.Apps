@@ -53,6 +53,8 @@ namespace ExamReg.Apps.Repositories
         {
             IQueryable<UserDAO> users = examRegContext.User.AsNoTracking();
             UserDAO userDAO = DynamicFilter(users, filter).FirstOrDefault();
+            if (userDAO == null)
+                return null;
             return new User
             {
                 Id = userDAO.Id,
@@ -69,7 +71,7 @@ namespace ExamReg.Apps.Repositories
         {
             IQueryable<UserDAO> users = examRegContext.User.AsNoTracking();
             users = DynamicFilter(users, filter);
-            users = DynmaicOrder(users, filter);
+            users = DynamicOrder(users, filter);
             return await users.Select(u => new User
             {
                 Id = u.Id,
@@ -90,7 +92,6 @@ namespace ExamReg.Apps.Repositories
                 {
                     Password = user.Password
                 });
-            await examRegContext.SaveChangesAsync();
             return true;
         }
 
@@ -124,9 +125,49 @@ namespace ExamReg.Apps.Repositories
             return query;
         }
 
-        private IQueryable<UserDAO> DynmaicOrder(IQueryable<UserDAO> users, UserFilter filter)
+        private IQueryable<UserDAO> DynamicOrder(IQueryable<UserDAO> query, UserFilter filter)
         {
-            throw new NotImplementedException();
+            switch (filter.OrderType)
+            {
+                case OrderType.ASC:
+                    switch (filter.OrderBy)
+                    {
+                        case UserOrder.Username:
+                            query = query.OrderBy(q => q.Username);
+                            break;
+                        case UserOrder.StudentLastName:
+                            query = query.OrderBy(q => q.Student.LastName);
+                            break;
+                        case UserOrder.StudentGivenName:
+                            query = query.OrderBy(q => q.Student.GivenName);
+                            break;
+                        default:
+                            query = query.OrderBy(q => q.CX);
+                            break;
+                    }
+                    break;
+                case OrderType.DESC:
+                    switch (filter.OrderBy)
+                    {
+                        case UserOrder.Username:
+                            query = query.OrderByDescending(q => q.Username);
+                            break;
+                        case UserOrder.StudentLastName:
+                            query = query.OrderByDescending(q => q.Student.LastName);
+                            break;
+                        case UserOrder.StudentGivenName:
+                            query = query.OrderByDescending(q => q.Student.GivenName);
+                            break;
+                        default:
+                            query = query.OrderByDescending(q => q.CX);
+                            break;
+                    }
+                    break;
+                default:
+                    query = query.OrderBy(q => q.CX);
+                    break;
+            }
+            return query.Skip(filter.Skip).Take(filter.Take);
         }
 
     }

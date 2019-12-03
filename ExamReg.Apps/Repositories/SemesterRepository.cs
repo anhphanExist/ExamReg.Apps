@@ -29,7 +29,7 @@ namespace ExamReg.Apps.Repositories
         }
         public async Task<int> Count(SemesterFilter filter)
         {
-            IQueryable<SemesterDAO> semesterDAOs = examRegContext.Semester;
+            IQueryable<SemesterDAO> semesterDAOs = examRegContext.Semester.AsNoTracking();
             semesterDAOs = DynamicFilter(semesterDAOs, filter);
 
             return await semesterDAOs.CountAsync();
@@ -62,40 +62,31 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Semester semester)
         {
-            try
-            {
-                await examRegContext.Term
-                .Where(t => t.SemesterId.Equals(semester.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.Term
+            .Where(t => t.SemesterId.Equals(semester.Id))
+            .DeleteFromQueryAsync();
 
-                await examRegContext.ExamProgram
-                .Where(t => t.SemesterId.Equals(semester.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.ExamProgram
+            .Where(t => t.SemesterId.Equals(semester.Id))
+            .DeleteFromQueryAsync();
 
-                SemesterDAO semesterDAO = examRegContext.Semester
-                    .Where(s => s.Id.Equals(semester.Id))
-                    .AsNoTracking()
-                    .FirstOrDefault();
+            SemesterDAO semesterDAO = examRegContext.Semester
+                .Where(s => s.Id.Equals(semester.Id))
+                .FirstOrDefault();
 
-                examRegContext.Semester.Remove(semesterDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }
+            examRegContext.Semester.Remove(semesterDAO);
+            await examRegContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Semester> Get(Guid Id)
         {
             SemesterDAO semesterDAO = examRegContext.Semester
-                .Where(s => s.Id.Equals(Id))
                 .AsNoTracking()
+                .Where(s => s.Id.Equals(Id))
                 .FirstOrDefault();
-
+            if (semesterDAO == null)
+                return null;
             return new Semester()
             {
                 Id = semesterDAO.Id,
@@ -108,9 +99,10 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Semester> Get(SemesterFilter filter)
         {
-            IQueryable<SemesterDAO> query = examRegContext.Semester;
+            IQueryable<SemesterDAO> query = examRegContext.Semester.AsNoTracking();
             SemesterDAO semesterDAO = DynamicFilter(query, filter).FirstOrDefault();
-
+            if (semesterDAO == null)
+                return null;
             return new Semester()
             {
                 Id = semesterDAO.Id,
@@ -125,7 +117,7 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null) return new List<Semester>();
 
-            IQueryable<SemesterDAO> query = examRegContext.Semester;
+            IQueryable<SemesterDAO> query = examRegContext.Semester.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
 

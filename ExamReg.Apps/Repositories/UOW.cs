@@ -20,7 +20,6 @@ namespace ExamReg.Apps.Repositories
         IExamRoomRepository ExamRoomRepository { get; }
         ISemesterRepository SemesterRepository { get; }
         IStudentExamPeriodRepository StudentExamPeriodRepository { get; }
-        IStudentExamRoomRepository StudentExamRoomRepository { get; }
         IStudentRepository StudentRepository { get; }
         IStudentTermRepository StudentTermRepository { get; }
         ITermRepository TermRepository { get; }
@@ -36,7 +35,6 @@ namespace ExamReg.Apps.Repositories
         public IExamRoomRepository ExamRoomRepository { get; }
         public ISemesterRepository SemesterRepository { get; }
         public IStudentExamPeriodRepository StudentExamPeriodRepository { get; }
-        public IStudentExamRoomRepository StudentExamRoomRepository { get; }
         public IStudentRepository StudentRepository { get; }
         public IStudentTermRepository StudentTermRepository { get; }
         public ITermRepository TermRepository { get; }
@@ -51,7 +49,6 @@ namespace ExamReg.Apps.Repositories
             ExamRoomRepository = new ExamRoomRepository(this.examRegContext);
             SemesterRepository = new SemesterRepository(this.examRegContext);
             StudentExamPeriodRepository = new StudentExamPeriodRepository(this.examRegContext);
-            StudentExamRoomRepository = new StudentExamRoomRepository(this.examRegContext);
             StudentRepository = new StudentRepository(this.examRegContext, CurrentContext);
             StudentTermRepository = new StudentTermRepository(this.examRegContext, CurrentContext);
             TermRepository = new TermRepository(this.examRegContext, CurrentContext);

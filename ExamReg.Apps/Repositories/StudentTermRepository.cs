@@ -57,7 +57,6 @@ namespace ExamReg.Apps.Repositories
             {
                 StudentTermDAO studentTermDAO = examRegContext.StudentTerm
                     .Where(s => (s.StudentId.Equals(studentTerm.StudentId) && s.TermId.Equals(studentTerm.TermId)))
-                    .AsNoTracking()
                     .FirstOrDefault();
 
                 examRegContext.StudentTerm.Remove(studentTermDAO);
@@ -72,7 +71,7 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<StudentTerm> Get(StudentTermFilter filter)
         {
-            IQueryable<StudentTermDAO> studentTermDAOs = examRegContext.StudentTerm;
+            IQueryable<StudentTermDAO> studentTermDAOs = examRegContext.StudentTerm.AsNoTracking();
             StudentTermDAO studentTermDAO = DynamicFilter(studentTermDAOs, filter).FirstOrDefault();
 
             return new StudentTerm()
@@ -87,7 +86,7 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null) return new List<StudentTerm>();
 
-            IQueryable<StudentTermDAO> query = examRegContext.StudentTerm;
+            IQueryable<StudentTermDAO> query = examRegContext.StudentTerm.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
             List<StudentTerm> list = await query.Select(s => new StudentTerm()

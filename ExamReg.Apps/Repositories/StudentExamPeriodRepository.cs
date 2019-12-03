@@ -12,11 +12,9 @@ namespace ExamReg.Apps.Repositories
     public interface IStudentExamPeriodRepository
     {
         Task<StudentExamPeriod> Get(StudentExamPeriodFilter filter);
-        //Task<bool> Create(StudentExamPeriod StudentExamPeriod);
-        //Task<bool> Update(StudentExamPeriod StudentExamPeriod);
-        //Task<bool> Delete(StudentExamPeriod StudentExamPeriod);
-        //Task<List<StudentExamPeriod>> List(StudentExamPeriodFilter filter);
-        Task<List<StudentExamPeriod>> List();
+        Task<bool> Create(Guid studentId, Guid examPeriodId);
+        Task<bool> Delete(Guid studentId, Guid examPeriodId);
+        Task<List<StudentExamPeriod>> List(StudentExamPeriodFilter filter);
     }
     public class StudentExamPeriodRepository : IStudentExamPeriodRepository
     {
@@ -25,74 +23,45 @@ namespace ExamReg.Apps.Repositories
         {
             this.examRegContext = examReg;
         }
-        /*public async Task<bool> Create(StudentExamPeriod studentExamPeriod)
-        {
-            StudentExamPeriodDAO studentExamPeriodDAO = examRegContext.StudentExamPeriod
-                .Where(s => (s.StudentId.Equals(studentExamPeriod.StudentId) && s.ExamPeriodId.Equals(studentExamPeriod.ExamPeriodId)))
-                .FirstOrDefault();
-            if (studentExamPeriodDAO == null)
-            {
-                studentExamPeriodDAO = new StudentExamPeriodDAO()
-                {
-                    StudentId = studentExamPeriod.StudentId,
-                    ExamPeriodId = studentExamPeriod.ExamPeriodId
-                };
 
-                await examRegContext.StudentExamPeriod.AddAsync(studentExamPeriodDAO);
-            }
-            else
+        public async Task<bool> Create(Guid studentId, Guid examPeriodId)
+        {
+            examRegContext.StudentExamPeriod.Add(new StudentExamPeriodDAO
             {
-                //
-            };
-            await examRegContext.SaveChangesAsync();
+                StudentId = studentId,
+                ExamPeriodId = examPeriodId
+            });
+            examRegContext.SaveChanges();
             return true;
-        }*/
+        }
 
-        /*public async Task<bool> Delete(StudentExamPeriod studentExamPeriod)
+        public async Task<bool> Delete(Guid studentId, Guid examPeriodId)
         {
-            try
-            {
-                StudentExamPeriodDAO studentExamPeriodDAO = examRegContext.StudentExamPeriod
-                    .Where(s => (s.StudentId.Equals(studentExamPeriod.StudentId) && s.ExamPeriodId.Equals(studentExamPeriod.ExamPeriodId)))
-                    .AsNoTracking()
-                    .FirstOrDefault();
-
-                examRegContext.StudentExamPeriod.Remove(studentExamPeriodDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }*/
+            examRegContext.StudentExamPeriod
+                .Where(s => s.StudentId.Equals(studentId) && s.ExamPeriodId.Equals(examPeriodId))
+                .DeleteFromQuery();
+            return true;
+        }
 
         public async Task<StudentExamPeriod> Get(StudentExamPeriodFilter filter)
         {
-            IQueryable<StudentExamPeriodDAO> studentExamPeriodDAOs = examRegContext.StudentExamPeriod;
+            IQueryable<StudentExamPeriodDAO> studentExamPeriodDAOs = examRegContext.StudentExamPeriod.AsNoTracking();
             StudentExamPeriodDAO studentExamPeriodDAO = DynamicFilter(studentExamPeriodDAOs, filter).FirstOrDefault();
-
+            if (studentExamPeriodDAO == null)
+                return null;
             return new StudentExamPeriod()
             {
                 StudentId = studentExamPeriodDAO.StudentId,
                 ExamPeriodId = studentExamPeriodDAO.ExamPeriodId
             };
-        }
-        public async Task<List<StudentExamPeriod>> List()
-        {
-            List<StudentExamPeriod> list = await examRegContext.StudentExamPeriod.Select(s => new StudentExamPeriod()
-            {
-                StudentId = s.StudentId,
-                ExamPeriodId = s.ExamPeriodId
-            }).ToListAsync();
-            return list;
+            
         }
 
-        /*public async Task<List<StudentExamPeriod>> List(StudentExamPeriodFilter filter)
+        public async Task<List<StudentExamPeriod>> List(StudentExamPeriodFilter filter)
         {
             if (filter == null) return new List<StudentExamPeriod>();
 
-            IQueryable<StudentExamPeriodDAO> query = examRegContext.StudentExamPeriod;
+            IQueryable<StudentExamPeriodDAO> query = examRegContext.StudentExamPeriod.AsNoTracking();
             query = DynamicFilter(query, filter);
 
             List<StudentExamPeriod> list = await query.Select(s => new StudentExamPeriod()
@@ -103,26 +72,16 @@ namespace ExamReg.Apps.Repositories
             }).ToListAsync();
             return list;
 
-        }*/
+        }
 
-        /*public async Task<bool> Update(StudentExamPeriod StudentExamPeriod)
-        {
-            await examRegContext.StudentExamPeriod
-                .Where(s => (s.StudentId.Equals(StudentExamPeriod.StudentId) && s.ExamPeriodId.Equals(StudentExamPeriod.ExamPeriodId)))
-                .UpdateFromQueryAsync(s => new StudentExamPeriodDAO()
-                {
-                    //
-                });
-
-            await examRegContext.SaveChangesAsync();
-            return true;
-        }*/
         private IQueryable<StudentExamPeriodDAO> DynamicFilter(IQueryable<StudentExamPeriodDAO> query, StudentExamPeriodFilter filter)
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            query = query.Where(q => q.StudentId, filter.StudentId);
-            query = query.Where(q => q.ExamPeriodId, filter.ExamPeriodId);
+            if (filter.StudentId != null)
+                query = query.Where(q => q.StudentId, filter.StudentId);
+            if (filter.ExamPeriodId != null)
+                query = query.Where(q => q.ExamPeriodId, filter.ExamPeriodId);
 
             return query;
         }

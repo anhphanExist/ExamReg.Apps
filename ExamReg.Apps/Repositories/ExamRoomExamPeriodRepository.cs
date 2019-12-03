@@ -50,7 +50,6 @@ namespace ExamReg.Apps.Repositories
         {
             ExamRoomExamPeriodDAO ExamRoomExamPeriodDAO = examRegContext.ExamRoomExamPeriod
                 .Where(s => (s.ExamRoomId.Equals(ExamRoomExamPeriod.ExamRoomId) && s.ExamPeriodId.Equals(ExamRoomExamPeriod.ExamPeriodId)))
-                .AsNoTracking()
                 .FirstOrDefault();
 
             examRegContext.ExamRoomExamPeriod.Remove(ExamRoomExamPeriodDAO);
@@ -61,9 +60,10 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter)
         {
-            IQueryable<ExamRoomExamPeriodDAO> examRoomExamPeriodDAOs = examRegContext.ExamRoomExamPeriod;
+            IQueryable<ExamRoomExamPeriodDAO> examRoomExamPeriodDAOs = examRegContext.ExamRoomExamPeriod.AsNoTracking();
             ExamRoomExamPeriodDAO examRoomExamPeriodDAO = DynamicFilter(examRoomExamPeriodDAOs, filter).FirstOrDefault();
-
+            if (examRoomExamPeriodDAO == null)
+                return null;
             return new ExamRoomExamPeriod()
             {
                 ExamRoomId = examRoomExamPeriodDAO.ExamRoomId,

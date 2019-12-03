@@ -28,7 +28,7 @@ namespace ExamReg.Apps.Repositories
         }
         public async Task<int> Count(ExamProgramFilter filter)
         {
-            IQueryable<ExamProgramDAO> examProgramDAOs = examRegContext.ExamProgram;
+            IQueryable<ExamProgramDAO> examProgramDAOs = examRegContext.ExamProgram.AsNoTracking();
             examProgramDAOs = DynamicFilter(examProgramDAOs, filter);
             return await examProgramDAOs.CountAsync();
         }
@@ -59,33 +59,24 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(ExamProgram examProgram)
         {
-            try
-            {
-                await examRegContext.ExamPeriod
-                .Where(t => t.ExamProgramId.Equals(examProgram.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.ExamPeriod
+            .Where(t => t.ExamProgramId.Equals(examProgram.Id))
+            .DeleteFromQueryAsync();
 
-                ExamProgramDAO examProgramDAO = examRegContext.ExamProgram
-                    .Where(e => e.Id.Equals(examProgram.Id))
-                    .AsNoTracking()
-                    .FirstOrDefault();
+            ExamProgramDAO examProgramDAO = examRegContext.ExamProgram
+                .Where(e => e.Id.Equals(examProgram.Id))
+                .FirstOrDefault();
 
-                examRegContext.ExamProgram.Remove(examProgramDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            examRegContext.ExamProgram.Remove(examProgramDAO);
+            await examRegContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<ExamProgram> Get(Guid Id)
         {
             ExamProgramDAO examProgramDAO = examRegContext.ExamProgram
-                .Where(t => t.Id.Equals(Id))
                 .AsNoTracking()
+                .Where(t => t.Id.Equals(Id))
                 .FirstOrDefault();
             return new ExamProgram()
             {
@@ -98,7 +89,7 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamProgram> Get(ExamProgramFilter filter)
         {
-            IQueryable<ExamProgramDAO> query = examRegContext.ExamProgram;
+            IQueryable<ExamProgramDAO> query = examRegContext.ExamProgram.AsNoTracking();
             ExamProgramDAO examProgramDAO = DynamicFilter(query, filter).FirstOrDefault();
 
             return new ExamProgram()
@@ -113,7 +104,7 @@ namespace ExamReg.Apps.Repositories
         public async Task<List<ExamProgram>> List(ExamProgramFilter filter)
         {
             if (filter == null) return new List<ExamProgram>();
-            IQueryable<ExamProgramDAO> query = examRegContext.ExamProgram;
+            IQueryable<ExamProgramDAO> query = examRegContext.ExamProgram.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
 

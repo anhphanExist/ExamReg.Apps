@@ -28,7 +28,7 @@ namespace ExamReg.Apps.Repositories
         }
         public async Task<int> Count(ExamRoomFilter filter)
         {
-            IQueryable<ExamRoomDAO> examRoomDAOs = examRegContext.ExamRoom;
+            IQueryable<ExamRoomDAO> examRoomDAOs = examRegContext.ExamRoom.AsNoTracking();
             examRoomDAOs = DynamicFilter(examRoomDAOs, filter);
             return await examRoomDAOs.CountAsync();
         }
@@ -61,39 +61,27 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(ExamRoom examRoom)
         {
-            try
-            {
-                await examRegContext.ExamRoomExamPeriod
-               .Where(t => t.ExamRoomId.Equals(examRoom.Id))
-               .AsNoTracking()
-               .DeleteFromQueryAsync();
+            await examRegContext.ExamRoomExamPeriod
+            .Where(t => t.ExamRoomId.Equals(examRoom.Id))
+            .DeleteFromQueryAsync();
 
-                await examRegContext.StudentExamRoom
-                .Where(t => t.ExamRoomId.Equals(examRoom.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            ExamRoomDAO examRoomDAO = examRegContext.ExamRoom
+                .Where(s => s.Id.Equals(examRoom.Id))
+                .FirstOrDefault();
 
-                ExamRoomDAO examRoomDAO = examRegContext.ExamRoom
-                    .Where(s => s.Id.Equals(examRoom.Id))
-                    .AsNoTracking()
-                    .FirstOrDefault();
-
-                examRegContext.ExamRoom.Remove(examRoomDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            examRegContext.ExamRoom.Remove(examRoomDAO);
+            await examRegContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<ExamRoom> Get(Guid Id)
         {
             ExamRoomDAO examRoomDAO = examRegContext.ExamRoom
-                .Where(e => e.Id.Equals(Id))
                 .AsNoTracking()
+                .Where(e => e.Id.Equals(Id))
                 .FirstOrDefault();
+            if (examRoomDAO == null)
+                return null;
             return new ExamRoom()
             {
                 Id = examRoomDAO.Id,
@@ -105,9 +93,10 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamRoom> Get(ExamRoomFilter filter)
         {
-            IQueryable<ExamRoomDAO> query = examRegContext.ExamRoom;
+            IQueryable<ExamRoomDAO> query = examRegContext.ExamRoom.AsNoTracking();
             ExamRoomDAO examRoomDAO = DynamicFilter(query, filter).FirstOrDefault();
-
+            if (examRoomDAO == null)
+                return null;
             return new ExamRoom()
             {
                 Id = examRoomDAO.Id,
@@ -120,7 +109,7 @@ namespace ExamReg.Apps.Repositories
         public async Task<List<ExamRoom>> List(ExamRoomFilter filter)
         {
             if (filter == null) return new List<ExamRoom>();
-            IQueryable<ExamRoomDAO> query = examRegContext.ExamRoom;
+            IQueryable<ExamRoomDAO> query = examRegContext.ExamRoom.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
 

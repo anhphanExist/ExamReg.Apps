@@ -55,7 +55,7 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<int> Count(StudentFilter filter)
         {
-            IQueryable<StudentDAO> studentDAOs = examRegContext.Student;
+            IQueryable<StudentDAO> studentDAOs = examRegContext.Student.AsNoTracking();
             studentDAOs = DynamicFilter(studentDAOs, filter);
             return await studentDAOs.CountAsync();
         }
@@ -91,56 +91,43 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Student student)
         {
-            try
-            {
-                await examRegContext.User
-                .Where(s => s.StudentId.Equals(student.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.User
+            .Where(s => s.StudentId.Equals(student.Id))
+            .DeleteFromQueryAsync();
 
-                await examRegContext.StudentExamPeriod
-                .Where(s => s.StudentId.Equals(student.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.StudentExamPeriod
+            .Where(s => s.StudentId.Equals(student.Id))
+            .DeleteFromQueryAsync();
 
-                await examRegContext.StudentExamRoom
-                .Where(s => s.StudentId.Equals(student.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.StudentTerm
+            .Where(s => s.StudentId.Equals(student.Id))
+            .DeleteFromQueryAsync();
 
-                await examRegContext.StudentTerm
-                .Where(s => s.StudentId.Equals(student.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            StudentDAO studentDAO = examRegContext.Student
+                .Where(s => s.Id.Equals(student.Id))
+                .FirstOrDefault();
 
-                StudentDAO studentDAO = examRegContext.Student
-                    .Where(s => s.Id.Equals(student.Id))
-                    .AsNoTracking()
-                    .FirstOrDefault();
-
-                examRegContext.Student.Remove(studentDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            examRegContext.Student.Remove(studentDAO);
+            await examRegContext.SaveChangesAsync();
+            return true;   
         }
 
         public async Task<Student> Get(Guid Id)
         {
-            Student student = await examRegContext.Student.Where(s => s.Id == Id).Select(s => new Student()
-            {
-                Id = s.Id,
-                Username = s.Users.FirstOrDefault().Username,
-                Password = s.Users.FirstOrDefault().Password,
-                StudentNumber = s.StudentNumber,
-                LastName = s.LastName,
-                GivenName = s.GivenName,
-                Birthday = s.Birthday,
-                Email = s.Email
-            }).FirstOrDefaultAsync();
+            Student student = await examRegContext.Student
+                .AsNoTracking()
+                .Where(s => s.Id == Id).Select(s => new Student()
+                {
+                    Id = s.Id,
+                    Username = s.Users.FirstOrDefault().Username,
+                    Password = s.Users.FirstOrDefault().Password,
+                    StudentNumber = s.StudentNumber,
+                    LastName = s.LastName,
+                    GivenName = s.GivenName,
+                    Birthday = s.Birthday,
+                    Email = s.Email
+                })
+                .FirstOrDefaultAsync();
 
             if (student == null) return null;
             return student;
@@ -151,6 +138,8 @@ namespace ExamReg.Apps.Repositories
             if (filter == null) return null;
             IQueryable<StudentDAO> students = examRegContext.Student.AsNoTracking();
             StudentDAO studentDAO = DynamicFilter(students, filter).FirstOrDefault();
+            if (studentDAO == null)
+                return null;
             return new Student()
             {
                 Id = studentDAO.Id,
@@ -172,8 +161,9 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<List<Student>> List(StudentFilter filter)
         {
-            if (filter == null) return new List<Student>();
-            IQueryable<StudentDAO> query = examRegContext.Student;
+            if (filter == null)
+                return new List<Student>();
+            IQueryable<StudentDAO> query = examRegContext.Student.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
             List<Student> list = await query.Select(s => new Student()
@@ -225,10 +215,6 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.StartHour), filter.ExamDate);
             if (filter.FinishHour != null)
                 query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.FinishHour), filter.ExamDate);
-            if (filter.ExamRoomNumber != null)
-                query = query.Where(q => q.StudentExamRooms.Select(s => s.ExamRoom.RoomNumber), filter.ExamRoomNumber);
-            if (filter.ExamRoomAmphitheaterName != null)
-                query = query.Where(q => q.StudentExamRooms.Select(s => s.ExamRoom.AmphitheaterName), filter.ExamRoomAmphitheaterName);
             return query;
         }
 

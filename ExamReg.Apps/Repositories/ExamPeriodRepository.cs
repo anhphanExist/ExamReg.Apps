@@ -28,7 +28,7 @@ namespace ExamReg.Apps.Repositories
         }
         public async Task<int> Count(ExamPeriodFilter filter)
         {
-            IQueryable<ExamPeriodDAO> examPeriodDAOs = examRegContext.ExamPeriod;
+            IQueryable<ExamPeriodDAO> examPeriodDAOs = examRegContext.ExamPeriod.AsNoTracking();
             examPeriodDAOs = DynamicFilter(examPeriodDAOs, filter);
             return await examPeriodDAOs.CountAsync();
         }
@@ -51,39 +51,31 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(ExamPeriod examPeriod)
         {
-            try
-            {
-                await examRegContext.StudentExamPeriod
-                .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.StudentExamPeriod
+            .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
+            .DeleteFromQueryAsync();
 
-                await examRegContext.ExamRoomExamPeriod
-                .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
-                .AsNoTracking()
-                .DeleteFromQueryAsync();
+            await examRegContext.ExamRoomExamPeriod
+            .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
+            .DeleteFromQueryAsync();
 
-                ExamPeriodDAO examPeriodDAO = examRegContext.ExamPeriod
-                    .Where(e => e.Id.Equals(examPeriod.Id))
-                    .AsNoTracking()
-                    .FirstOrDefault();
+            ExamPeriodDAO examPeriodDAO = examRegContext.ExamPeriod
+                .Where(e => e.Id.Equals(examPeriod.Id))
+                .FirstOrDefault();
 
-                examRegContext.ExamPeriod.Remove(examPeriodDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            examRegContext.ExamPeriod.Remove(examPeriodDAO);
+            await examRegContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<ExamPeriod> Get(Guid Id)
         {
             ExamPeriodDAO examPeriodDAO = examRegContext.ExamPeriod
-                .Where(t => t.Id.Equals(Id))
                 .AsNoTracking()
+                .Where(t => t.Id.Equals(Id))
                 .FirstOrDefault();
+            if (examPeriodDAO == null)
+                return null;
             return new ExamPeriod()
             {
                 Id = examPeriodDAO.Id,
@@ -99,9 +91,10 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamPeriod> Get(ExamPeriodFilter filter)
         {
-            IQueryable<ExamPeriodDAO> examPeriodDAOs = examRegContext.ExamPeriod;
+            IQueryable<ExamPeriodDAO> examPeriodDAOs = examRegContext.ExamPeriod.AsNoTracking();
             ExamPeriodDAO examPeriodDAO = DynamicFilter(examPeriodDAOs, filter).FirstOrDefault();
-
+            if (examPeriodDAO == null)
+                return null;
             return new ExamPeriod()
             {
                 Id = examPeriodDAO.Id,
@@ -118,7 +111,7 @@ namespace ExamReg.Apps.Repositories
         public async Task<List<ExamPeriod>> List(ExamPeriodFilter filter)
         {
             if (filter == null) return new List<ExamPeriod>();
-            IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod;
+            IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
             List<ExamPeriod> list = await query.Select(e => new ExamPeriod()
