@@ -22,9 +22,11 @@ namespace ExamReg.Apps.Repositories
     public class ExamRoomRepository : IExamRoomRepository
     {
         private ExamRegContext examRegContext;
-        public ExamRoomRepository(ExamRegContext examReg)
+        private ICurrentContext CurrentContext;
+        public ExamRoomRepository(ExamRegContext examReg, ICurrentContext CurrentContext)
         {
             this.examRegContext = examReg;
+            this.CurrentContext = CurrentContext;
         }
         public async Task<int> Count(ExamRoomFilter filter)
         {
@@ -143,7 +145,6 @@ namespace ExamReg.Apps.Repositories
                 RoomNumber = examRoom.RoomNumber
             });
 
-            await examRegContext.SaveChangesAsync();
             return true;
         }
 

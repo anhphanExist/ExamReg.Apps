@@ -12,18 +12,21 @@ namespace ExamReg.Apps.Repositories
     public interface IExamRoomExamPeriodRepository
     {
         Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter);
-        //Task<bool> Create(ExamRoomExamPeriod ExamRoomExamPeriod);
-        //Task<bool> Update(ExamRoomExamPeriod ExamRoomExamPeriod);
-        //Task<bool> Delete(ExamRoomExamPeriod ExamRoomExamPeriod);
-        //Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter);
-        Task<List<ExamRoomExamPeriod>> List();
+        Task<bool> Create(ExamRoomExamPeriod ExamRoomExamPeriod);
+        Task<bool> Update(ExamRoomExamPeriod ExamRoomExamPeriod);
+        Task<bool> Delete(ExamRoomExamPeriod ExamRoomExamPeriod);
+        Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter);
+
+        //Task<List<ExamRoomExamPeriod>> List();
     }
     public class ExamRoomExamPeriodRepository : IExamRoomExamPeriodRepository
     {
         private ExamRegContext examRegContext;
-        public ExamRoomExamPeriodRepository(ExamRegContext examReg)
+        private ICurrentContext CurrentContext;
+        public ExamRoomExamPeriodRepository(ExamRegContext examReg, ICurrentContext CurrentContext)
         {
             this.examRegContext = examReg;
+            this.CurrentContext = CurrentContext;
         }
         public async Task<bool> Create(ExamRoomExamPeriod examRoomExamPeriod)
         {
@@ -42,7 +45,8 @@ namespace ExamReg.Apps.Repositories
             }
             else
             {
-                //
+                examRoomExamPeriodDAO.ExamRoomId = examRoomExamPeriod.ExamRoomId;
+                examRoomExamPeriodDAO.ExamPeriodId = examRoomExamPeriod.ExamPeriodId;
             };
             await examRegContext.SaveChangesAsync();
             return true;
@@ -75,7 +79,12 @@ namespace ExamReg.Apps.Repositories
             return new ExamRoomExamPeriod()
             {
                 ExamRoomId = ExamRoomExamPeriodDAO.ExamRoomId,
-                ExamPeriodId = ExamRoomExamPeriodDAO.ExamPeriodId
+                RoomNumber = ExamRoomExamPeriodDAO.ExamRoom.RoomNumber,
+                AmphitheaterName = ExamRoomExamPeriodDAO.ExamRoom.AmphitheaterName,
+                ExamPeriodId = ExamRoomExamPeriodDAO.ExamPeriodId,
+                ExamDate = ExamRoomExamPeriodDAO.ExamPeriod.ExamDate,
+                StartHour = ExamRoomExamPeriodDAO.ExamPeriod.StartHour,
+                FinishHour = ExamRoomExamPeriodDAO.ExamPeriod.FinishHour
             };
         }
         public async Task<List<ExamRoomExamPeriod>> List()
@@ -83,7 +92,12 @@ namespace ExamReg.Apps.Repositories
             List<ExamRoomExamPeriod> list = await examRegContext.ExamRoomExamPeriod.Select(s => new ExamRoomExamPeriod()
             {
                 ExamRoomId = s.ExamRoomId,
-                ExamPeriodId = s.ExamPeriodId
+                RoomNumber = s.ExamRoom.RoomNumber,
+                AmphitheaterName = s.ExamRoom.AmphitheaterName,
+                ExamPeriodId = s.ExamPeriodId,
+                ExamDate = s.ExamPeriod.ExamDate,
+                StartHour = s.ExamPeriod.StartHour,
+                FinishHour = s.ExamPeriod.FinishHour
             }).ToListAsync();
             return list;
         }
@@ -94,11 +108,17 @@ namespace ExamReg.Apps.Repositories
 
             IQueryable<ExamRoomExamPeriodDAO> query = examRegContext.ExamRoomExamPeriod;
             query = DynamicFilter(query, filter);
+            query = DynamicOrder(query, filter);
 
             List<ExamRoomExamPeriod> list = await query.Select(s => new ExamRoomExamPeriod()
             {
                 ExamRoomId = s.ExamRoomId,
-                ExamPeriodId = s.ExamPeriodId
+                RoomNumber = s.ExamRoom.RoomNumber,
+                AmphitheaterName = s.ExamRoom.AmphitheaterName,
+                ExamPeriodId = s.ExamPeriodId,
+                ExamDate = s.ExamPeriod.ExamDate,
+                StartHour = s.ExamPeriod.StartHour,
+                FinishHour = s.ExamPeriod.FinishHour
 
             }).ToListAsync();
             return list;
@@ -111,20 +131,83 @@ namespace ExamReg.Apps.Repositories
                 .Where(s => (s.ExamRoomId.Equals(ExamRoomExamPeriod.ExamRoomId) && s.ExamPeriodId.Equals(ExamRoomExamPeriod.ExamPeriodId)))
                 .UpdateFromQueryAsync(s => new ExamRoomExamPeriodDAO()
                 {
-                    //
+                    // (?)
                 });
 
-            await examRegContext.SaveChangesAsync();
             return true;
         }
         private IQueryable<ExamRoomExamPeriodDAO> DynamicFilter(IQueryable<ExamRoomExamPeriodDAO> query, ExamRoomExamPeriodFilter filter)
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            query = query.Where(q => q.ExamRoomId, filter.ExamRoomId);
-            query = query.Where(q => q.ExamPeriodId, filter.ExamPeriodId);
+            if (filter.RoomNumber != null)
+                query = query.Where(q => q.ExamRoom.RoomNumber, filter.RoomNumber);
+            if (filter.AmphitheaterName != null)
+                query = query.Where(q => q.ExamRoom.AmphitheaterName, filter.AmphitheaterName);
+            if (filter.ExamDate != null)
+                query = query.Where(q => q.ExamPeriod.ExamDate, filter.ExamDate);
+            if (filter.StartHour != null)
+                query = query.Where(q => q.ExamPeriod.StartHour, filter.StartHour);
+            if (filter.FinishHour != null)
+                query = query.Where(q => q.ExamPeriod.FinishHour, filter.FinishHour);
 
             return query;
+        }
+        private IQueryable<ExamRoomExamPeriodDAO> DynamicOrder(IQueryable<ExamRoomExamPeriodDAO> query, ExamRoomExamPeriodFilter filter)
+        {
+            switch (filter.OrderType)
+            {
+                case OrderType.ASC:
+                    switch (filter.OrderBy)
+                    {
+                        case ExamRoomExamPeriodOrder.AmphitheaterName:
+                            query = query.OrderBy(q => q.ExamRoom.AmphitheaterName);
+                            break;
+                        case ExamRoomExamPeriodOrder.RoomNumber:
+                            query = query.OrderBy(q => q.ExamRoom.RoomNumber);
+                            break;
+                        case ExamRoomExamPeriodOrder.ExamDate:
+                            query = query.OrderBy(q => q.ExamPeriod.ExamDate);
+                            break;
+                        case ExamRoomExamPeriodOrder.StartHour:
+                            query = query.OrderBy(q => q.ExamPeriod.StartHour);
+                            break;
+                        case ExamRoomExamPeriodOrder.FinishHour:
+                            query = query.OrderBy(q => q.ExamPeriod.FinishHour);
+                            break;
+                        default:
+                            query = query.OrderBy(q => q.CX);
+                            break;
+                    }
+                    break;
+                case OrderType.DESC:
+                    switch (filter.OrderBy)
+                    {
+                        case ExamRoomExamPeriodOrder.AmphitheaterName:
+                            query = query.OrderByDescending(q => q.ExamRoom.AmphitheaterName);
+                            break;
+                        case ExamRoomExamPeriodOrder.RoomNumber:
+                            query = query.OrderByDescending(q => q.ExamRoom.RoomNumber);
+                            break;
+                        case ExamRoomExamPeriodOrder.ExamDate:
+                            query = query.OrderByDescending(q => q.ExamPeriod.ExamDate);
+                            break;
+                        case ExamRoomExamPeriodOrder.StartHour:
+                            query = query.OrderByDescending(q => q.ExamPeriod.StartHour);
+                            break;
+                        case ExamRoomExamPeriodOrder.FinishHour:
+                            query = query.OrderByDescending(q => q.ExamPeriod.FinishHour);
+                            break;
+                        default:
+                            query = query.OrderByDescending(q => q.CX);
+                            break;
+                    }
+                    break;
+                default:
+                    query = query.OrderBy(q => q.CX);
+                    break;
+            }
+            return query.Skip(filter.Skip).Take(filter.Take);
         }
     }
 }
