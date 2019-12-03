@@ -42,11 +42,11 @@ namespace ExamReg.Apps.Controllers.exam_register
 
         // Hiển thị các môn thi cho sinh viên chọn ca thi
         [Route(ExamRegisterRoute.ListTerm), HttpPost]
-        public async Task<List<TermDTO>> ListTerm([FromBody] TermFilterDTO termFilterRequestDTO)
+        public async Task<List<TermDTO>> ListTerm()
         {
             TermFilter filter = new TermFilter
             {
-                StudentNumber = new IntFilter { Equal = termFilterRequestDTO.StudentNumber }
+                StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber }
             };
             List<Term> res = await TermService.List(filter);
             return res.Select(r => new TermDTO
@@ -62,17 +62,18 @@ namespace ExamReg.Apps.Controllers.exam_register
                     ExamProgramName = e.ExamProgramName,
                     Errors = e.Errors
                 }).ToList(),
+                IsQualified = r.QualifiedStudents.Where(q => q.StudentNumber == CurrentContext.StudentNumber).Any(),
                 Errors = r.Errors
             }).ToList();
         }
 
         // Hiển thị các ca thi hiện tại của môn thi
         [Route(ExamRegisterRoute.ListCurrentExamPeriod), HttpPost]
-        public async Task<List<ExamPeriodDTO>> ListCurrentExamPeriod([FromBody] ExamPeriodFilterDTO examPeriodRequestFilterDTO)
+        public async Task<List<ExamPeriodDTO>> ListCurrentExamPeriod()
         {
             ExamPeriodFilter filter = new ExamPeriodFilter
             {
-                StudentNumber = new IntFilter { Equal = examPeriodRequestFilterDTO.StudentNumber }
+                StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber }
             };
             List<ExamPeriod> res = await ExamPeriodService.List(filter);
             return res.Select(r => new ExamPeriodDTO

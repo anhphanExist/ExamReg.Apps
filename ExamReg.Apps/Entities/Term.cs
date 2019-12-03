@@ -13,6 +13,7 @@ namespace ExamReg.Apps.Entities
         public Guid SemesterId { get; set; }
         public string SemesterCode { get; set; }
         public List<ExamPeriod> ExamPeriods { get; set; }
+        public List<Student> QualifiedStudents { get; set; }
     }
     public class TermFilter : FilterEntity
     {

@@ -48,6 +48,7 @@ namespace ExamReg.Apps.Common
             CurrentContext.UserId = Guid.TryParse(context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value, out Guid u) ? u : Guid.Empty;
             CurrentContext.Username = context.User.FindFirstValue(ClaimTypes.Name);
             CurrentContext.StudentId = Guid.TryParse(context.User.FindFirst(c => c.Type == "StudentId").Value, out Guid s) ? s : Guid.Empty;
+            CurrentContext.StudentNumber = int.Parse(context.User.FindFirstValue("StudentNumber"));
             context.Succeed(requirement);
             return Task.CompletedTask;
         }

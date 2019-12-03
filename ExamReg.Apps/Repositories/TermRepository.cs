@@ -111,6 +111,15 @@ namespace ExamReg.Apps.Repositories
                     StartHour = e.StartHour,
                     TermId = e.TermId,
                     SubjectName = e.Term.SubjectName
+                }).ToList(),
+                QualifiedStudents = termDAO.StudentTerms.Select(s => new Student
+                {
+                    Id = s.StudentId,
+                    StudentNumber = s.Student.StudentNumber,
+                    LastName = s.Student.LastName,
+                    GivenName = s.Student.GivenName,
+                    Email = s.Student.Email,
+                    Birthday = s.Student.Birthday
                 }).ToList()
             };
         }
@@ -136,6 +145,15 @@ namespace ExamReg.Apps.Repositories
                     StartHour = e.StartHour,
                     TermId = e.TermId,
                     SubjectName = e.Term.SubjectName
+                }).ToList(),
+                QualifiedStudents = termDAO.StudentTerms.Select(s => new Student
+                {
+                    Id = s.StudentId,
+                    StudentNumber = s.Student.StudentNumber,
+                    LastName = s.Student.LastName,
+                    GivenName = s.Student.GivenName,
+                    Email = s.Student.Email,
+                    Birthday = s.Student.Birthday
                 }).ToList()
             };
         }
@@ -162,6 +180,15 @@ namespace ExamReg.Apps.Repositories
                     StartHour = e.StartHour,
                     TermId = e.TermId,
                     SubjectName = e.Term.SubjectName
+                }).ToList(),
+                QualifiedStudents = t.StudentTerms.Select(s => new Student
+                {
+                    Id = s.StudentId,
+                    StudentNumber = s.Student.StudentNumber,
+                    LastName = s.Student.LastName,
+                    GivenName = s.Student.GivenName,
+                    Email = s.Student.Email,
+                    Birthday = s.Student.Birthday
                 }).ToList()
             }).ToListAsync();
             return list;

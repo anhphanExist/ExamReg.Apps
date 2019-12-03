@@ -11,9 +11,4 @@ namespace ExamReg.Apps.Controllers.exam_register
         public string SubjectName { get; set; }
         public string ExamProgramName { get; set; }
     }
-
-    public class ExamPeriodFilterDTO : FilterDTO
-    {
-        public int StudentNumber { get; set; }
-    }
 }

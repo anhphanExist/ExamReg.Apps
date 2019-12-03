@@ -8,6 +8,7 @@ namespace ExamReg.Apps.Common
         string Username { get; set; }
         bool IsAdmin { get; set; }
         Guid StudentId { get; set; }
+        int StudentNumber { get; set; }
     }
 
     public class CurrentContext : ICurrentContext
@@ -16,5 +17,6 @@ namespace ExamReg.Apps.Common
         public string Username { get; set; }
         public bool IsAdmin { get; set; }
         public Guid StudentId { get; set; }
+        public int StudentNumber { get; set; }
     }
 }

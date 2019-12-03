@@ -8,10 +8,6 @@ namespace ExamReg.Apps.Controllers.exam_register
         public string SubjectName { get; set; }
         public string SemesterCode { get; set; }
         public List<ExamPeriodDTO> ExamPeriods { get; set; }
-    }
-
-    public class TermFilterDTO : FilterDTO
-    {
-        public int StudentNumber { get; set; }
+        public bool IsQualified { get; set; }
     }
 }
