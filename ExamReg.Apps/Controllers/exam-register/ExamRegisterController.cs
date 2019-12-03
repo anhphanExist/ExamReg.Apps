@@ -19,7 +19,7 @@ namespace ExamReg.Apps.Controllers.exam_register
         private const string Default = Base + "/exam-register-result";
         public const string ListTerm = Default + "/list-term";
         public const string ListCurrentExamPeriod = Default + "/list-current-exam-period";
-        public const string CreateExamRoomExamPeriod = Default + "/create-exam-room-exam-period";
+        public const string RegisterExam = Default + "/register-exam";
     }
 
     [Authorize(Policy = "CanRegisterExam")]
@@ -93,11 +93,13 @@ namespace ExamReg.Apps.Controllers.exam_register
         }
 
         // Tạo hoặc sửa đổi đăng ký dự thi các ca thi của môn thi
-        [Route(ExamRegisterRoute.CreateExamRoomExamPeriod), HttpPost]
-        public async Task CreateExamRoomExamPeriod([FromBody] RegisterRequestDTO registerRequestDTO)
+        [Route(ExamRegisterRoute.RegisterExam), HttpPost]
+        public async Task RegisterExam([FromBody] RegisterRequestDTO registerRequestDTO)
         {
-            await StudentService.CreateStudentExamPeriod(CurrentContext.StudentId, registerRequestDTO.ExamPeriodId);
-            throw new NotImplementedException();
+            Parallel.ForEach(registerRequestDTO.ExamPeriodIds, async examPeriodId =>
+            {
+                await StudentService.RegisterExam(CurrentContext.StudentId, examPeriodId);
+            });
         }
     }
 }

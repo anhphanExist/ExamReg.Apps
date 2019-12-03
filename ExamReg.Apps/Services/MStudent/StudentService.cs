@@ -25,7 +25,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<List<StudentTerm>> ImportExcelStudentTerm(byte[] file);
         Task<byte[]> GenerateStudentTermTemplate();
         Task<byte[]> ExportStudentTerm();
-        Task CreateStudentExamPeriod(Guid studentId, Guid examPeriodId);
+        Task RegisterExam(Guid studentId, Guid examPeriodId);
     }
     public class StudentService : IStudentService
     {
@@ -488,11 +488,17 @@ namespace ExamReg.Apps.Services.MStudent
             }
         }
 
-        public async Task CreateStudentExamPeriod(Guid studentId, Guid examPeriodId)
+        public async Task RegisterExam(Guid studentId, Guid examPeriodId)
         {
             // xoá cũ thêm mới
-            //await UOW.StudentExamPeriodRepository.Delete(studentId, )
-            throw new NotImplementedException();
+            StudentExamPeriod studentExamPeriod = await UOW.StudentExamPeriodRepository.Get(new StudentExamPeriodFilter
+            {
+                StudentId = new GuidFilter { Equal = studentId },
+                ExamPeriodId = new GuidFilter { Equal = examPeriodId }
+            });
+            if (studentExamPeriod != null)
+                await UOW.StudentExamPeriodRepository.Delete(studentId, examPeriodId);
+            await UOW.StudentExamPeriodRepository.Create(studentId, examPeriodId);
         }
     }
 }
