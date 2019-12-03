@@ -12,7 +12,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
     public interface IExamRoomExamPeriodService : IServiceScoped
     {
         Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter);
-        Task<ExamRoomExamPeriod> Create(ExamRoomExamPeriod examRoomExamPeriod);
+        Task<ExamRoomExamPeriod> Create(Guid examPeriodId);
         Task<ExamRoomExamPeriod> Delete(ExamRoomExamPeriod examRoomExamPeriod);
         Task<byte[]> ExportStudent(ExamRoomExamPeriodFilter filter);
     }
@@ -24,7 +24,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
             this.UOW = UOW;
         }
 
-        public Task<ExamRoomExamPeriod> Create(ExamRoomExamPeriod examRoomExamPeriod)
+        public Task<ExamRoomExamPeriod> Create(Guid examPeriodId)
         {
             throw new NotImplementedException();
         }

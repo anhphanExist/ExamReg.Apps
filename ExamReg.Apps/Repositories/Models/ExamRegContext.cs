@@ -13,7 +13,6 @@ namespace ExamReg.Apps.Repositories.Models
         public virtual DbSet<SemesterDAO> Semester { get; set; }
         public virtual DbSet<StudentDAO> Student { get; set; }
         public virtual DbSet<StudentExamPeriodDAO> StudentExamPeriod { get; set; }
-        public virtual DbSet<StudentExamRoomDAO> StudentExamRoom { get; set; }
         public virtual DbSet<StudentTermDAO> StudentTerm { get; set; }
         public virtual DbSet<TermDAO> Term { get; set; }
         public virtual DbSet<UserDAO> User { get; set; }
@@ -178,30 +177,6 @@ namespace ExamReg.Apps.Repositories.Models
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("studentexamperiod_fk");
-            });
-
-            modelBuilder.Entity<StudentExamRoomDAO>(entity =>
-            {
-                entity.HasKey(e => new { e.ExamRoomId, e.StudentId })
-                    .HasName("studentexamroom_pk");
-
-                entity.HasIndex(e => e.CX)
-                    .HasName("studentexamroom_un")
-                    .IsUnique();
-
-                entity.Property(e => e.CX).ValueGeneratedOnAdd();
-
-                entity.HasOne(d => d.ExamRoom)
-                    .WithMany(p => p.StudentExamRooms)
-                    .HasForeignKey(d => d.ExamRoomId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("examroom_studentexamroom_fk");
-
-                entity.HasOne(d => d.Student)
-                    .WithMany(p => p.StudentExamRooms)
-                    .HasForeignKey(d => d.StudentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("student_studentexamroom_fk");
             });
 
             modelBuilder.Entity<StudentTermDAO>(entity =>

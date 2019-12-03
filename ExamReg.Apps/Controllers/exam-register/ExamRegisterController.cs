@@ -18,7 +18,6 @@ namespace ExamReg.Apps.Controllers.exam_register
     {
         private const string Default = Base + "/exam-register-result";
         public const string ListTerm = Default + "/list-term";
-        public const string ListCurrentExamRoomExamPeriod = Default + "/list-current-exam-room-exam-period";
         public const string ListCurrentExamPeriod = Default + "/list-current-exam-period";
         public const string CreateExamRoomExamPeriod = Default + "/create-exam-room-exam-period";
     }
@@ -29,15 +28,18 @@ namespace ExamReg.Apps.Controllers.exam_register
         private IStudentService StudentService;
         private IExamPeriodService ExamPeriodService;
         private ITermService TermService;
+        private IExamRoomExamPeriodService ExamRoomExamPeriodService;
         public ExamRegisterController(ICurrentContext CurrentContext,
             IExamPeriodService ExamPeriodService,
             IStudentService StudentService,
-            ITermService TermService
+            ITermService TermService,
+            IExamRoomExamPeriodService ExamRoomExamPeriodService
             ) : base(CurrentContext)
         {
             this.StudentService = StudentService;
             this.TermService = TermService;
             this.ExamPeriodService = ExamPeriodService;
+            this.ExamRoomExamPeriodService = ExamRoomExamPeriodService;
         }
 
         // Hiển thị các môn thi cho sinh viên chọn ca thi
@@ -51,6 +53,7 @@ namespace ExamReg.Apps.Controllers.exam_register
             List<Term> res = await TermService.List(filter);
             return res.Select(r => new TermDTO
             {
+                Id = r.Id,
                 SubjectName = r.SubjectName,
                 SemesterCode = r.SemesterCode,
                 ExamPeriods = r.ExamPeriods.Select(e => new ExamPeriodDTO
@@ -78,6 +81,8 @@ namespace ExamReg.Apps.Controllers.exam_register
             List<ExamPeriod> res = await ExamPeriodService.List(filter);
             return res.Select(r => new ExamPeriodDTO
             {
+                Id = r.Id,
+                TermId = r.TermId,
                 SubjectName = r.SubjectName,
                 ExamDate = r.ExamDate,
                 StartHour = r.StartHour,
@@ -85,6 +90,14 @@ namespace ExamReg.Apps.Controllers.exam_register
                 ExamProgramName = r.ExamProgramName,
                 Errors = r.Errors
             }).ToList();
+        }
+
+        // Tạo hoặc sửa đổi đăng ký dự thi các ca thi của môn thi
+        [Route(ExamRegisterRoute.CreateExamRoomExamPeriod), HttpPost]
+        public async Task CreateExamRoomExamPeriod([FromBody] RegisterRequestDTO registerRequestDTO)
+        {
+            await StudentService.CreateStudentExamPeriod(CurrentContext.StudentId, registerRequestDTO.ExamPeriodId);
+            throw new NotImplementedException();
         }
     }
 }

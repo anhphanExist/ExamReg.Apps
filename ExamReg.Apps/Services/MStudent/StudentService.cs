@@ -25,6 +25,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<List<StudentTerm>> ImportExcelStudentTerm(byte[] file);
         Task<byte[]> GenerateStudentTermTemplate();
         Task<byte[]> ExportStudentTerm();
+        Task CreateStudentExamPeriod(Guid studentId, Guid examPeriodId);
     }
     public class StudentService : IStudentService
     {
@@ -485,6 +486,13 @@ namespace ExamReg.Apps.Services.MStudent
                 // trả về dữ liệu dạng byte
                 return excel.GetAsByteArray();
             }
+        }
+
+        public async Task CreateStudentExamPeriod(Guid studentId, Guid examPeriodId)
+        {
+            // xoá cũ thêm mới
+            //await UOW.StudentExamPeriodRepository.Delete(studentId, )
+            throw new NotImplementedException();
         }
     }
 }
