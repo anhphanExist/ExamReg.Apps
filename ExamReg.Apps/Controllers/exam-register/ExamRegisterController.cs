@@ -40,6 +40,7 @@ namespace ExamReg.Apps.Controllers.exam_register
             this.ExamPeriodService = ExamPeriodService;
         }
 
+        // Hiển thị các môn thi cho sinh viên chọn ca thi
         [Route(ExamRegisterRoute.ListTerm), HttpPost]
         public async Task<List<TermDTO>> ListTerm([FromBody] TermFilterDTO termFilterRequestDTO)
         {
@@ -65,6 +66,7 @@ namespace ExamReg.Apps.Controllers.exam_register
             }).ToList();
         }
 
+        // Hiển thị các ca thi hiện tại của môn thi
         [Route(ExamRegisterRoute.ListCurrentExamPeriod), HttpPost]
         public async Task<List<ExamPeriodDTO>> ListCurrentExamPeriod([FromBody] ExamPeriodFilterDTO examPeriodRequestFilterDTO)
         {

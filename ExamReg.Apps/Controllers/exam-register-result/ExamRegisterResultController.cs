@@ -32,6 +32,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
             this.StudentService = StudentService;
         }
 
+        // Lấy thông tin của sinh viên
         [Route(ExamRegisterResultRoute.GetStudentInfo), HttpPost]
         public async Task<StudentDTO> GetStudentInfo()
         {
@@ -47,6 +48,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
             };
         }
 
+        // Lấy danh sách môn thi và phòng thi của sinh viên
         [Route(ExamRegisterResultRoute.ListExamRoomExamPeriod), HttpPost]
         public async Task<List<ExamRoomExamPeriodDTO>> ListExamRoomExamPeriod([FromBody] ExamRoomExamPeriodFilterDTO examRoomExamPeriodRequestDTO)
         {

@@ -27,6 +27,7 @@ namespace ExamReg.Apps.Controllers.watcher
             this.ExamRoomExamPeriodService = ExamRoomExamPeriodService;
         }
 
+        // Lấy danh sách tất cả thông tin của các ca thi ứng với phòng thi và môn thi
         [Route(WatcherRoute.List), HttpPost]
         public async Task<List<WatcherDTO>> List()
         {
@@ -48,6 +49,7 @@ namespace ExamReg.Apps.Controllers.watcher
             return res;
         }
 
+        // Xuất danh sách sinh viên thi trong 1 phòng thi của 1 ca thi của 1 môn thi
         [Route(WatcherRoute.ExportStudent), HttpPost]
         public async Task<FileResult> ExportStudent([FromBody] WatcherDTO watcherRequestDTO)
         {
