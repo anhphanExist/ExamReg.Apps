@@ -28,18 +28,54 @@ namespace ExamReg.Apps.Services.MStudent
     public class StudentService : IStudentService
     {
         private IUOW UOW;
-        public StudentService(IUOW UOW)
+        private IStudentValidator StudentValidator;
+        public StudentService(IUOW UOW, IStudentValidator StudentValidator)
         {
             this.UOW = UOW;
+            this.StudentValidator = StudentValidator;
         }
         public async Task<int> Count(StudentFilter filter)
         {
-            throw new NotImplementedException();
+            return await UOW.StudentRepository.Count(filter);
+        }
+        public async Task<Student> Get(Guid studentId)
+        {
+            if (studentId == Guid.Empty) return null;
+            Student student = await UOW.StudentRepository.Get(studentId);
+            return student;
         }
 
         public async Task<Student> Create(Student student)
         {
-            throw new NotImplementedException();
+            if (!await StudentValidator.Create(student))
+                return student;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    student.Id = Guid.NewGuid();
+                    await UOW.StudentRepository.Create(student);
+
+                    var user = await UOW.UserRepository.Create(new User()
+                    {
+                        Id = Guid.NewGuid(),
+                        Username = student.Username,
+                        Password = student.Password,
+                        StudentId = student.Id,
+                        IsAdmin = false
+                    });
+                    
+                    await UOW.Commit();
+                    return await Get(student.Id);
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    student.AddError(nameof(StudentService), nameof(Create), CommonEnum.ErrorCode.SystemError);
+                    return student;
+                }
+            }
         }
 
         public async Task<Student> Delete(Student student)
@@ -49,7 +85,7 @@ namespace ExamReg.Apps.Services.MStudent
 
         public async Task<List<Student>> List(StudentFilter filter)
         {
-            throw new NotImplementedException();
+            return await UOW.StudentRepository.List(filter);
         }
 
         public async Task<Student> Update(Student student)
@@ -59,8 +95,6 @@ namespace ExamReg.Apps.Services.MStudent
 
         public async Task<Student> ResetPassword(Student student)
         {
-            // Note: Thêm student Validator vào đây
-
             using (UOW.Begin())
             {
                 try
