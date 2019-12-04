@@ -35,11 +35,15 @@ namespace ExamReg.Apps.Controllers.watcher
             List<WatcherDTO> res = new List<WatcherDTO>();
             examRoomExamPeriods.ForEach(r => res.Add(new WatcherDTO
             {
+                ExamPeriodId = r.ExamPeriodId,
+                ExamRoomId = r.ExamRoomId,
+                ExamProgramId = r.ExamProgramId,
+                TermId = r.TermId,
                 ExamProgramName = r.ExamProgramName,
                 ExamRoomNumber = r.ExamRoomNumber,
                 ExamRoomAmphitheaterName = r.ExamRoomAmphitheaterName,
                 ExamRoomComputerNumber = r.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = r.CurrentNumberOfStudentRegistered,
+                CurrentNumberOfStudentRegistered = r.Students.Count,
                 ExamDate = r.ExamDate,
                 StartHour = r.StartHour,
                 FinishHour = r.FinishHour,
@@ -55,13 +59,8 @@ namespace ExamReg.Apps.Controllers.watcher
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
-                ExamRoomNumber = new ShortFilter { Equal = watcherRequestDTO.ExamRoomNumber },
-                ExamRoomAmphitheaterName = new StringFilter { Equal = watcherRequestDTO.ExamRoomAmphitheaterName },
-                ExamProgramName = new StringFilter { Equal = watcherRequestDTO.ExamProgramName },
-                SubjectName = new StringFilter { Equal = watcherRequestDTO.SubjectName },
-                ExamDate = new DateTimeFilter { Equal = watcherRequestDTO.ExamDate },
-                StartHour = new ShortFilter { Equal = watcherRequestDTO.StartHour },
-                FinishHour = new ShortFilter { Equal = watcherRequestDTO.FinishHour }
+                ExamPeriodId = new GuidFilter { Equal = watcherRequestDTO.ExamPeriodId },
+                ExamRoomId = new GuidFilter { Equal = watcherRequestDTO.ExamRoomId }
             };
             byte[] data = await ExamRoomExamPeriodService.ExportStudent(filter);
             return File(data, "application/octet-stream", "StudentRoomPeriod.xlsx");
