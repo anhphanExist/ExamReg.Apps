@@ -36,44 +36,13 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
 
         public async Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter)
         {
-            List<ExamRoomExamPeriod> examRoomExamPeriods = await UOW.ExamRoomExamPeriodRepository.List(filter);
-            Parallel.ForEach(examRoomExamPeriods, async examRoomExamPeriod =>
-            {
-                StudentFilter studentFilter = new StudentFilter
-                {
-                    StudentNumber = filter.StudentNumber,
-                    ExamProgramName = new StringFilter { Equal = examRoomExamPeriod.ExamProgramName },
-                    SubjectName = new StringFilter { Equal = examRoomExamPeriod.SubjectName },
-                    ExamDate = new DateTimeFilter { Equal = examRoomExamPeriod.ExamDate },
-                    StartHour = new ShortFilter { Equal = examRoomExamPeriod.StartHour },
-                    FinishHour = new ShortFilter { Equal = examRoomExamPeriod.FinishHour },
-                    ExamRoomNumber = new ShortFilter { Equal = examRoomExamPeriod.ExamRoomNumber },
-                    ExamRoomAmphitheaterName = new StringFilter { Equal = examRoomExamPeriod.ExamRoomAmphitheaterName },
-                    OrderBy = StudentOrder.GivenName
-                };
-                examRoomExamPeriod.Students = await UOW.StudentRepository.List(studentFilter);
-                examRoomExamPeriod.CurrentNumberOfStudentRegistered = examRoomExamPeriod.Students.Count;
-            });
-            return examRoomExamPeriods;
+            return await UOW.ExamRoomExamPeriodRepository.List(filter);
         }
 
         public async Task<byte[]> ExportStudent(ExamRoomExamPeriodFilter filter)
         {
             // Lấy dữ liệu trong database
             ExamRoomExamPeriod examRoomExamPeriod = await UOW.ExamRoomExamPeriodRepository.Get(filter);
-            StudentFilter studentFilter = new StudentFilter
-            {
-                ExamProgramName = filter.ExamProgramName,
-                SubjectName = filter.SubjectName,
-                ExamDate = filter.ExamDate,
-                StartHour = filter.StartHour,
-                FinishHour = filter.FinishHour,
-                ExamRoomNumber = filter.ExamRoomNumber,
-                ExamRoomAmphitheaterName = filter.ExamRoomAmphitheaterName,
-                OrderBy = StudentOrder.GivenName
-            };
-            examRoomExamPeriod.Students = await UOW.StudentRepository.List(studentFilter);
-            examRoomExamPeriod.CurrentNumberOfStudentRegistered = examRoomExamPeriod.Students.Count;
             // Mở excelPackage
             using (ExcelPackage excel = new ExcelPackage())
             {
@@ -102,7 +71,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                         examRoomExamPeriod.ExamDate.Date.ToString("dd/MM/yyyy"),
                         examRoomExamPeriod.StartHour.ToString(),
                         examRoomExamPeriod.FinishHour.ToString(),
-                        examRoomExamPeriod.CurrentNumberOfStudentRegistered.ToString()
+                        examRoomExamPeriod.Students.Count.ToString()
                     },
                     new string[]
                     {
@@ -126,7 +95,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                     });
                 }
                 // tạo worksheet
-                excel.GenerateWorksheet("Sinh viên - Phòng thi - Ca thi", examRoomExamPeriodHeaders, data);
+                excel.GenerateWorksheet("Phòng thi - Ca thi", examRoomExamPeriodHeaders, data);
                 // trả về dữ liệu dạng byte
                 return excel.GetAsByteArray();
             }
