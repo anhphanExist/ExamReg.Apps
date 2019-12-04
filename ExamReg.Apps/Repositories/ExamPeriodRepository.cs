@@ -53,10 +53,6 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(ExamPeriod examPeriod)
         {
-            await examRegContext.StudentExamPeriod
-            .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
-            .DeleteFromQueryAsync();
-
             await examRegContext.ExamRoomExamPeriod
             .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
             .DeleteFromQueryAsync();
@@ -148,7 +144,7 @@ namespace ExamReg.Apps.Repositories
             if (filter == null)
                 return query.Where(q => 1 == 0);
             if (filter.StudentNumber != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.Student.StudentNumber), filter.StudentNumber);
+                query = query.Where(q => q.ExamRoomExamPeriods.Select(e => e.ExamRegisters.Select(r => r.Student.StudentNumber)), filter.StudentNumber);
             if (filter.ExamDate != null)
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
             if (filter.SubjectName != null)

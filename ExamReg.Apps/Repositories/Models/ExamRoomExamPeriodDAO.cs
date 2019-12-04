@@ -7,7 +7,7 @@ namespace ExamReg.Apps.Repositories.Models
     {
         public ExamRoomExamPeriodDAO()
         {
-            Students = new HashSet<StudentDAO>();
+            ExamRegisters = new HashSet<ExamRegisterDAO>();
         }
 
         public Guid ExamRoomId { get; set; }
@@ -16,6 +16,6 @@ namespace ExamReg.Apps.Repositories.Models
 
         public virtual ExamPeriodDAO ExamPeriod { get; set; }
         public virtual ExamRoomDAO ExamRoom { get; set; }
-        public virtual ICollection<StudentDAO> Students { get; set; }
+        public virtual ICollection<ExamRegisterDAO> ExamRegisters { get; set; }
     }
 }

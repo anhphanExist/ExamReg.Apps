@@ -40,6 +40,7 @@ namespace ExamReg.Apps.Controllers.term
             List<TermDTO> res = new List<TermDTO>();
             terms.ForEach(t => res.Add(new TermDTO
             {
+                Id = t.Id,
                 SemesterCode = t.SemesterCode,
                 SubjectName = t.SubjectName,
                 Errors = t.Errors
@@ -58,6 +59,7 @@ namespace ExamReg.Apps.Controllers.term
             Term res = await TermService.Create(newTerm);
             return new TermDTO
             {
+                Id = res.Id,
                 SemesterCode = res.SemesterCode,
                 SubjectName = res.SubjectName,
                 Errors = res.Errors
@@ -69,12 +71,14 @@ namespace ExamReg.Apps.Controllers.term
         {
             Term term = new Term
             {
+                Id = termRequestDTO.Id,
                 SemesterCode = termRequestDTO.SemesterCode,
                 SubjectName = termRequestDTO.SubjectName
             };
             Term res = await TermService.Update(term);
             return new TermDTO
             {
+                Id = res.Id,
                 SemesterCode = res.SemesterCode,
                 SubjectName = res.SubjectName,
                 Errors = res.Errors
@@ -86,12 +90,14 @@ namespace ExamReg.Apps.Controllers.term
         {
             Term term = new Term
             {
+                Id = termRequestDTO.Id,
                 SemesterCode = termRequestDTO.SemesterCode,
                 SubjectName = termRequestDTO.SubjectName
             };
             Term res = await TermService.Delete(term);
             return new TermDTO
             {
+                Id = res.Id,
                 SemesterCode = res.SemesterCode,
                 SubjectName = res.SubjectName,
                 Errors = res.Errors

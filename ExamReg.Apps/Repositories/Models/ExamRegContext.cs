@@ -8,6 +8,7 @@ namespace ExamReg.Apps.Repositories.Models
     {
         public virtual DbSet<ExamPeriodDAO> ExamPeriod { get; set; }
         public virtual DbSet<ExamProgramDAO> ExamProgram { get; set; }
+        public virtual DbSet<ExamRegisterDAO> ExamRegister { get; set; }
         public virtual DbSet<ExamRoomDAO> ExamRoom { get; set; }
         public virtual DbSet<ExamRoomExamPeriodDAO> ExamRoomExamPeriod { get; set; }
         public virtual DbSet<SemesterDAO> Semester { get; set; }
@@ -77,6 +78,24 @@ namespace ExamReg.Apps.Repositories.Models
                     .HasForeignKey(d => d.SemesterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("examprogram_fk");
+            });
+
+            modelBuilder.Entity<ExamRegisterDAO>(entity =>
+            {
+                entity.HasKey(e => new { e.StudentId, e.ExamRoomId, e.ExamPeriodId })
+                    .HasName("examregister_pk");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.ExamRegisters)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examregister_fk_1");
+
+                entity.HasOne(d => d.Exam)
+                    .WithMany(p => p.ExamRegisters)
+                    .HasForeignKey(d => new { d.ExamRoomId, d.ExamPeriodId })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("examregister_fk");
             });
 
             modelBuilder.Entity<ExamRoomDAO>(entity =>
@@ -152,11 +171,6 @@ namespace ExamReg.Apps.Repositories.Models
                 entity.Property(e => e.LastName)
                     .IsRequired()
                     .HasMaxLength(100);
-
-                entity.HasOne(d => d.Exam)
-                    .WithMany(p => p.Students)
-                    .HasForeignKey(d => new { d.ExamRoomId, d.ExamPeriodId })
-                    .HasConstraintName("student_fk");
             });
 
             modelBuilder.Entity<StudentTermDAO>(entity =>

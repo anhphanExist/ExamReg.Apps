@@ -1,5 +1,6 @@
 ﻿using ExamReg.Apps.Common;
 using ExamReg.Apps.Entities;
+using ExamReg.Apps.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,11 @@ namespace ExamReg.Apps.Services.MExamPeriod
 
     public class ExamPeriodService : IExamPeriodService
     {
+        private IUOW UOW;
+        public ExamPeriodService(IUOW UOW)
+        {
+            this.UOW = UOW;
+        }
         public Task<int> Count(ExamPeriodFilter filter)
         {
             throw new NotImplementedException();
@@ -33,9 +39,9 @@ namespace ExamReg.Apps.Services.MExamPeriod
             throw new NotImplementedException();
         }
 
-        public Task<List<ExamPeriod>> List(ExamPeriodFilter filter)
+        public async Task<List<ExamPeriod>> List(ExamPeriodFilter filter)
         {
-            throw new NotImplementedException();
+            return await UOW.ExamPeriodRepository.List(filter);
         }
 
         public Task<ExamPeriod> Update(ExamPeriod examPeriod)

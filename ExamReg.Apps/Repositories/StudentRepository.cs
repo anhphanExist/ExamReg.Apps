@@ -95,10 +95,6 @@ namespace ExamReg.Apps.Repositories
             .Where(s => s.StudentId.Equals(student.Id))
             .DeleteFromQueryAsync();
 
-            await examRegContext.StudentExamPeriod
-            .Where(s => s.StudentId.Equals(student.Id))
-            .DeleteFromQueryAsync();
-
             await examRegContext.StudentTerm
             .Where(s => s.StudentId.Equals(student.Id))
             .DeleteFromQueryAsync();
@@ -205,16 +201,14 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.GivenName, filter.GivenName);
             if (filter.Birthday != null)
                 query = query.Where(q => q.Birthday, filter.Birthday);
-            if (filter.ExamProgramName != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.ExamProgram.Name), filter.ExamProgramName);
-            if (filter.SubjectName != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.Term.SubjectName), filter.SubjectName);
-            if (filter.ExamDate != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.ExamDate), filter.ExamDate);
-            if (filter.StartHour != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.StartHour), filter.ExamDate);
-            if (filter.FinishHour != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.FinishHour), filter.ExamDate);
+            if (filter.ExamProgramId != null)
+                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.ExamProgramId), filter.ExamProgramId);
+            if (filter.ExamPeriodId != null)
+                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.TermId), filter.ExamPeriodId);
+            if (filter.ExamRoomId != null)
+                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.ExamRoomExamPeriods.Select(e => e.ExamRoomId)), filter.ExamRoomId);
+            if (filter.TermId != null)
+                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.TermId), filter.TermId);
             return query;
         }
 

@@ -5,6 +5,7 @@ namespace ExamReg.Apps.Controllers.exam_period
 {
     public class ExamPeriodDTO : DataDTO
     {
+        public Guid Id { get; set; }
         public DateTime ExamDate { get; set; }
         public short StartHour { get; set; }
         public short FinishHour { get; set; }

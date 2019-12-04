@@ -15,7 +15,7 @@ namespace ExamReg.Apps.Repositories
         Task<Term> Get(TermFilter filter);
         Task<bool> Create(Term term);
         Task<bool> Update(Term term);
-        Task<bool> Delete(Term term);
+        Task<bool> Delete(Guid Id);
         Task<int> Count(TermFilter filter);
         Task<List<Term>> List(TermFilter filter);
         Task<bool> BulkInsert(List<Term> terms);
@@ -62,18 +62,18 @@ namespace ExamReg.Apps.Repositories
             return true;
         }
 
-        public async Task<bool> Delete(Term term)
+        public async Task<bool> Delete(Guid Id)
         {
             await examRegContext.StudentTerm
-            .Where(t => t.TermId.Equals(term.Id))
+            .Where(t => t.TermId.Equals(Id))
             .DeleteFromQueryAsync();
 
             await examRegContext.ExamPeriod
-            .Where(t => t.TermId.Equals(term.Id))
+            .Where(t => t.TermId.Equals(Id))
             .DeleteFromQueryAsync();
 
             TermDAO termDAO = examRegContext.Term
-                .Where(s => s.Id.Equals(term.Id))
+                .Where(s => s.Id.Equals(Id))
                 .FirstOrDefault();
 
             examRegContext.Term.Remove(termDAO);

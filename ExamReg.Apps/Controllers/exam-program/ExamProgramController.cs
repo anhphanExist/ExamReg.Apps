@@ -34,6 +34,7 @@ namespace ExamReg.Apps.Controllers.exam_program
             List<ExamProgramDTO> res = new List<ExamProgramDTO>();
             examPrograms.ForEach(e => res.Add(new ExamProgramDTO
             {
+                Id = e.Id,
                 Name = e.Name,
                 Errors = e.Errors
             }));
@@ -50,6 +51,7 @@ namespace ExamReg.Apps.Controllers.exam_program
             ExamProgram res = await ExamProgramService.Create(newExamProgram);
             return new ExamProgramDTO
             {
+                Id = res.Id,
                 Name = res.Name,
                 Errors = res.Errors
             };
@@ -60,11 +62,13 @@ namespace ExamReg.Apps.Controllers.exam_program
         {
             ExamProgram examProgram = new ExamProgram
             {
+                Id = examProgramRequestDTO.Id,
                 Name = examProgramRequestDTO.Name
             };
             ExamProgram res = await ExamProgramService.Update(examProgram);
             return new ExamProgramDTO
             {
+                Id = examProgramRequestDTO.Id,
                 Name = res.Name,
                 Errors = res.Errors
             };
@@ -75,11 +79,13 @@ namespace ExamReg.Apps.Controllers.exam_program
         {
             ExamProgram examProgram = new ExamProgram
             {
+                Id = examProgramRequestDTO.Id,
                 Name = examProgramRequestDTO.Name
             };
             ExamProgram res = await ExamProgramService.Delete(examProgram);
             return new ExamProgramDTO
             {
+                Id = res.Id,
                 Name = res.Name,
                 Errors = res.Errors
             };
