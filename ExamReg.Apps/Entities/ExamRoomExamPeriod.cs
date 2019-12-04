@@ -9,6 +9,8 @@ namespace ExamReg.Apps.Entities
     public class ExamRoomExamPeriod : DataEntity
     {
         public Guid ExamRoomId { get; set; }
+        public short RoomNumber { get; set; }
+        public string AmphitheaterName { get; set; }
         public Guid ExamPeriodId { get; set; }
         public short ExamRoomNumber { get; set; }
         public string ExamRoomAmphitheaterName { get; set; }
@@ -37,5 +39,13 @@ namespace ExamReg.Apps.Entities
         public StringFilter SubjectName { get; set; }
         public StringFilter ExamProgramName { get; set; }
         public ExamRoomExamPeriodFilter() : base() { }
+    }
+    public enum ExamRoomExamPeriodOrder
+    {
+        RoomNumber,
+        AmphitheaterName,
+        ExamDate,
+        StartHour,
+        FinishHour
     }
 }

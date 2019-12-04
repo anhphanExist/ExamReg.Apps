@@ -19,9 +19,11 @@ namespace ExamReg.Apps.Repositories
     public class StudentExamPeriodRepository : IStudentExamPeriodRepository
     {
         private ExamRegContext examRegContext;
-        public StudentExamPeriodRepository(ExamRegContext examReg)
+        private ICurrentContext CurrentContext;
+        public StudentExamPeriodRepository(ExamRegContext examReg, ICurrentContext CurrentContext)
         {
             this.examRegContext = examReg;
+            this.CurrentContext = CurrentContext;
         }
 
         public async Task<bool> Create(Guid studentId, Guid examPeriodId)

@@ -23,9 +23,11 @@ namespace ExamReg.Apps.Repositories
     public class SemesterRepository : ISemesterRepository
     {
         private ExamRegContext examRegContext;
-        public SemesterRepository(ExamRegContext examReg)
+        private ICurrentContext CurrentContext;
+        public SemesterRepository(ExamRegContext examReg, ICurrentContext CurrentContext)
         {
             this.examRegContext = examReg;
+            this.CurrentContext = CurrentContext;
         }
         public async Task<int> Count(SemesterFilter filter)
         {

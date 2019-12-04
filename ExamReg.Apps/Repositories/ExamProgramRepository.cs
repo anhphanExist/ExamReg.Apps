@@ -22,9 +22,11 @@ namespace ExamReg.Apps.Repositories
     public class ExamProgramRepository : IExamProgramRepository
     {
         private ExamRegContext examRegContext;
-        public ExamProgramRepository(ExamRegContext examReg)
+        private ICurrentContext CurrentContext;
+        public ExamProgramRepository(ExamRegContext examReg, ICurrentContext currentContext)
         {
             this.examRegContext = examReg;
+            this.CurrentContext = currentContext;
         }
         public async Task<int> Count(ExamProgramFilter filter)
         {
@@ -126,7 +128,6 @@ namespace ExamReg.Apps.Repositories
                 SemesterId = examProgram.SemesterId
             });
 
-            await examRegContext.SaveChangesAsync();
             return true;
         }
         private IQueryable<ExamProgramDAO> DynamicFilter(IQueryable<ExamProgramDAO> query, ExamProgramFilter filter)
