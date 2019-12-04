@@ -59,7 +59,6 @@ namespace ExamReg.Apps.Services.MStudent
             {
                 Skip = 0,
                 Take = int.MaxValue,
-                Ids = new List<Guid> { student.Id },
                 OrderBy = StudentOrder.StudentNumber,
                 OrderType = OrderType.ASC
             };
@@ -111,12 +110,7 @@ namespace ExamReg.Apps.Services.MStudent
             {
                 student.AddError(nameof(StudentValidator), nameof(student.Password), ERROR.InvalidPassword);
                 return false;
-            }                 
-            else if (student.Password.Length < 8 || (student.Password.Length > 50))
-            {
-                student.AddError(nameof(StudentValidator), nameof(student.Password), ERROR.StringLimited);
-                return false;
-            }                
+            }                                
 
         return true;
         }
@@ -172,7 +166,7 @@ namespace ExamReg.Apps.Services.MStudent
 
             if (!IsValid) return false;
 
-            IsValid &= ValidateStringLength(student);
+            //IsValid &= ValidateStringLength(student);
             IsValid &= ValidateNewPassword(student, newPassword);
             return IsValid;
         }
