@@ -10,6 +10,7 @@ namespace ExamReg.Apps.Entities
     {
         public Guid StudentId { get; set; }
         public Guid ExamPeriodId { get; set; }
+        public Guid ExamRoomId { get; set; }
     }
     public class StudentExamPeriodFilter : FilterEntity
     {

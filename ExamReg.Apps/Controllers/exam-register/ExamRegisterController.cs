@@ -70,7 +70,7 @@ namespace ExamReg.Apps.Controllers.exam_register
             }).ToList();
         }
 
-        // Hiển thị các ca thi hiện tại của môn thi
+        // Hiển thị các ca thi hiện tại của môn thi mà sinh viên đã đăng ký
         [Route(ExamRegisterRoute.ListCurrentExamPeriod), HttpPost]
         public async Task<List<ExamPeriodDTO>> ListCurrentExamPeriod()
         {
