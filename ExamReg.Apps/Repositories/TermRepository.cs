@@ -120,6 +120,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Term> Get(TermFilter filter)
         {
+            if (filter == null)
+                return null;
             IQueryable<TermDAO> query = examRegContext.Term.AsNoTracking();
             TermDAO termDAO = DynamicFilter(query, filter).FirstOrDefault();
             if (termDAO == null)

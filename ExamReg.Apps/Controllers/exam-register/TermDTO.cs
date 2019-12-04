@@ -8,6 +8,7 @@ namespace ExamReg.Apps.Controllers.exam_register
     {
         public Guid Id { get; set; }
         public string SubjectName { get; set; }
+        public Guid SemesterId { get; set; }
         public string SemesterCode { get; set; }
         public List<ExamPeriodDTO> ExamPeriods { get; set; }
         public bool IsQualified { get; set; }

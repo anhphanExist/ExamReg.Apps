@@ -108,7 +108,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<List<ExamPeriod>> List(ExamPeriodFilter filter)
         {
-            if (filter == null) return new List<ExamPeriod>();
+            if (filter == null)
+                return new List<ExamPeriod>();
             IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
@@ -145,6 +146,7 @@ namespace ExamReg.Apps.Repositories
                 return query.Where(q => 1 == 0);
             if (filter.StudentNumber != null)
                 query = query.Where(q => q.ExamRoomExamPeriods.Select(e => e.ExamRegisters.Select(r => r.Student.StudentNumber)), filter.StudentNumber);
+                // có thể dùng join vào với nhau để đạt performance cao hơn
             if (filter.ExamDate != null)
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
             if (filter.SubjectName != null)

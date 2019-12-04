@@ -54,10 +54,14 @@ namespace ExamReg.Apps.Controllers.exam_register
             return res.Select(r => new TermDTO
             {
                 Id = r.Id,
+                SemesterId = r.SemesterId,
                 SubjectName = r.SubjectName,
                 SemesterCode = r.SemesterCode,
                 ExamPeriods = r.ExamPeriods.Select(e => new ExamPeriodDTO
                 {
+                    Id = e.Id,
+                    ExamProgramId = e.ExamProgramId,
+                    TermId = e.TermId,
                     SubjectName = e.SubjectName,
                     StartHour = e.StartHour,
                     FinishHour = e.FinishHour,
@@ -83,6 +87,7 @@ namespace ExamReg.Apps.Controllers.exam_register
             {
                 Id = r.Id,
                 TermId = r.TermId,
+                ExamProgramId = r.ExamProgramId,
                 SubjectName = r.SubjectName,
                 ExamDate = r.ExamDate,
                 StartHour = r.StartHour,

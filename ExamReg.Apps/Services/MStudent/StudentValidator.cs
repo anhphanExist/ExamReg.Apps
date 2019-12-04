@@ -30,7 +30,6 @@ namespace ExamReg.Apps.Services.MStudent
         }
         private IUOW UOW;
 
-
         public StudentValidator(IUOW UOW)
         {
             this.UOW = UOW;
@@ -170,6 +169,5 @@ namespace ExamReg.Apps.Services.MStudent
             IsValid &= ValidateNewPassword(student, newPassword);
             return IsValid;
         }
-        
     }
 }
