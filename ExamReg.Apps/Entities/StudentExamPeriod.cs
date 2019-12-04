@@ -20,9 +20,11 @@ namespace ExamReg.Apps.Entities
     }
     public class StudentExamPeriodFilter : FilterEntity
     {
+        public GuidFilter StudentId { get; set; }
         public IntFilter StudentNumber { get; set; }
         public StringFilter LastName { get; set; }
         public StringFilter GivenName { get; set; }
+        public GuidFilter ExamPeriodId { get; set; }
         public DateTimeFilter ExamDate { get; set; }
         public ShortFilter StartHour { get; set; }
         public ShortFilter FinishHour { get; set; }

@@ -14,9 +14,9 @@ namespace ExamReg.Apps.Services.MStudent
     {
         Task<int> Count(StudentFilter filter);
         Task<List<Student>> List(StudentFilter filter);
-        Task<Student> Get(Guid Id);
+        Task<Student> Get(Guid studentId);
         Task<Student> Create(Student student);
-        Task<Student> Update(Student student);
+        Task<Student> Update(Student student, string newPassword);
         Task<Student> Delete(Student student);
         Task<Student> ResetPassword(Student student);
         Task<List<Student>> ImportExcelStudent(byte[] file);
@@ -40,16 +40,11 @@ namespace ExamReg.Apps.Services.MStudent
         {
             return await UOW.StudentRepository.Count(filter);
         }
+       
         public async Task<Student> Get(Guid studentId)
         {
             if (studentId == Guid.Empty) return null;
-            Student student = await UOW.StudentRepository.Get(studentId);
-            return student;
-        }
-
-        public async Task<Student> Get(Guid Id)
-        {
-            return await UOW.StudentRepository.Get(Id);
+            return await UOW.StudentRepository.Get(studentId);
         }
 
         public async Task<Student> Create(Student student)
@@ -67,8 +62,8 @@ namespace ExamReg.Apps.Services.MStudent
                     var user = await UOW.UserRepository.Create(new User()
                     {
                         Id = Guid.NewGuid(),
-                        Username = student.Username,
-                        Password = student.Password,
+                        Username = student.StudentNumber.ToString(),
+                        Password = student.StudentNumber.ToString(),
                         StudentId = student.Id,
                         IsAdmin = false
                     });
@@ -87,7 +82,23 @@ namespace ExamReg.Apps.Services.MStudent
 
         public async Task<Student> Delete(Student student)
         {
-            throw new NotImplementedException();
+            if (!await StudentValidator.Delete(student))
+                return student;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    await UOW.StudentRepository.Delete(student);
+                    await UOW.Commit();
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    student.AddError(nameof(StudentService), nameof(Delete), CommonEnum.ErrorCode.SystemError);
+                }
+            }
+            return student;
         }
 
         public async Task<List<Student>> List(StudentFilter filter)
@@ -95,9 +106,32 @@ namespace ExamReg.Apps.Services.MStudent
             return await UOW.StudentRepository.List(filter);
         }
 
-        public async Task<Student> Update(Student student)
+        public async Task<Student> Update(Student student, string newPassword)
         {
-            throw new NotImplementedException();
+            if (!await StudentValidator.Update(student, newPassword))
+                return student;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    StudentFilter studentFilter = new StudentFilter
+                    {
+                        StudentNumber = new IntFilter { Equal = student.StudentNumber }
+                    };
+                    Student existingStudent = await UOW.StudentRepository.Get(studentFilter);
+                    existingStudent.Password = newPassword;
+                    await UOW.StudentRepository.Update(existingStudent);
+                    await UOW.Commit();
+                    return existingStudent;
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    student.AddError(nameof(StudentService), nameof(Update), CommonEnum.ErrorCode.SystemError);
+                    return student;
+                }
+            }
         }
 
         public async Task<Student> ResetPassword(Student student)
