@@ -6,6 +6,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
 {
     public class StudentDTO : DataDTO
     {
+        public Guid Id { get; set; }
         public int StudentNumber { get; set; }
         public string LastName { get; set; }
         public string GivenName { get; set; }

@@ -39,6 +39,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
             Student res = await StudentService.Get(CurrentContext.StudentId);
             return new StudentDTO
             {
+                Id = res.Id,
                 StudentNumber = res.StudentNumber,
                 LastName = res.LastName,
                 GivenName = res.GivenName,
@@ -50,15 +51,21 @@ namespace ExamReg.Apps.Controllers.exam_register_result
 
         // Lấy danh sách môn thi và phòng thi của sinh viên
         [Route(ExamRegisterResultRoute.ListExamRoomExamPeriod), HttpPost]
-        public async Task<List<ExamRoomExamPeriodDTO>> ListExamRoomExamPeriod([FromBody] ExamRoomExamPeriodFilterDTO examRoomExamPeriodRequestDTO)
+        public async Task<List<ExamRoomExamPeriodDTO>> ListExamRoomExamPeriod()
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
-                StudentNumber = new IntFilter { Equal = examRoomExamPeriodRequestDTO.StudentNumber }
+                StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
+                OrderBy = ExamOrder.SubjectName,
+                OrderType = OrderType.ASC
             };
             List<ExamRoomExamPeriod> res = await ExamRoomExamPeriodService.List(filter);
             return res.Select(r => new ExamRoomExamPeriodDTO
             {
+                ExamPeriodId = r.ExamPeriodId,
+                ExamRoomId = r.ExamRoomId,
+                TermId = r.TermId,
+                ExamProgramId = r.ExamProgramId,
                 ExamProgramName = r.ExamProgramName,
                 ExamDate = r.ExamDate,
                 StartHour = r.StartHour,
@@ -66,7 +73,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
                 ExamRoomNumber = r.ExamRoomNumber,
                 ExamRoomAmphitheaterName = r.ExamRoomAmphitheaterName,
                 ExamRoomComputerNumber = r.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = r.CurrentNumberOfStudentRegistered,
+                CurrentNumberOfStudentRegistered = r.Students.Count,
                 SubjectName = r.SubjectName,
                 Errors = r.Errors,
             }).ToList();
