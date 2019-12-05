@@ -17,6 +17,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         private const string Default = Base + "/exam-register-result";
         public const string GetStudentInfo = Default + "/get-student-info";
         public const string ListExamRoomExamPeriod = Default + "/list";
+        public const string PrintExamRegisterResult = Default + "/print";
     }
 
     [Authorize(Policy= "CanRegisterExam")]
@@ -77,6 +78,12 @@ namespace ExamReg.Apps.Controllers.exam_register_result
                 SubjectName = r.SubjectName,
                 Errors = r.Errors,
             }).ToList();
+        }
+
+        [Route(ExamRegisterResultRoute.PrintExamRegisterResult), HttpGet]
+        public async Task<FileResult> PrintExamRegisterResult()
+        {
+            throw new NotImplementedException();
         }
     }
 }
