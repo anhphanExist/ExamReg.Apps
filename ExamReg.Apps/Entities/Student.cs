@@ -23,10 +23,6 @@ namespace ExamReg.Apps.Entities
         public StringFilter LastName { get; set; }
         public StringFilter GivenName { get; set; }
         public DateTimeFilter Birthday { get; set; }
-        public GuidFilter ExamRoomId { get; set; }
-        public GuidFilter ExamPeriodId { get; set; }
-        public GuidFilter TermId { get; set; }
-        public GuidFilter ExamProgramId { get; set; }
         public StudentOrder OrderBy { get; set; }
         public StudentFilter() : base()
         {
