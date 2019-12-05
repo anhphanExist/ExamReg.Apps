@@ -33,6 +33,15 @@ namespace ExamReg.Apps.Entities
         public GuidFilter ExamProgramId { get; set; }
         public GuidFilter ExamPeriodId { get; set; }
         public GuidFilter ExamRoomId { get; set; }
+        public ExamOrder OrderBy { get; set; }
         public ExamRoomExamPeriodFilter() : base() { }
+    }
+
+    public enum ExamOrder
+    {
+        SubjectName,
+        ExamDate,
+        StartHour,
+        ExamProgramName
     }
 }

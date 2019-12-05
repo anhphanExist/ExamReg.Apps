@@ -102,7 +102,7 @@ namespace ExamReg.Apps.Repositories
 
             IQueryable<ExamRoomExamPeriodDAO> query = examRegContext.ExamRoomExamPeriod.AsNoTracking();
             query = DynamicFilter(query, filter);
-
+            query = DynamicOrder(query, filter);
             List<ExamRoomExamPeriod> list = await query.Select(s => new ExamRoomExamPeriod()
             {
                 ExamProgramId = s.ExamPeriod.ExamProgramId,
@@ -147,6 +147,57 @@ namespace ExamReg.Apps.Repositories
             if (filter.TermId != null)
                 query = query.Where(q => q.ExamPeriod.TermId, filter.TermId);
             return query;
+        }
+
+        private IQueryable<ExamRoomExamPeriodDAO> DynamicOrder(IQueryable<ExamRoomExamPeriodDAO> query, ExamRoomExamPeriodFilter filter)
+        {
+            switch (filter.OrderType)
+            {
+                case OrderType.ASC:
+                    switch (filter.OrderBy)
+                    {
+                        case ExamOrder.SubjectName:
+                            query = query.OrderBy(q => q.ExamPeriod.Term.SubjectName);
+                            break;
+                        case ExamOrder.ExamProgramName:
+                            query = query.OrderBy(q => q.ExamPeriod.ExamProgram.Name);
+                            break;
+                        case ExamOrder.ExamDate:
+                            query = query.OrderBy(q => q.ExamPeriod.ExamDate);
+                            break;
+                        case ExamOrder.StartHour:
+                            query = query.OrderBy(q => q.ExamPeriod.StartHour);
+                            break;
+                        default:
+                            query = query.OrderBy(q => q.CX);
+                            break;
+                    }
+                    break;
+                case OrderType.DESC:
+                    switch (filter.OrderBy)
+                    {
+                        case ExamOrder.SubjectName:
+                            query = query.OrderByDescending(q => q.ExamPeriod.Term.SubjectName);
+                            break;
+                        case ExamOrder.ExamProgramName:
+                            query = query.OrderByDescending(q => q.ExamPeriod.ExamProgram.Name);
+                            break;
+                        case ExamOrder.ExamDate:
+                            query = query.OrderByDescending(q => q.ExamPeriod.ExamDate);
+                            break;
+                        case ExamOrder.StartHour:
+                            query = query.OrderByDescending(q => q.ExamPeriod.StartHour);
+                            break;
+                        default:
+                            query = query.OrderByDescending(q => q.CX);
+                            break;
+                    }
+                    break;
+                default:
+                    query = query.OrderBy(q => q.CX);
+                    break;
+            }
+            return query.Skip(filter.Skip).Take(filter.Take);
         }
         
     }
