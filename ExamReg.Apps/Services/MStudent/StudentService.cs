@@ -25,7 +25,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<List<StudentTerm>> ImportExcelStudentTerm(byte[] file);
         Task<byte[]> GenerateStudentTermTemplate();
         Task<byte[]> ExportStudentTerm();
-        Task RegisterExam(Guid studentId, Guid examPeriodId);
+        Task RegisterExam(Guid studentId, Guid examPeriodId, Guid termId);
     }
     public class StudentService : IStudentService
     {

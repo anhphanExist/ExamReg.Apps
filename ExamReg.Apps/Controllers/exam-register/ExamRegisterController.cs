@@ -101,9 +101,9 @@ namespace ExamReg.Apps.Controllers.exam_register
         [Route(ExamRegisterRoute.RegisterExam), HttpPost]
         public async Task RegisterExam([FromBody] RegisterRequestDTO registerRequestDTO)
         {
-            Parallel.ForEach(registerRequestDTO.ExamPeriodIds, async examPeriodId =>
+            Parallel.ForEach(registerRequestDTO.ExamPeriods, async examPeriod =>
             {
-                await StudentService.RegisterExam(CurrentContext.StudentId, examPeriodId);
+                await StudentService.RegisterExam(CurrentContext.StudentId, examPeriod.Id, examPeriod.TermId);
             });
         }
     }
