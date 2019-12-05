@@ -34,6 +34,7 @@ namespace ExamReg.Apps.Controllers.exam_period
             List<ExamPeriodDTO> res = new List<ExamPeriodDTO>();
             examPeriods.ForEach(e => res.Add(new ExamPeriodDTO
             {
+                Id = e.Id,
                 ExamDate = e.ExamDate,
                 StartHour = e.StartHour,
                 FinishHour = e.FinishHour,
@@ -58,6 +59,7 @@ namespace ExamReg.Apps.Controllers.exam_period
             ExamPeriod res = await ExamPeriodService.Create(newExamPeriod);
             return new ExamPeriodDTO
             {
+                Id = res.Id,
                 ExamDate = res.ExamDate,
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
@@ -72,6 +74,7 @@ namespace ExamReg.Apps.Controllers.exam_period
         {
             ExamPeriod examPeriod = new ExamPeriod
             {
+                Id = examPeriodRequestDTO.Id,
                 ExamDate = examPeriodRequestDTO.ExamDate,
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
@@ -81,6 +84,7 @@ namespace ExamReg.Apps.Controllers.exam_period
             ExamPeriod res = await ExamPeriodService.Update(examPeriod);
             return new ExamPeriodDTO
             {
+                Id = res.Id,
                 ExamDate = res.ExamDate,
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
@@ -95,6 +99,7 @@ namespace ExamReg.Apps.Controllers.exam_period
         {
             ExamPeriod examPeriod = new ExamPeriod
             {
+                Id = examPeriodRequestDTO.Id,
                 ExamDate = examPeriodRequestDTO.ExamDate,
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,

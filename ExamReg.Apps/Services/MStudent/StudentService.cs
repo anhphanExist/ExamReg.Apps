@@ -43,7 +43,6 @@ namespace ExamReg.Apps.Services.MStudent
        
         public async Task<Student> Get(Guid studentId)
         {
-            if (studentId == Guid.Empty) return null;
             return await UOW.StudentRepository.Get(studentId);
         }
 

@@ -19,7 +19,6 @@ namespace ExamReg.Apps.Repositories
         Task<int> Count(StudentFilter filter);
         Task<List<Student>> List(StudentFilter filter);
         Task<bool> BulkMerge(List<Student> students);
-        Task<int> GetMaxStudentNumber();
     }
     public class StudentRepository : IStudentRepository
     {
@@ -149,12 +148,6 @@ namespace ExamReg.Apps.Repositories
             };
         }
 
-        public async Task<int> GetMaxStudentNumber()
-        {
-            int count = await examRegContext.Student.CountAsync();
-            return count;
-        }
-
         public async Task<List<Student>> List(StudentFilter filter)
         {
             if (filter == null)
@@ -201,14 +194,6 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.GivenName, filter.GivenName);
             if (filter.Birthday != null)
                 query = query.Where(q => q.Birthday, filter.Birthday);
-            if (filter.ExamProgramId != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.ExamProgramId), filter.ExamProgramId);
-            if (filter.ExamPeriodId != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.TermId), filter.ExamPeriodId);
-            if (filter.ExamRoomId != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.ExamRoomExamPeriods.Select(e => e.ExamRoomId)), filter.ExamRoomId);
-            if (filter.TermId != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.ExamPeriod.TermId), filter.TermId);
             return query;
         }
 
