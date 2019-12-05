@@ -15,6 +15,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
         Task<ExamRoomExamPeriod> Create(Guid examPeriodId);
         Task<ExamRoomExamPeriod> Delete(ExamRoomExamPeriod examRoomExamPeriod);
         Task<byte[]> ExportStudent(ExamRoomExamPeriodFilter filter);
+        Task<byte[]> PrintExamRegisterResult(ExamRoomExamPeriodFilter filter);
     }
     public class ExamRoomExamPeriodService : IExamRoomExamPeriodService
     {
@@ -99,6 +100,11 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                 // trả về dữ liệu dạng byte
                 return excel.GetAsByteArray();
             }
+        }
+
+        public Task<byte[]> PrintExamRegisterResult(ExamRoomExamPeriodFilter filter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

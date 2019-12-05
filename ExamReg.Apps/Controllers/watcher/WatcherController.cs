@@ -15,7 +15,7 @@ namespace ExamReg.Apps.Controllers.watcher
     {
         private const string Default = Base + "/watcher";
         public const string List = Default + "/list";
-        public const string ExportStudent = Default + "/export-student";
+        public const string ExportStudent = Default + "/export-student/{examPeriodId}/{examRoomId}";
     }
     [Authorize(Policy = "CanManage")]
     public class WatcherController : ApiController
@@ -54,16 +54,16 @@ namespace ExamReg.Apps.Controllers.watcher
         }
 
         // Xuất danh sách sinh viên thi trong 1 phòng thi của 1 ca thi của 1 môn thi
-        [Route(WatcherRoute.ExportStudent), HttpPost]
-        public async Task<FileResult> ExportStudent([FromBody] WatcherDTO watcherRequestDTO)
+        [Route(WatcherRoute.ExportStudent), HttpGet]
+        public async Task<FileResult> ExportStudent(Guid examPeriodId, Guid examRoomId)
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
-                ExamPeriodId = new GuidFilter { Equal = watcherRequestDTO.ExamPeriodId },
-                ExamRoomId = new GuidFilter { Equal = watcherRequestDTO.ExamRoomId }
+                ExamPeriodId = new GuidFilter { Equal = examPeriodId },
+                ExamRoomId = new GuidFilter { Equal = examRoomId }
             };
             byte[] data = await ExamRoomExamPeriodService.ExportStudent(filter);
-            return File(data, "application/octet-stream", "StudentRoomPeriod.xlsx");
+            return File(data, "application/octet-stream", "Exam" + examPeriodId.ToString() + "_" + examRoomId.ToString() + ".xlsx");
         }
     }
 }

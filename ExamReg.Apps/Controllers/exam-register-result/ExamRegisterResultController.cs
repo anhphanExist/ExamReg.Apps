@@ -83,6 +83,14 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         [Route(ExamRegisterResultRoute.PrintExamRegisterResult), HttpGet]
         public async Task<FileResult> PrintExamRegisterResult()
         {
+            ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
+            {
+                StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
+                OrderBy = ExamOrder.SubjectName,
+                OrderType = OrderType.ASC
+            };
+            byte[] data = await ExamRoomExamPeriodService.PrintExamRegisterResult(filter);
+            return File(data, "application/octet-stream", "ExamRegisterResult.docx");
             throw new NotImplementedException();
         }
     }
