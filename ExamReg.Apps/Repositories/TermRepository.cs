@@ -157,7 +157,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<List<Term>> List(TermFilter filter)
         {
-            if (filter == null) return new List<Term>();
+            if (filter == null)
+                return new List<Term>();
             IQueryable<TermDAO> query = examRegContext.Term.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
@@ -222,6 +223,8 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.StudentTerms.Select(s => s.Student.StudentNumber), filter.StudentNumber);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
+            if (filter.SemesterId != null)
+                query = query.Where(q => q.SemesterId, filter.SemesterId);
             if (filter.SemesterCode != null)
             {
                 string[] codeData = filter.SemesterCode.Equal.Split(".");
