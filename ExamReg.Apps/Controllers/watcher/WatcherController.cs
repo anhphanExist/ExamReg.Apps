@@ -15,6 +15,7 @@ namespace ExamReg.Apps.Controllers.watcher
     {
         private const string Default = Base + "/watcher";
         public const string List = Default + "/list";
+        public const string Create = Default + "/create";
         public const string ExportStudent = Default + "/export-student/{examPeriodId}/{examRoomId}";
     }
     [Authorize(Policy = "CanManage")]
@@ -25,6 +26,13 @@ namespace ExamReg.Apps.Controllers.watcher
             IExamRoomExamPeriodService ExamRoomExamPeriodService) : base(CurrentContext)
         {
             this.ExamRoomExamPeriodService = ExamRoomExamPeriodService;
+        }
+
+        // Tạo exam room exam period mới
+        [Route(WatcherRoute.Create), HttpPost]
+        public async Task<WatcherDTO> Create([FromBody] WatcherDTO watcherRequestDTO)
+        {
+            throw new NotImplementedException();
         }
 
         // Lấy danh sách tất cả thông tin của các ca thi ứng với phòng thi và môn thi

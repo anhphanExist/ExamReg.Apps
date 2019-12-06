@@ -12,11 +12,13 @@ namespace ExamReg.Apps.Entities
         public string Name { get; set; }
         public Guid SemesterId { get; set; }
         public string SemesterCode { get; set; }
+        public bool IsCurrent { get; set; }
     }
     public class ExamProgramFilter : FilterEntity
     {
         public StringFilter Name { get; set; }
         public StringFilter SemesterCode { get; set; }
+        public bool? IsCurrent { get; set; }
         public ExamProgramOrder OrderBy { get; set; }
         public ExamProgramFilter() : base()
         {
