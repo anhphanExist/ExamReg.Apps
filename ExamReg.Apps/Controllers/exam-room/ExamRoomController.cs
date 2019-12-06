@@ -30,7 +30,11 @@ namespace ExamReg.Apps.Controllers.exam_room
         [Route(ExamRoomRoute.List), HttpPost]
         public async Task<List<ExamRoomDTO>> List()
         {
-            List<ExamRoom> examRooms = await ExamRoomService.List(new ExamRoomFilter());
+            List<ExamRoom> examRooms = await ExamRoomService.List(new ExamRoomFilter
+            {
+                OrderBy = ExamRoomOrder.AmphitheaterName,
+                OrderType = OrderType.ASC
+            });
             List<ExamRoomDTO> res = new List<ExamRoomDTO>();
             examRooms.ForEach(r => res.Add(new ExamRoomDTO
             {
