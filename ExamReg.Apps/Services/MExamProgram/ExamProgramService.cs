@@ -14,6 +14,7 @@ namespace ExamReg.Apps.Services.MExamProgram
         Task<ExamProgram> Create(ExamProgram examProgram);
         Task<ExamProgram> Update(ExamProgram examProgram);
         Task<ExamProgram> Delete(ExamProgram examProgram);
+        Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram);
     }
     public class ExamProgramService : IExamProgramService
     {
@@ -38,6 +39,11 @@ namespace ExamReg.Apps.Services.MExamProgram
         }
 
         public Task<ExamProgram> Update(ExamProgram examProgram)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram)
         {
             throw new NotImplementedException();
         }
