@@ -75,7 +75,11 @@ namespace ExamReg.Apps.Controllers.semester
         {
             Semester semester = new Semester
             {
-                Id = semesterRequestDTO.Id
+                Id = semesterRequestDTO.Id,
+                Code = semesterRequestDTO.Code,
+                StartYear = semesterRequestDTO.StartYear,
+                EndYear = semesterRequestDTO.EndYear,
+                IsFirstHalf = semesterRequestDTO.IsFirstHalf
             };
             Semester res = await SemesterService.Delete(semester);
             return new SemesterDTO

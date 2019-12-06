@@ -89,7 +89,8 @@ namespace ExamReg.Apps.Repositories
                 Id = examRoomDAO.Id,
                 AmphitheaterName = examRoomDAO.AmphitheaterName,
                 ComputerNumber = examRoomDAO.ComputerNumber,
-                RoomNumber = examRoomDAO.RoomNumber
+                RoomNumber = examRoomDAO.RoomNumber,
+                Code = string.Format(examRoomDAO.AmphitheaterName + "_" + examRoomDAO.RoomNumber)
             };
         }
 
@@ -104,7 +105,8 @@ namespace ExamReg.Apps.Repositories
                 Id = examRoomDAO.Id,
                 AmphitheaterName = examRoomDAO.AmphitheaterName,
                 ComputerNumber = examRoomDAO.ComputerNumber,
-                RoomNumber = examRoomDAO.RoomNumber
+                RoomNumber = examRoomDAO.RoomNumber,
+                Code = string.Format(examRoomDAO.AmphitheaterName + "_" + examRoomDAO.RoomNumber)
             };
         }
 
@@ -120,7 +122,8 @@ namespace ExamReg.Apps.Repositories
                 Id = e.Id,
                 RoomNumber = e.RoomNumber,
                 ComputerNumber = e.ComputerNumber,
-                AmphitheaterName = e.AmphitheaterName
+                AmphitheaterName = e.AmphitheaterName,
+                Code = string.Format(e.AmphitheaterName + "_" + e.RoomNumber)
             }).ToListAsync();
             return list;
         }

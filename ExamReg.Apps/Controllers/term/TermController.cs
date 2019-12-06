@@ -65,7 +65,6 @@ namespace ExamReg.Apps.Controllers.term
             Term newTerm = new Term
             {
                 SubjectName = termRequestDTO.SubjectName,
-                SemesterId = termRequestDTO.SemesterId,
                 SemesterCode = termRequestDTO.SemesterCode
             };
             Term res = await TermService.Create(newTerm);
@@ -86,8 +85,7 @@ namespace ExamReg.Apps.Controllers.term
             {
                 Id = termRequestDTO.Id,
                 SubjectName = termRequestDTO.SubjectName,
-                SemesterCode = termRequestDTO.SemesterCode,
-                SemesterId = termRequestDTO.SemesterId
+                SemesterCode = termRequestDTO.SemesterCode
             };
             Term res = await TermService.Update(term);
             return new TermDTO

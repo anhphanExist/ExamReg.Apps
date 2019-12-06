@@ -14,6 +14,7 @@ namespace ExamReg.Apps.Services.MExamRoom
         Task<ExamRoom> Create(ExamRoom examRoom);
         Task<ExamRoom> Update(ExamRoom examRoom);
         Task<ExamRoom> Delete(ExamRoom examRoom);
+        Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter examRoomFilter);
     }
     public class ExamRoomService : IExamRoomService
     {
@@ -39,6 +40,12 @@ namespace ExamReg.Apps.Services.MExamRoom
 
         public Task<ExamRoom> Update(ExamRoom examRoom)
         {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter examRoomFilter)
+        {
+            // Lấy tất cả các phòng thi trống ứng với StartHour, FinishHour, ExamDate
             throw new NotImplementedException();
         }
     }

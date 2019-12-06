@@ -61,7 +61,6 @@ namespace ExamReg.Apps.Controllers.exam_program
             ExamProgram newExamProgram = new ExamProgram
             {
                 Name = examProgramRequestDTO.Name,
-                SemesterId = examProgramRequestDTO.SemesterId,
                 SemesterCode = examProgramRequestDTO.SemesterCode
             };
             ExamProgram res = await ExamProgramService.Create(newExamProgram);
@@ -83,7 +82,6 @@ namespace ExamReg.Apps.Controllers.exam_program
             {
                 Id = examProgramRequestDTO.Id,
                 Name = examProgramRequestDTO.Name,
-                SemesterId = examProgramRequestDTO.SemesterId,
                 SemesterCode = examProgramRequestDTO.SemesterCode
             };
             ExamProgram res = await ExamProgramService.Update(examProgram);
@@ -104,7 +102,9 @@ namespace ExamReg.Apps.Controllers.exam_program
             ExamProgram examProgram = new ExamProgram
             {
                 Id = examProgramRequestDTO.Id,
-                Name = examProgramRequestDTO.Name
+                Name = examProgramRequestDTO.Name,
+                SemesterCode = examProgramRequestDTO.SemesterCode,
+                IsCurrent = examProgramRequestDTO.IsCurrent
             };
             ExamProgram res = await ExamProgramService.Delete(examProgram);
             return new ExamProgramDTO

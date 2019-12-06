@@ -39,6 +39,7 @@ namespace ExamReg.Apps.Controllers.exam_room
             examRooms.ForEach(r => res.Add(new ExamRoomDTO
             {
                 Id = r.Id,
+                Code = r.Code,
                 RoomNumber = r.RoomNumber,
                 AmphitheaterName = r.AmphitheaterName,
                 ComputerNumber = r.ComputerNumber,
@@ -60,6 +61,7 @@ namespace ExamReg.Apps.Controllers.exam_room
             return new ExamRoomDTO
             {
                 Id = res.Id,
+                Code = res.Code,
                 RoomNumber = res.RoomNumber,
                 AmphitheaterName = res.AmphitheaterName,
                 ComputerNumber = res.ComputerNumber,
@@ -81,6 +83,7 @@ namespace ExamReg.Apps.Controllers.exam_room
             return new ExamRoomDTO
             {
                 Id = examRoomRequestDTO.Id,
+                Code = res.Code,
                 RoomNumber = res.RoomNumber,
                 AmphitheaterName = res.AmphitheaterName,
                 ComputerNumber = res.ComputerNumber,
@@ -102,6 +105,7 @@ namespace ExamReg.Apps.Controllers.exam_room
             return new ExamRoomDTO
             {
                 Id = res.Id,
+                Code = res.Code,
                 RoomNumber = res.RoomNumber,
                 AmphitheaterName = res.AmphitheaterName,
                 ComputerNumber = res.ComputerNumber,
