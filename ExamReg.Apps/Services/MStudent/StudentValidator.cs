@@ -11,7 +11,7 @@ namespace ExamReg.Apps.Services.MStudent
     public interface IStudentValidator : IServiceScoped
     {
         Task<bool> Create(Student student);
-        Task<bool> Update(Student student, string newPassword);
+        Task<bool> Update(Student student);
         Task<bool> Delete(Student student);
         Task<bool> Import(List<Student> students);
     }
@@ -114,7 +114,7 @@ namespace ExamReg.Apps.Services.MStudent
         return true;
         }
         
-        private bool ValidateNewPassword(Student student, string newPassword)
+        /*private bool ValidateNewPassword(Student student, string newPassword)
         {
             if (newPassword == null)
             {
@@ -132,7 +132,7 @@ namespace ExamReg.Apps.Services.MStudent
                 return false;
             }
             return true;
-        }
+        }*/
         public async Task<bool> Create(Student student)
         {
             bool IsValid = true;
@@ -158,15 +158,14 @@ namespace ExamReg.Apps.Services.MStudent
             return IsValid;
         }
 
-        public async Task<bool> Update(Student student, string newPassword)
+        public async Task<bool> Update(Student student)
         {
             bool IsValid = true;
             IsValid &= await ValidateId(student);
 
             if (!IsValid) return false;
 
-            //IsValid &= ValidateStringLength(student);
-            IsValid &= ValidateNewPassword(student, newPassword);
+            IsValid &= ValidateStringLength(student);
             return IsValid;
         }
     }

@@ -4,6 +4,7 @@ using ExamReg.Apps.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExamReg.Apps.Services.MExamProgram
@@ -87,7 +88,7 @@ namespace ExamReg.Apps.Services.MExamProgram
                 ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeEmpty);
                 return false;
             }
-            else if (ExamProgram.SemesterCode != null && ())
+            else if (ExamProgram.SemesterCode != null && Regex.IsMatch(ExamProgram.SemesterCode, @"^\d{4}_\d{4}_\d") == false)
             {
                 ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeInValid);
                 return false;
