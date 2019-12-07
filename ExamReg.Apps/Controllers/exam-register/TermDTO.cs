@@ -13,4 +13,10 @@ namespace ExamReg.Apps.Controllers.exam_register
         public List<ExamPeriodDTO> ExamPeriods { get; set; }
         public bool IsQualified { get; set; }
     }
+
+    public class TermFilterDTO : FilterDTO
+    {
+        public Guid SemesterId { get; set; }
+        public string SemesterCode { get; set; }
+    }
 }
