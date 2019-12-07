@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExamReg.Apps.Common;
 using ExamReg.Apps.Entities;
+using ExamReg.Apps.Services.MExamProgram;
 using ExamReg.Apps.Services.MExamRoomExamPeriod;
 using ExamReg.Apps.Services.MStudent;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
     {
         private const string Default = Base + "/exam-register-result";
         public const string GetStudentInfo = Default + "/get-student-info";
+        public const string GetCurrentExamProgram = Default + "/get-current-exam-program";
         public const string ListExamRoomExamPeriod = Default + "/list";
         public const string PrintExamRegisterResult = Default + "/print";
     }
@@ -25,12 +27,16 @@ namespace ExamReg.Apps.Controllers.exam_register_result
     {
         private IExamRoomExamPeriodService ExamRoomExamPeriodService;
         private IStudentService StudentService;
+        private IExamProgramService ExamProgramService;
         public ExamRegisterResultController(ICurrentContext CurrentContext,
             IExamRoomExamPeriodService ExamRoomExamPeriodService,
-            IStudentService StudentService) : base(CurrentContext)
+            IStudentService StudentService,
+            IExamProgramService ExamProgramService
+            ) : base(CurrentContext)
         {
             this.ExamRoomExamPeriodService = ExamRoomExamPeriodService;
             this.StudentService = StudentService;
+            this.ExamProgramService = ExamProgramService;
         }
 
         // Lấy thông tin của sinh viên
@@ -46,6 +52,21 @@ namespace ExamReg.Apps.Controllers.exam_register_result
                 GivenName = res.GivenName,
                 Birthday = res.Birthday,
                 Email = res.Email,
+                Errors = res.Errors
+            };
+        }
+
+        [Route(ExamRegisterResultRoute.GetCurrentExamProgram), HttpPost]
+        public async Task<ExamProgramDTO> GetCurrentExamProgram()
+        {
+            ExamProgram res = await ExamProgramService.GetCurrentExamProgram();
+            return new ExamProgramDTO
+            {
+                Id = res.Id,
+                Name = res.Name,
+                SemesterId = res.SemesterId,
+                SemesterCode = res.SemesterCode,
+                IsCurrent = res.IsCurrent,
                 Errors = res.Errors
             };
         }
