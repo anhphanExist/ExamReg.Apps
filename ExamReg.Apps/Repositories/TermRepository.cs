@@ -15,7 +15,7 @@ namespace ExamReg.Apps.Repositories
         Task<Term> Get(TermFilter filter);
         Task<bool> Create(Term term);
         Task<bool> Update(Term term);
-        Task<bool> Delete(Term term);
+        Task<bool> Delete(Guid Id);
         Task<int> Count(TermFilter filter);
         Task<List<Term>> List(TermFilter filter);
         Task<bool> BulkInsert(List<Term> terms);
@@ -62,18 +62,18 @@ namespace ExamReg.Apps.Repositories
             return true;
         }
 
-        public async Task<bool> Delete(Term term)
+        public async Task<bool> Delete(Guid Id)
         {
             await examRegContext.StudentTerm
-            .Where(t => t.TermId.Equals(term.Id))
+            .Where(t => t.TermId.Equals(Id))
             .DeleteFromQueryAsync();
 
             await examRegContext.ExamPeriod
-            .Where(t => t.TermId.Equals(term.Id))
+            .Where(t => t.TermId.Equals(Id))
             .DeleteFromQueryAsync();
 
             TermDAO termDAO = examRegContext.Term
-                .Where(s => s.Id.Equals(term.Id))
+                .Where(s => s.Id.Equals(Id))
                 .FirstOrDefault();
 
             examRegContext.Term.Remove(termDAO);
@@ -120,6 +120,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Term> Get(TermFilter filter)
         {
+            if (filter == null)
+                return null;
             IQueryable<TermDAO> query = examRegContext.Term.AsNoTracking();
             TermDAO termDAO = DynamicFilter(query, filter).FirstOrDefault();
             if (termDAO == null)
@@ -155,7 +157,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<List<Term>> List(TermFilter filter)
         {
-            if (filter == null) return new List<Term>();
+            if (filter == null)
+                return new List<Term>();
             IQueryable<TermDAO> query = examRegContext.Term.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
@@ -220,6 +223,8 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.StudentTerms.Select(s => s.Student.StudentNumber), filter.StudentNumber);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
+            if (filter.SemesterId != null)
+                query = query.Where(q => q.SemesterId, filter.SemesterId);
             if (filter.SemesterCode != null)
             {
                 string[] codeData = filter.SemesterCode.Equal.Split(".");

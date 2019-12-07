@@ -30,10 +30,16 @@ namespace ExamReg.Apps.Controllers.exam_room
         [Route(ExamRoomRoute.List), HttpPost]
         public async Task<List<ExamRoomDTO>> List()
         {
-            List<ExamRoom> examRooms = await ExamRoomService.List(new ExamRoomFilter());
+            List<ExamRoom> examRooms = await ExamRoomService.List(new ExamRoomFilter
+            {
+                OrderBy = ExamRoomOrder.AmphitheaterName,
+                OrderType = OrderType.ASC
+            });
             List<ExamRoomDTO> res = new List<ExamRoomDTO>();
             examRooms.ForEach(r => res.Add(new ExamRoomDTO
             {
+                Id = r.Id,
+                Code = r.Code,
                 RoomNumber = r.RoomNumber,
                 AmphitheaterName = r.AmphitheaterName,
                 ComputerNumber = r.ComputerNumber,
@@ -54,6 +60,8 @@ namespace ExamReg.Apps.Controllers.exam_room
             ExamRoom res = await ExamRoomService.Create(newExamRoom);
             return new ExamRoomDTO
             {
+                Id = res.Id,
+                Code = res.Code,
                 RoomNumber = res.RoomNumber,
                 AmphitheaterName = res.AmphitheaterName,
                 ComputerNumber = res.ComputerNumber,
@@ -66,6 +74,7 @@ namespace ExamReg.Apps.Controllers.exam_room
         {
             ExamRoom examRoom = new ExamRoom
             {
+                Id = examRoomRequestDTO.Id,
                 RoomNumber = examRoomRequestDTO.RoomNumber,
                 AmphitheaterName = examRoomRequestDTO.AmphitheaterName,
                 ComputerNumber = examRoomRequestDTO.ComputerNumber
@@ -73,6 +82,8 @@ namespace ExamReg.Apps.Controllers.exam_room
             ExamRoom res = await ExamRoomService.Update(examRoom);
             return new ExamRoomDTO
             {
+                Id = examRoomRequestDTO.Id,
+                Code = res.Code,
                 RoomNumber = res.RoomNumber,
                 AmphitheaterName = res.AmphitheaterName,
                 ComputerNumber = res.ComputerNumber,
@@ -85,6 +96,7 @@ namespace ExamReg.Apps.Controllers.exam_room
         {
             ExamRoom examRoom = new ExamRoom
             {
+                Id = examRoomRequestDTO.Id,
                 RoomNumber = examRoomRequestDTO.RoomNumber,
                 AmphitheaterName = examRoomRequestDTO.AmphitheaterName,
                 ComputerNumber = examRoomRequestDTO.ComputerNumber
@@ -92,6 +104,8 @@ namespace ExamReg.Apps.Controllers.exam_room
             ExamRoom res = await ExamRoomService.Delete(examRoom);
             return new ExamRoomDTO
             {
+                Id = res.Id,
+                Code = res.Code,
                 RoomNumber = res.RoomNumber,
                 AmphitheaterName = res.AmphitheaterName,
                 ComputerNumber = res.ComputerNumber,

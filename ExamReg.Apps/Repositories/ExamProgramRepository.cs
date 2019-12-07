@@ -37,24 +37,14 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Create(ExamProgram examProgram)
         {
-            ExamProgramDAO examProgramDAO = examRegContext.ExamProgram.Where(e => e.Id.Equals(examProgram.Id)).FirstOrDefault();
-            if(examProgramDAO == null)
+            ExamProgramDAO examProgramDAO = new ExamProgramDAO()
             {
-                examProgramDAO = new ExamProgramDAO()
-                {
-                    Id = examProgram.Id,
-                    Name = examProgram.Name,
-                    SemesterId = examProgram.SemesterId
-                };
-                await examRegContext.ExamProgram.AddAsync(examProgramDAO);
-            }
-            else
-            {
-                examProgramDAO.Id = examProgram.Id;
-                examProgramDAO.Name = examProgram.Name;
-                examProgramDAO.SemesterId = examProgram.SemesterId;
+                Id = examProgram.Id,
+                Name = examProgram.Name,
+                SemesterId = examProgram.SemesterId,
+                IsCurrent = false
             };
-
+            await examRegContext.ExamProgram.AddAsync(examProgramDAO);
             await examRegContext.SaveChangesAsync();
             return true;
         }
@@ -85,7 +75,8 @@ namespace ExamReg.Apps.Repositories
                 Id = examProgramDAO.Id,
                 Name = examProgramDAO.Name,
                 SemesterId = examProgramDAO.SemesterId,
-                SemesterCode = string.Format(examProgramDAO.Semester.StartYear + "_" + examProgramDAO.Semester.EndYear + "_" + (examProgramDAO.Semester.IsFirstHalf ? 1 : 2))
+                SemesterCode = string.Format(examProgramDAO.Semester.StartYear + "_" + examProgramDAO.Semester.EndYear + "_" + (examProgramDAO.Semester.IsFirstHalf ? 1 : 2)),
+                IsCurrent = examProgramDAO.IsCurrent
             };
         }
 
@@ -99,7 +90,8 @@ namespace ExamReg.Apps.Repositories
                 Id = examProgramDAO.Id,
                 Name = examProgramDAO.Name,
                 SemesterId = examProgramDAO.SemesterId,
-                SemesterCode = string.Format(examProgramDAO.Semester.StartYear + "_" + examProgramDAO.Semester.EndYear + "_" + (examProgramDAO.Semester.IsFirstHalf ? 1 : 2))
+                SemesterCode = string.Format(examProgramDAO.Semester.StartYear + "_" + examProgramDAO.Semester.EndYear + "_" + (examProgramDAO.Semester.IsFirstHalf ? 1 : 2)),
+                IsCurrent = examProgramDAO.IsCurrent
             };
         }
 
@@ -115,7 +107,8 @@ namespace ExamReg.Apps.Repositories
                 Id = e.Id,
                 Name = e.Name,
                 SemesterId = e.SemesterId,
-                SemesterCode = string.Format(e.Semester.StartYear + "_" + e.Semester.EndYear + "_" + (e.Semester.IsFirstHalf ? 1 : 2))
+                SemesterCode = string.Format(e.Semester.StartYear + "_" + e.Semester.EndYear + "_" + (e.Semester.IsFirstHalf ? 1 : 2)),
+                IsCurrent = e.IsCurrent
             }).ToListAsync();
             return list;
         }
@@ -125,7 +118,8 @@ namespace ExamReg.Apps.Repositories
             await examRegContext.ExamProgram.Where(t => t.Id.Equals(examProgram.Id)).UpdateFromQueryAsync(t => new ExamProgramDAO
             {
                 Name = examProgram.Name,
-                SemesterId = examProgram.SemesterId
+                SemesterId = examProgram.SemesterId,
+                IsCurrent = examProgram.IsCurrent
             });
 
             return true;
@@ -143,6 +137,8 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.Semester.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
                 query = query.Where(q => q.Semester.IsFirstHalf == (codeData[2] == "1" ? true : false));
             }
+            if (filter.IsCurrent != null)
+                query = query.Where(q => q.IsCurrent == filter.IsCurrent);
             return query;
         }
 

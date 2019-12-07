@@ -16,12 +16,14 @@ namespace ExamReg.Apps.Entities
         public string SubjectName { get; set; }
         public Guid ExamProgramId { get; set; }
         public string ExamProgramName { get; set; }
+        public List<ExamRoom> ExamRooms { get; set; }
     }
     public class ExamPeriodFilter : FilterEntity
     {
         public IntFilter StudentNumber { get; set; }
         public DateTimeFilter ExamDate { get; set; }
         public StringFilter SubjectName { get; set; }
+        public GuidFilter ExamProgramId { get; set; }
         public StringFilter ExamProgramName { get; set; }
         public ExamPeriodOrder OrderBy { get; set; }
         public ExamPeriodFilter() : base()

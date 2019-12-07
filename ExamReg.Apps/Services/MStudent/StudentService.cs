@@ -25,7 +25,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<List<StudentTerm>> ImportExcelStudentTerm(byte[] file);
         Task<byte[]> GenerateStudentTermTemplate();
         Task<byte[]> ExportStudentTerm();
-        Task RegisterExam(Guid studentId, Guid examPeriodId);
+        Task RegisterExam(Guid studentId, Guid examPeriodId, Guid termId);
     }
     public class StudentService : IStudentService
     {
@@ -43,7 +43,6 @@ namespace ExamReg.Apps.Services.MStudent
        
         public async Task<Student> Get(Guid studentId)
         {
-            if (studentId == Guid.Empty) return null;
             return await UOW.StudentRepository.Get(studentId);
         }
 
@@ -556,17 +555,48 @@ namespace ExamReg.Apps.Services.MStudent
             }
         }
 
-        public async Task RegisterExam(Guid studentId, Guid examPeriodId)
+        public async Task RegisterExam(Guid studentId, Guid examPeriodId, Guid termId)
         {
-            // xoá cũ thêm mới
-            StudentExamPeriod studentExamPeriod = await UOW.StudentExamPeriodRepository.Get(new StudentExamPeriodFilter
+            // nếu sinh viên đã đăng ký thi 1 ca thi của môn đó trước đó thì phải xoá đi đăng ký lại nếu đăng ký ca thi mới của môn đó
+            // đếm số lượng exam register để biết sinh viên đã đăng ký ca thi nào đó của môn học đó chưa
+            int countExistedExamRegisterOfTerm = await UOW.ExamRegisterRepository.Count(new ExamRegisterFilter
             {
                 StudentId = new GuidFilter { Equal = studentId },
+                TermId = new GuidFilter { Equal = termId }
+            });
+            // nếu đã từng đăng ký thì xoá đi tạo lại
+            if (countExistedExamRegisterOfTerm > 0)
+            {
+                await UOW.ExamRegisterRepository.Delete(studentId, examPeriodId);
+            }
+            
+            // nếu chưa từng đăng ký thì tạo mới
+            // lấy số lượng sinh viên ở trong các phòng thi hiện tại và insert sinh viên vào phòng thi có ít sinh viên nhất
+            // nếu số lượng sinh viên trong tất cả các phòng đã đạt max thì báo lỗi
+
+            // Lấy examRoomExamPeriod có số student trong đó ít nhất
+            List<ExamRoomExamPeriod> exams = await UOW.ExamRoomExamPeriodRepository.List(new ExamRoomExamPeriodFilter
+            {
                 ExamPeriodId = new GuidFilter { Equal = examPeriodId }
             });
-            if (studentExamPeriod != null)
-                await UOW.StudentExamPeriodRepository.Delete(studentId, examPeriodId);
-            await UOW.StudentExamPeriodRepository.Create(studentId, examPeriodId);
+            // Loại exam có số lượng student đạt max, nếu list exam trống thì báo lỗi
+            exams.RemoveAll(e => e.Students.Count == e.ExamRoomComputerNumber);
+            if (exams.Count == 0)
+                throw new MessageException("Đăng ký thất bại! Có ca thi đã đủ sinh viên đăng ký thi, vui lòng đăng kí ca thi khác");
+
+            // Tiếp tục quy trình nếu list exam còn chỗ trống
+            ExamRoomExamPeriod examToRegisterIn = exams
+                .Where(exam => exam.Students.Count == exams.Select(e => e.Students.Count).Min())
+                .FirstOrDefault();
+            // Tạo examRegister mới
+            ExamRegister examRegister = new ExamRegister
+            {
+                StudentId = studentId,
+                ExamPeriodId = examPeriodId,
+                ExamRoomId = examToRegisterIn.ExamRoomId
+            };
+            await UOW.ExamRegisterRepository.Create(examRegister);
+            
         }
     }
 }

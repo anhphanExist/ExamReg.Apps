@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ExamReg.Apps.Controllers.exam_register_result
+namespace ExamReg.Apps.Controllers.student_profile
 {
     public class StudentDTO : DataDTO
     {

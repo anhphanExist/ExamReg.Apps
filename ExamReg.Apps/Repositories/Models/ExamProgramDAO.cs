@@ -14,6 +14,7 @@ namespace ExamReg.Apps.Repositories.Models
         public string Name { get; set; }
         public Guid SemesterId { get; set; }
         public long CX { get; set; }
+        public bool IsCurrent { get; set; }
 
         public virtual SemesterDAO Semester { get; set; }
         public virtual ICollection<ExamPeriodDAO> ExamPeriods { get; set; }

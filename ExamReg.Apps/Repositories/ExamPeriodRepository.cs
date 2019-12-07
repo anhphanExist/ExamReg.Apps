@@ -53,10 +53,6 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(ExamPeriod examPeriod)
         {
-            await examRegContext.StudentExamPeriod
-            .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
-            .DeleteFromQueryAsync();
-
             await examRegContext.ExamRoomExamPeriod
             .Where(s => s.ExamPeriodId.Equals(examPeriod.Id))
             .DeleteFromQueryAsync();
@@ -112,7 +108,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<List<ExamPeriod>> List(ExamPeriodFilter filter)
         {
-            if (filter == null) return new List<ExamPeriod>();
+            if (filter == null)
+                return new List<ExamPeriod>();
             IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod.AsNoTracking();
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
@@ -148,11 +145,14 @@ namespace ExamReg.Apps.Repositories
             if (filter == null)
                 return query.Where(q => 1 == 0);
             if (filter.StudentNumber != null)
-                query = query.Where(q => q.StudentExamPeriods.Select(s => s.Student.StudentNumber), filter.StudentNumber);
+                query = query.Where(q => q.ExamRoomExamPeriods.Select(e => e.ExamRegisters.Select(r => r.Student.StudentNumber)), filter.StudentNumber);
+                // có thể dùng join vào với nhau để đạt performance cao hơn
             if (filter.ExamDate != null)
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.Term.SubjectName, filter.SubjectName);
+            if (filter.ExamProgramId != null)
+                query = query.Where(q => q.ExamProgramId, filter.ExamProgramId);
             if (filter.ExamProgramName != null)
                 query = query.Where(q => q.ExamProgram.Name, filter.ExamProgramName);
             return query;

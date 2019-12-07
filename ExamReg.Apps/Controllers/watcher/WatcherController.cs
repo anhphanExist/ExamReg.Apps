@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExamReg.Apps.Common;
 using ExamReg.Apps.Entities;
+using ExamReg.Apps.Services.MExamProgram;
 using ExamReg.Apps.Services.MExamRoomExamPeriod;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,14 +16,18 @@ namespace ExamReg.Apps.Controllers.watcher
     {
         private const string Default = Base + "/watcher";
         public const string List = Default + "/list";
-        public const string ExportStudent = Default + "/export-student";
+        public const string GetCurrentExamProgram = Default + "/get-current-exam-program";
+        public const string ExportStudent = Default + "/export-student/{examPeriodId}/{examRoomId}";
     }
     [Authorize(Policy = "CanManage")]
     public class WatcherController : ApiController
     {
         private IExamRoomExamPeriodService ExamRoomExamPeriodService;
+        private IExamProgramService ExamProgramService;
         public WatcherController(ICurrentContext CurrentContext,
-            IExamRoomExamPeriodService ExamRoomExamPeriodService) : base(CurrentContext)
+            IExamRoomExamPeriodService ExamRoomExamPeriodService,
+            IExamProgramService ExamProgramService
+            ) : base(CurrentContext)
         {
             this.ExamRoomExamPeriodService = ExamRoomExamPeriodService;
         }
@@ -35,11 +40,15 @@ namespace ExamReg.Apps.Controllers.watcher
             List<WatcherDTO> res = new List<WatcherDTO>();
             examRoomExamPeriods.ForEach(r => res.Add(new WatcherDTO
             {
+                ExamPeriodId = r.ExamPeriodId,
+                ExamRoomId = r.ExamRoomId,
+                ExamProgramId = r.ExamProgramId,
+                TermId = r.TermId,
                 ExamProgramName = r.ExamProgramName,
                 ExamRoomNumber = r.ExamRoomNumber,
                 ExamRoomAmphitheaterName = r.ExamRoomAmphitheaterName,
                 ExamRoomComputerNumber = r.ExamRoomComputerNumber,
-                CurrentNumberOfStudentRegistered = r.CurrentNumberOfStudentRegistered,
+                CurrentNumberOfStudentRegistered = r.Students.Count,
                 ExamDate = r.ExamDate,
                 StartHour = r.StartHour,
                 FinishHour = r.FinishHour,
@@ -49,22 +58,32 @@ namespace ExamReg.Apps.Controllers.watcher
             return res;
         }
 
+        [Route(WatcherRoute.GetCurrentExamProgram), HttpPost]
+        public async Task<ExamProgramDTO> GetCurrentExamProgram()
+        {
+            ExamProgram res = await ExamProgramService.GetCurrentExamProgram();
+            return new ExamProgramDTO
+            {
+                Id = res.Id,
+                Name = res.Name,
+                SemesterId = res.SemesterId,
+                SemesterCode = res.SemesterCode,
+                IsCurrent = res.IsCurrent,
+                Errors = res.Errors
+            };
+        }
+
         // Xuất danh sách sinh viên thi trong 1 phòng thi của 1 ca thi của 1 môn thi
-        [Route(WatcherRoute.ExportStudent), HttpPost]
-        public async Task<FileResult> ExportStudent([FromBody] WatcherDTO watcherRequestDTO)
+        [Route(WatcherRoute.ExportStudent), HttpGet]
+        public async Task<FileResult> ExportStudent(Guid examPeriodId, Guid examRoomId)
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
-                ExamRoomNumber = new ShortFilter { Equal = watcherRequestDTO.ExamRoomNumber },
-                ExamRoomAmphitheaterName = new StringFilter { Equal = watcherRequestDTO.ExamRoomAmphitheaterName },
-                ExamProgramName = new StringFilter { Equal = watcherRequestDTO.ExamProgramName },
-                SubjectName = new StringFilter { Equal = watcherRequestDTO.SubjectName },
-                ExamDate = new DateTimeFilter { Equal = watcherRequestDTO.ExamDate },
-                StartHour = new ShortFilter { Equal = watcherRequestDTO.StartHour },
-                FinishHour = new ShortFilter { Equal = watcherRequestDTO.FinishHour }
+                ExamPeriodId = new GuidFilter { Equal = examPeriodId },
+                ExamRoomId = new GuidFilter { Equal = examRoomId }
             };
             byte[] data = await ExamRoomExamPeriodService.ExportStudent(filter);
-            return File(data, "application/octet-stream", "StudentRoomPeriod.xlsx");
+            return File(data, "application/octet-stream", "Exam" + examPeriodId.ToString() + "_" + examRoomId.ToString() + ".xlsx");
         }
     }
 }

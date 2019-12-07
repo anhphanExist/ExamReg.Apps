@@ -44,6 +44,7 @@ namespace ExamReg.Apps.Controllers.student
             List<StudentDTO> res = new List<StudentDTO>();
             students.ForEach(s => res.Add(new StudentDTO
             {
+                Id = s.Id,
                 StudentNumber = s.StudentNumber,
                 Username = s.Username,
                 LastName = s.LastName,
@@ -70,6 +71,7 @@ namespace ExamReg.Apps.Controllers.student
             Student res = await StudentService.Create(newStudent);
             return new StudentDTO
             {
+                Id = res.Id,
                 StudentNumber = res.StudentNumber,
                 Username = res.Username,
                 LastName = res.LastName,
@@ -90,17 +92,18 @@ namespace ExamReg.Apps.Controllers.student
                 Birthday = studentRequestDTO.Birthday,
                 Email = studentRequestDTO.Email
             };
-            Student res = await StudentService.Update(student);
-            return new StudentDTO
-            {
-                StudentNumber = res.StudentNumber,
-                Username = res.Username,
-                LastName = res.LastName,
-                GivenName = res.GivenName,
-                Birthday = res.Birthday,
-                Email = res.Email,
-                Errors = res.Errors
-            };
+            //Student res = await StudentService.Update(student);
+            //return new StudentDTO
+            //{
+            //    StudentNumber = res.StudentNumber,
+            //    Username = res.Username,
+            //    LastName = res.LastName,
+            //    GivenName = res.GivenName,
+            //    Birthday = res.Birthday,
+            //    Email = res.Email,
+            //    Errors = res.Errors
+            //};
+            throw new NotImplementedException();
         }
 
         [Route(StudentRoute.Delete), HttpPost]
@@ -108,11 +111,13 @@ namespace ExamReg.Apps.Controllers.student
         {
             Student student = new Student
             {
+                Id = studentRequestDTO.Id,
                 StudentNumber = studentRequestDTO.StudentNumber
             };
             Student res = await StudentService.Delete(student);
             return new StudentDTO
             {
+                Id = res.Id,
                 StudentNumber = res.StudentNumber,
                 Username = res.Username,
                 LastName = res.LastName,
@@ -133,6 +138,7 @@ namespace ExamReg.Apps.Controllers.student
             Student res = await StudentService.ResetPassword(student);
             return new StudentDTO
             {
+                Id = res.Id,
                 StudentNumber = res.StudentNumber,
                 Username = res.Username,
                 LastName = res.LastName,
