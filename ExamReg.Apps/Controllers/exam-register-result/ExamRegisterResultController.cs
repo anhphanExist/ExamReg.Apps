@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ExamReg.Apps.Common;
@@ -73,12 +74,13 @@ namespace ExamReg.Apps.Controllers.exam_register_result
 
         // Lấy danh sách môn thi và phòng thi của sinh viên
         [Route(ExamRegisterResultRoute.ListExamRoomExamPeriod), HttpPost]
-        public async Task<List<ExamRoomExamPeriodDTO>> ListExamRoomExamPeriod()
+        public async Task<List<ExamRoomExamPeriodDTO>> ListExamRoomExamPeriod(ExamRoomExamPeriodFilterDTO examRoomExamPeriodRequestFilterDTO)
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
                 StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
-                OrderBy = ExamOrder.SubjectName,
+                ExamProgramName = new StringFilter { Equal = examRoomExamPeriodRequestFilterDTO.ExamProgramName },
+                OrderBy = ExamOrder.ExamDate,
                 OrderType = OrderType.ASC
             };
             List<ExamRoomExamPeriod> res = await ExamRoomExamPeriodService.List(filter);
@@ -102,17 +104,18 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         }
 
         [Route(ExamRegisterResultRoute.PrintExamRegisterResult), HttpGet]
-        public async Task<FileResult> PrintExamRegisterResult()
+        public async Task<FileResult> PrintExamRegisterResult(ExamRoomExamPeriodFilterDTO examRoomExamPeriodRequestFilterDTO)
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
                 StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
-                OrderBy = ExamOrder.SubjectName,
+                ExamProgramName = new StringFilter { Equal = examRoomExamPeriodRequestFilterDTO.ExamProgramName },
+                OrderBy = ExamOrder.ExamDate,
                 OrderType = OrderType.ASC
             };
-            byte[] data = await ExamRoomExamPeriodService.PrintExamRegisterResult(filter);
-            return File(data, "application/octet-stream", "ExamRegisterResult.docx");
-            throw new NotImplementedException();
+            MemoryStream stream = await ExamRoomExamPeriodService.PrintExamRegisterResult(filter);
+            // Download Word document in the browser
+            return File(stream, "application/msword", "ExamRegisterResult.docx");
         }
     }
 }

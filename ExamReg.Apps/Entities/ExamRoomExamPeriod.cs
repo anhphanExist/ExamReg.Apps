@@ -34,6 +34,7 @@ namespace ExamReg.Apps.Entities
         public GuidFilter ExamProgramId { get; set; }
         public GuidFilter ExamPeriodId { get; set; }
         public GuidFilter ExamRoomId { get; set; }
+        public StringFilter ExamProgramName { get; set; }
         public ExamOrder OrderBy { get; set; }
         public ExamRoomExamPeriodFilter() : base() { }
     }

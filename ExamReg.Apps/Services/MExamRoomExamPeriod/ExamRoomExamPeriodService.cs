@@ -2,8 +2,12 @@
 using ExamReg.Apps.Entities;
 using ExamReg.Apps.Repositories;
 using OfficeOpenXml;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.Drawing;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,7 +19,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
         Task<ExamRoomExamPeriod> Create(Guid examPeriodId);
         Task<ExamRoomExamPeriod> Delete(ExamRoomExamPeriod examRoomExamPeriod);
         Task<byte[]> ExportStudent(ExamRoomExamPeriodFilter filter);
-        Task<byte[]> PrintExamRegisterResult(ExamRoomExamPeriodFilter filter);
+        Task<MemoryStream> PrintExamRegisterResult(ExamRoomExamPeriodFilter filter);
     }
     public class ExamRoomExamPeriodService : IExamRoomExamPeriodService
     {
@@ -102,8 +106,86 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
             }
         }
 
-        public Task<byte[]> PrintExamRegisterResult(ExamRoomExamPeriodFilter filter)
+        public async Task<MemoryStream> PrintExamRegisterResult(ExamRoomExamPeriodFilter filter)
         {
+            // Lấy dữ liệu trong database
+            List<ExamRoomExamPeriod> examRoomExamPeriods = await UOW.ExamRoomExamPeriodRepository.List(filter);
+            Student student = await UOW.StudentRepository.Get(new StudentFilter
+            {
+                StudentNumber = filter.StudentNumber
+            });
+
+            using (WordDocument document = new WordDocument())
+            {
+                //Adds new section to the document
+                IWSection section = document.AddSection();
+                //Adds new paragraph to the section
+                IWParagraph titleParagraph = section.AddParagraph();
+                //Adds new text to the paragraph
+                IWTextRange textRange = titleParagraph.AppendText("Kết quả đăng ký dự thi");
+                textRange.CharacterFormat.FontSize = 20;
+                textRange.CharacterFormat.Bold = true;
+                textRange.CharacterFormat.TextColor = Color.DarkBlue;
+                titleParagraph.ParagraphFormat.AfterSpacing = 18f;
+                titleParagraph.ParagraphFormat.BeforeSpacing = 18f;
+                titleParagraph.ParagraphFormat.FirstLineIndent = 10f;
+                titleParagraph.ParagraphFormat.LineSpacing = 10f;
+                titleParagraph.ParagraphFormat.HorizontalAlignment = Syncfusion.DocIO.DLS.HorizontalAlignment.Center;
+
+                IWParagraph studentNumberParagraph = section.AddParagraph();
+                studentNumberParagraph.AppendText("Mã số sinh viên: " + student.StudentNumber.ToString());
+                IWParagraph studentNameParagraph = section.AddParagraph();
+                studentNameParagraph.AppendText("Họ và tên: " + student.LastName + " " + student.GivenName);
+                IWParagraph studentBirthdayParagraph = section.AddParagraph();
+                studentBirthdayParagraph.AppendText("Ngày sinh: " + student.Birthday.ToString("dd-MM-yyyy"));
+                IWParagraph studentEmailParagraph = section.AddParagraph();
+                studentEmailParagraph.AppendText("Email: " + student.Email);
+
+
+                string[] tableHeaders = new string[]
+                {
+                    "STT",
+                    "Tên môn học",
+                    "Ngày thi",
+                    "Giờ bắt đầu",
+                    "Giờ kết thúc",
+                    "Phòng thi",
+                    "Giảng đường"
+                };
+                //Adds a new table into Word document
+                IWTable table = section.AddTable();
+                //Specifies the total number of rows & columns
+                table.ResetCells(examRoomExamPeriods.Count + 1, tableHeaders.Length);
+                table.TableFormat.HorizontalAlignment = RowAlignment.Center;
+                for (int i = 0; i < tableHeaders.Length; i++)
+                {
+                    textRange = table[0, i].AddParagraph().AppendText(tableHeaders[i]);
+                    textRange.CharacterFormat.Bold = true;
+                }
+
+                for (int i = 1; i < table.Rows.Count; i++)
+                {
+                    table[i, 0].AddParagraph().AppendText(i.ToString());
+                    table[i, 1].AddParagraph().AppendText(examRoomExamPeriods[i - 1].SubjectName);
+                    table[i, 2].AddParagraph().AppendText(examRoomExamPeriods[i - 1].ExamDate.ToString("dd-MM-yyyy"));
+                    table[i, 3].AddParagraph().AppendText(examRoomExamPeriods[i - 1].StartHour.ToString());
+                    table[i, 4].AddParagraph().AppendText(examRoomExamPeriods[i - 1].FinishHour.ToString());
+                    table[i, 5].AddParagraph().AppendText(examRoomExamPeriods[i - 1].ExamRoomNumber.ToString());
+                    table[i, 6].AddParagraph().AppendText(examRoomExamPeriods[i - 1].ExamRoomAmphitheaterName);
+                }
+
+
+                MemoryStream stream = new MemoryStream();
+                document.Save(stream, FormatType.Docx);
+                //Closes the Word document
+                document.Close();
+                stream.Position = 0;
+                //Download Word document in the browser
+                return stream;
+            }
+
+
+
             throw new NotImplementedException();
         }
     }

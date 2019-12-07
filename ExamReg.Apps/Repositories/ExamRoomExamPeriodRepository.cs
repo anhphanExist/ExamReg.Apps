@@ -142,6 +142,8 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.ExamRegisters.Select(r => r.Student.StudentNumber), filter.StudentNumber);
             if (filter.ExamProgramId != null)
                 query = query.Where(q => q.ExamPeriod.ExamProgramId, filter.ExamProgramId);
+            if (filter.ExamProgramName != null)
+                query = query.Where(q => q.ExamPeriod.ExamProgram.Name, filter.ExamProgramName);
             if (filter.ExamPeriodId != null)
                 query = query.Where(q => q.ExamPeriodId, filter.ExamPeriodId);
             if (filter.ExamRoomId != null)

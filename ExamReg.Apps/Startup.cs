@@ -121,6 +121,7 @@ namespace ExamReg.Apps
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTc5NjY0QDMxMzcyZTMzMmUzMG5ad3NpOEplYzNub1dLR3ZuOUp6L0RjSWY5M2x1eVBKNjJZSFVGd0p6THc9");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
