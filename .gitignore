@@ -2,5 +2,6 @@ ExamReg.Apps/.vs/
 ExamReg.Apps/bin/
 ExamReg.Apps/obj/
 ExamReg.Apps/CodeTemplates
-ExamReg.DataInit/bin
-ExamReg.DataInit/obj
+ExamReg.DataInit/.vs/
+ExamReg.DataInit/bin/
+ExamReg.DataInit/obj/
