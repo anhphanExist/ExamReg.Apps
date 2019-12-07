@@ -44,9 +44,9 @@ namespace ExamReg.Apps.Services.MStudent
             };
 
             int count = await UOW.StudentRepository.Count(filter);
-            if (count == 0)
+            if (count > 0)
             {
-                student.AddError(nameof(StudentValidator), nameof(student.StudentNumber), ERROR.NotExisted);
+                student.AddError(nameof(StudentValidator), nameof(student.StudentNumber), ERROR.StudentNumberExisted);
                 return false;
             }
             return true;
@@ -61,9 +61,9 @@ namespace ExamReg.Apps.Services.MStudent
             };
 
             int count = await UOW.StudentRepository.Count(filter);
-            if (count > 0)
+            if (count == 0)
             {
-                student.AddError(nameof(StudentValidator), nameof(student.StudentNumber), ERROR.StudentNumberExisted);
+                student.AddError(nameof(StudentValidator), nameof(student.StudentNumber), ERROR.NotExisted);
                 return false;
             }
             return true;

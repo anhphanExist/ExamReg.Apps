@@ -16,7 +16,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<List<Student>> List(StudentFilter filter);
         Task<Student> Get(Guid studentId);
         Task<Student> Create(Student student);
-        Task<Student> Update(Student student, string newPassword);
+        Task<Student> Update(Student student);
         Task<Student> Delete(Student student);
         Task<Student> ResetPassword(Student student);
         Task<List<Student>> ImportExcelStudent(byte[] file);
