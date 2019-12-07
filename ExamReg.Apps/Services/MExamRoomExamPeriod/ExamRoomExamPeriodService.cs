@@ -183,10 +183,6 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                 //Download Word document in the browser
                 return stream;
             }
-
-
-
-            throw new NotImplementedException();
         }
     }
 }

@@ -1,0 +1,171 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.DataInit\\ExamReg.DataInit.csproj": {}
+  },
+  "projects": {
+    "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.Apps\\ExamReg.Apps.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.Apps\\ExamReg.Apps.csproj",
+        "projectName": "ExamReg.Apps",
+        "projectPath": "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.Apps\\ExamReg.Apps.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.Apps\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "EPPlus": {
+              "target": "Package",
+              "version": "[4.5.3.2, )"
+            },
+            "EntityFrameworkCore.Scaffolding.Handlebars": {
+              "target": "Package",
+              "version": "[2.1.1, )"
+            },
+            "Microsoft.AspNetCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            },
+            "Microsoft.AspNetCore.Razor.Design": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[2.2.4, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[2.2.4, )"
+            },
+            "Scrutor": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[4.0.1, )"
+            },
+            "Syncfusion.DocIO.Net.Core": {
+              "target": "Package",
+              "version": "[17.3.0.33, )"
+            },
+            "Z.EntityFramework.Extensions.EFCore": {
+              "target": "Package",
+              "version": "[2.7.1, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    },
+    "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.DataInit\\ExamReg.DataInit.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.DataInit\\ExamReg.DataInit.csproj",
+        "projectName": "ExamReg.DataInit",
+        "projectPath": "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.DataInit\\ExamReg.DataInit.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.DataInit\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {
+              "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.Apps\\ExamReg.Apps.csproj": {
+                "projectPath": "D:\\STUDY\\Ongoing Subject\\Assignment - ExamReg\\ExamReg.BackEnd\\ExamReg.Apps\\ExamReg.Apps\\ExamReg.Apps.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}
