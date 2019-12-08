@@ -5,13 +5,33 @@ using ExamReg.Apps.Repositories.Models;
 
 namespace ExamReg.DataInit.Resources
 {
-    public class StudentTermInit
+    public class StudentTermInit : CommonInit
     {
-        private ExamRegContext examRegContext;
-
-        public StudentTermInit(ExamRegContext examRegContext)
+        public List<string> StudentTermCodes { get; private set; }
+        public StudentTermInit(ExamRegContext examRegContext) : base(examRegContext)
         {
-            this.examRegContext = examRegContext;
+        }
+
+        public List<string> Init(List<string> studentIds, List<string> termIds)
+        {
+            List<string> returnList = new List<string>();
+            var rand = new Random();
+
+            foreach (string studentId in studentIds)
+            {
+                foreach (string termId in termIds)
+                {
+                    examRegContext.StudentTerm.Add(new StudentTermDAO
+                    {
+                        TermId = CreateGuid(termId),
+                        StudentId = CreateGuid(studentId),
+                        IsQualified = rand.NextDouble() >= 0.5
+                    });
+                    returnList.Add(string.Format(studentId + "|" + termId));
+                }
+            }
+            StudentTermCodes.AddRange(returnList);
+            return returnList;
         }
     }
 }

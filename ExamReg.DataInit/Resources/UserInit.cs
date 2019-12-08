@@ -5,13 +5,43 @@ using ExamReg.Apps.Repositories.Models;
 
 namespace ExamReg.DataInit.Resources
 {
-    public class UserInit
+    public class UserInit : CommonInit
     {
-        private ExamRegContext examRegContext;
-
-        public UserInit(ExamRegContext examRegContext)
+        public List<string> UserCodes { get; private set; }
+        public UserInit(ExamRegContext examRegContext) : base(examRegContext)
         {
-            this.examRegContext = examRegContext;
+        }
+
+        public List<string> Init(List<string> studentIds)
+        {
+            List<string> returnList = new List<string>
+            {
+                "admin"
+            };
+            returnList.AddRange(studentIds);
+            examRegContext.User.Add(new UserDAO
+            {
+                Id = CreateGuid("admin"),
+                Username = returnList[0],
+                Password = returnList[0],
+                IsAdmin = true
+            });
+
+            for (int i = 0; i < studentIds.Count; i++)
+            {
+                int username = 17020000 + i;
+                examRegContext.User.Add(new UserDAO
+                {
+                    Id = CreateGuid(username.ToString()),
+                    Username = username.ToString(),
+                    Password = username.ToString(),
+                    IsAdmin = false,
+                    StudentId = CreateGuid(studentIds[i])
+                });
+            }
+
+            UserCodes.AddRange(returnList);
+            return returnList;
         }
     }
 }

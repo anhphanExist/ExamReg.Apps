@@ -5,13 +5,16 @@ using ExamReg.Apps.Repositories.Models;
 
 namespace ExamReg.DataInit.Resources
 {
-    public class ExamRegisterInit
+    public class ExamRegisterInit : CommonInit
     {
-        private ExamRegContext examRegContext;
-
-        public ExamRegisterInit(ExamRegContext examRegContext)
+        public List<string> ExamRegisterCodes { get; private set; }
+        public ExamRegisterInit(ExamRegContext examRegContext) : base(examRegContext)
         {
-            this.examRegContext = examRegContext;
+        }
+
+        public List<string> Init(string studentId, string examPeriodId, string examRoomId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
