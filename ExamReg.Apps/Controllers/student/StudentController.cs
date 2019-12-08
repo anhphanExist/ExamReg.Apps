@@ -87,6 +87,8 @@ namespace ExamReg.Apps.Controllers.student
         {
             Student student = new Student
             {
+                Id = studentRequestDTO.Id,
+                StudentNumber = studentRequestDTO.StudentNumber,
                 LastName = studentRequestDTO.LastName,
                 GivenName = studentRequestDTO.GivenName,
                 Birthday = studentRequestDTO.Birthday,
@@ -95,6 +97,7 @@ namespace ExamReg.Apps.Controllers.student
             //Student res = await StudentService.Update(student);
             //return new StudentDTO
             //{
+            //    Id = res.Id,
             //    StudentNumber = res.StudentNumber,
             //    Username = res.Username,
             //    LastName = res.LastName,
