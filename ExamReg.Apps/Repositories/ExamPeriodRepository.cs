@@ -129,14 +129,20 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Update(ExamPeriod examPeriod)
         {
-            await examRegContext.ExamPeriod.Where(t => t.Id.Equals(examPeriod.Id)).UpdateFromQueryAsync(t => new ExamPeriodDAO
+            // Xoá ExamRegister của ExamRoomExamPeriod của ExamPeriod
+            await examRegContext.ExamRoomExamPeriod
+                .Where(e => e.ExamPeriodId == examPeriod.Id)
+                .DeleteFromQueryAsync();
+            await examRegContext.ExamRegister
+                .Where(e => e.ExamPeriodId == examPeriod.Id)
+                .DeleteFromQueryAsync();
+
+            // Thêm lại ExamRoomExamPeriod
+            await examRegContext.ExamRoomExamPeriod.BulkInsertAsync(examPeriod.ExamRooms.Select(e => new ExamRoomExamPeriodDAO
             {
-                ExamDate = examPeriod.ExamDate,
-                StartHour = examPeriod.StartHour,
-                FinishHour = examPeriod.FinishHour,
-                TermId = examPeriod.TermId,
-                ExamProgramId = examPeriod.ExamProgramId
-            });
+                ExamPeriodId = examPeriod.Id,
+                ExamRoomId = e.Id
+            }).ToList());
 
             return true;
         }

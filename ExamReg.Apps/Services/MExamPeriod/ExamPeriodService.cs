@@ -20,9 +20,12 @@ namespace ExamReg.Apps.Services.MExamPeriod
     public class ExamPeriodService : IExamPeriodService
     {
         private IUOW UOW;
-        public ExamPeriodService(IUOW UOW)
+        private IExamPeriodValidator ExamPeriodValidator;
+        public ExamPeriodService(IUOW UOW,
+            IExamPeriodValidator ExamPeriodValidator)
         {
             this.UOW = UOW;
+            this.ExamPeriodValidator = ExamPeriodValidator;
         }
         public Task<int> Count(ExamPeriodFilter filter)
         {
@@ -44,9 +47,26 @@ namespace ExamReg.Apps.Services.MExamPeriod
             return await UOW.ExamPeriodRepository.List(filter);
         }
 
-        public Task<ExamPeriod> Update(ExamPeriod examPeriod)
+        public async Task<ExamPeriod> Update(ExamPeriod examPeriod)
         {
-            throw new NotImplementedException();
+            // Thêm validator
+            if (!await ExamPeriodValidator.Update(examPeriod))
+                return examPeriod;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    await UOW.ExamPeriodRepository.Update(examPeriod);
+                    await UOW.Commit();
+                }
+                catch (Exception)
+                {
+                    await UOW.Rollback();
+                    examPeriod.AddError(nameof(ExamPeriodService), nameof(Update), CommonEnum.ErrorCode.SystemError);
+                }
+                return examPeriod;
+            }
         }
     }
 }

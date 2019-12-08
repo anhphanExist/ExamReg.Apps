@@ -58,7 +58,6 @@ namespace ExamReg.Apps.Repositories
             examRegContext.ExamRoomExamPeriod.Remove(ExamRoomExamPeriodDAO);
             await examRegContext.SaveChangesAsync();
             return true;
-            
         }
 
         public async Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter)

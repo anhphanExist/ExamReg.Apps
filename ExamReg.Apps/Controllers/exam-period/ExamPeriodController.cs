@@ -61,6 +61,14 @@ namespace ExamReg.Apps.Controllers.exam_period
                 SubjectName = e.SubjectName,
                 ExamProgramId = e.ExamProgramId,
                 ExamProgramName = e.ExamProgramName,
+                ExamRooms = e.ExamRooms.Select(r => new ExamRoomDTO
+                {
+                    Id = r.Id,
+                    Code = r.Code,
+                    RoomNumber = r.RoomNumber,
+                    AmphitheaterName = r.AmphitheaterName,
+                    ComputerNumber = r.ComputerNumber
+                }).ToList(),
                 Errors = e.Errors
             }).ToList();
         }
@@ -74,7 +82,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
                 SubjectName = examPeriodRequestDTO.SubjectName,
-                ExamProgramName = examPeriodRequestDTO.ExamProgramName,
+                ExamProgramName = examPeriodRequestDTO.ExamProgramName
             };
             ExamPeriod res = await ExamPeriodService.Create(newExamPeriod);
             return new ExamPeriodDTO
@@ -86,6 +94,14 @@ namespace ExamReg.Apps.Controllers.exam_period
                 SubjectName = res.SubjectName,
                 ExamProgramId = res.ExamProgramId,
                 ExamProgramName = res.ExamProgramName,
+                ExamRooms = res.ExamRooms.Select(r => new ExamRoomDTO
+                {
+                    Id = r.Id,
+                    Code = r.Code,
+                    RoomNumber = r.RoomNumber,
+                    AmphitheaterName = r.AmphitheaterName,
+                    ComputerNumber = r.ComputerNumber
+                }).ToList(),
                 Errors = res.Errors
             };
         }
@@ -96,7 +112,19 @@ namespace ExamReg.Apps.Controllers.exam_period
             ExamPeriod examPeriod = new ExamPeriod
             {
                 Id = examPeriodRequestDTO.Id,
-                
+                ExamDate = examPeriodRequestDTO.ExamDate,
+                StartHour = examPeriodRequestDTO.StartHour,
+                FinishHour = examPeriodRequestDTO.FinishHour,
+                SubjectName = examPeriodRequestDTO.SubjectName,
+                ExamProgramName = examPeriodRequestDTO.ExamProgramName,
+                ExamRooms = examPeriodRequestDTO.ExamRooms.Select(e => new ExamRoom
+                {
+                    Id = e.Id,
+                    Code = e.Code,
+                    RoomNumber = e.RoomNumber,
+                    AmphitheaterName = e.AmphitheaterName,
+                    ComputerNumber = e.ComputerNumber
+                }).ToList()
             };
             ExamPeriod res = await ExamPeriodService.Update(examPeriod);
             return new ExamPeriodDTO
@@ -108,6 +136,14 @@ namespace ExamReg.Apps.Controllers.exam_period
                 SubjectName = res.SubjectName,
                 ExamProgramId = res.ExamProgramId,
                 ExamProgramName = res.ExamProgramName,
+                ExamRooms = res.ExamRooms.Select(r => new ExamRoomDTO
+                {
+                    Id = r.Id,
+                    Code = r.Code,
+                    RoomNumber = r.RoomNumber,
+                    AmphitheaterName = r.AmphitheaterName,
+                    ComputerNumber = r.ComputerNumber
+                }).ToList(),
                 Errors = res.Errors
             };
         }
@@ -122,7 +158,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
                 SubjectName = examPeriodRequestDTO.SubjectName,
-                ExamProgramName = examPeriodRequestDTO.ExamProgramName,
+                ExamProgramName = examPeriodRequestDTO.ExamProgramName
             };
             ExamPeriod res = await ExamPeriodService.Delete(examPeriod);
             return new ExamPeriodDTO
@@ -132,6 +168,14 @@ namespace ExamReg.Apps.Controllers.exam_period
                 FinishHour = res.FinishHour,
                 SubjectName = res.SubjectName,
                 ExamProgramName = res.ExamProgramName,
+                ExamRooms = res.ExamRooms.Select(r => new ExamRoomDTO
+                {
+                    Id = r.Id,
+                    Code = r.Code,
+                    RoomNumber = r.RoomNumber,
+                    AmphitheaterName = r.AmphitheaterName,
+                    ComputerNumber = r.ComputerNumber
+                }).ToList(),
                 Errors = res.Errors
             };
         }
