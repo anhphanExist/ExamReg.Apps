@@ -87,7 +87,7 @@ namespace ExamReg.Apps.Services.MExamProgram
                 ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeEmpty);
                 return false;
             }
-            else if (ExamProgram.SemesterCode != null && ())
+            else if (ExamProgram.SemesterCode != null)
             {
                 ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeInValid);
                 return false;
