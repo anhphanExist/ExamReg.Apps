@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ExamReg.Apps.Common;
 using ExamReg.Apps.Repositories.Models;
 
 namespace ExamReg.DataInit.Resources
@@ -58,6 +59,7 @@ namespace ExamReg.DataInit.Resources
                     givenName += (j < (nameParts.Length - 1) ? " " : "");
                 }
                 email += "@gmail.com";
+                email = email.ChangeToEnglishChar();
 
                 examRegContext.Student.Add(new StudentDAO
                 {
