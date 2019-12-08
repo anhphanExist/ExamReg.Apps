@@ -15,7 +15,7 @@ namespace ExamReg.Apps.Repositories
         Task<Semester> Get(SemesterFilter filter);
         Task<bool> Create(Semester semester);
         Task<bool> Update(Semester semester);
-        Task<bool> Delete(Semester semester);
+        Task<bool> Delete(Guid Id);
         Task<int> Count(SemesterFilter filter);
         Task<List<Semester>> List(SemesterFilter filter);
         Task<bool> BulkInsert(List<Semester> semesters);
@@ -62,18 +62,18 @@ namespace ExamReg.Apps.Repositories
             return true;
         }
 
-        public async Task<bool> Delete(Semester semester)
+        public async Task<bool> Delete(Guid Id)
         {
             await examRegContext.Term
-            .Where(t => t.SemesterId.Equals(semester.Id))
+            .Where(t => t.SemesterId.Equals(Id))
             .DeleteFromQueryAsync();
 
             await examRegContext.ExamProgram
-            .Where(t => t.SemesterId.Equals(semester.Id))
+            .Where(t => t.SemesterId.Equals(Id))
             .DeleteFromQueryAsync();
 
             SemesterDAO semesterDAO = examRegContext.Semester
-                .Where(s => s.Id.Equals(semester.Id))
+                .Where(s => s.Id.Equals(Id))
                 .FirstOrDefault();
 
             examRegContext.Semester.Remove(semesterDAO);

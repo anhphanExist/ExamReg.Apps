@@ -11,7 +11,7 @@ namespace ExamReg.Apps.Services.MStudent
     public interface IStudentValidator : IServiceScoped
     {
         Task<bool> Create(Student student);
-        Task<bool> Update(Student student, string newPassword);
+        Task<bool> Update(Student student);
         Task<bool> Delete(Student student);
         Task<bool> Import(List<Student> students);
     }
@@ -52,7 +52,24 @@ namespace ExamReg.Apps.Services.MStudent
             return true;
         }
 
-        private async Task<bool> ValidateId(Student student)
+        private async Task<bool> ValidateExist(Student student)
+        {
+            StudentFilter filter = new StudentFilter
+            {
+                Take = Int32.MaxValue,
+                StudentNumber = new IntFilter { Equal = student.StudentNumber }
+            };
+
+            int count = await UOW.StudentRepository.Count(filter);
+            if (count == 0)
+            {
+                student.AddError(nameof(StudentValidator), nameof(student.StudentNumber), ERROR.NotExisted);
+                return false;
+            }
+            return true;
+        }
+
+        /*private async Task<bool> ValidateId(Student student)
         {
             StudentFilter filter = new StudentFilter
             {
@@ -67,7 +84,7 @@ namespace ExamReg.Apps.Services.MStudent
                 student.AddError(nameof(StudentValidator), nameof(student.Id), ERROR.IdNotFound);
 
             return count == 1;
-        }
+        }*/
 
         private bool ValidateStringLength(Student student)
         {
@@ -113,8 +130,8 @@ namespace ExamReg.Apps.Services.MStudent
 
         return true;
         }
-        
-        private bool ValidateNewPassword(Student student, string newPassword)
+
+        /*private bool ValidateNewPassword(Student student, string newPassword)
         {
             if (newPassword == null)
             {
@@ -132,7 +149,8 @@ namespace ExamReg.Apps.Services.MStudent
                 return false;
             }
             return true;
-        }
+        }*/
+
         public async Task<bool> Create(Student student)
         {
             bool IsValid = true;
@@ -144,7 +162,7 @@ namespace ExamReg.Apps.Services.MStudent
         public async Task<bool> Delete(Student student)
         {
             bool IsValid = true;
-            IsValid &= await ValidateId(student);
+            IsValid &= await ValidateExist(student);
             return IsValid;
         }
 
@@ -153,20 +171,18 @@ namespace ExamReg.Apps.Services.MStudent
             bool IsValid = true;
             foreach(var student in students)
             {
+                //IsValid &= await ValidateNotExist(student);
                 IsValid &= ValidateStringLength(student);
             }
             return IsValid;
         }
 
-        public async Task<bool> Update(Student student, string newPassword)
+        public async Task<bool> Update(Student student)
         {
             bool IsValid = true;
-            IsValid &= await ValidateId(student);
 
-            if (!IsValid) return false;
-
-            //IsValid &= ValidateStringLength(student);
-            IsValid &= ValidateNewPassword(student, newPassword);
+            IsValid &= await ValidateExist(student);
+            IsValid &= ValidateStringLength(student);
             return IsValid;
         }
     }

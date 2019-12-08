@@ -14,7 +14,7 @@ namespace ExamReg.Apps.Repositories
         Task<StudentTerm> Get(StudentTermFilter filter);
         Task<bool> Create(StudentTerm studentTerm);
         Task<bool> Update(StudentTerm studentTerm);
-        Task<bool> Delete(StudentTerm studentTerm);
+        Task<bool> Delete(Guid studentId, Guid TermId);
         Task<List<StudentTerm>> List(StudentTermFilter filter);
         Task<bool> BulkMerge(List<StudentTerm> studentTerms);
     }
@@ -51,12 +51,12 @@ namespace ExamReg.Apps.Repositories
             return true;
         }
 
-        public async Task<bool> Delete(StudentTerm studentTerm)
+        public async Task<bool> Delete(Guid studentId, Guid TermId)
         {
             try
             {
                 StudentTermDAO studentTermDAO = examRegContext.StudentTerm
-                    .Where(s => (s.StudentId.Equals(studentTerm.StudentId) && s.TermId.Equals(studentTerm.TermId)))
+                    .Where(s => (s.StudentId.Equals(studentId) && s.TermId.Equals(TermId)))
                     .FirstOrDefault();
 
                 examRegContext.StudentTerm.Remove(studentTermDAO);

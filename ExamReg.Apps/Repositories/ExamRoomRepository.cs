@@ -15,7 +15,7 @@ namespace ExamReg.Apps.Repositories
         Task<ExamRoom> Get(ExamRoomFilter filter);
         Task<bool> Create(ExamRoom examRoom);
         Task<bool> Update(ExamRoom examRoom);
-        Task<bool> Delete(ExamRoom examRoom);
+        Task<bool> Delete(Guid Id);
         Task<int> Count(ExamRoomFilter filter);
         Task<List<ExamRoom>> List(ExamRoomFilter filter);
     }
@@ -61,14 +61,14 @@ namespace ExamReg.Apps.Repositories
             return true;
         }
 
-        public async Task<bool> Delete(ExamRoom examRoom)
+        public async Task<bool> Delete(Guid Id)
         {
             await examRegContext.ExamRoomExamPeriod
-            .Where(t => t.ExamRoomId.Equals(examRoom.Id))
+            .Where(t => t.ExamRoomId.Equals(Id))
             .DeleteFromQueryAsync();
 
             ExamRoomDAO examRoomDAO = examRegContext.ExamRoom
-                .Where(s => s.Id.Equals(examRoom.Id))
+                .Where(s => s.Id.Equals(Id))
                 .FirstOrDefault();
 
             examRegContext.ExamRoom.Remove(examRoomDAO);

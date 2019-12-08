@@ -21,30 +21,114 @@ namespace ExamReg.Apps.Services.MExamProgram
     public class ExamProgramService : IExamProgramService
     {
         private IUOW UOW;
+        private IExamProgramValidator ExamProgramValidator;
+        public ExamProgramService(IUOW UOW, IExamProgramValidator ExamProgramValidator)
+        {
+            this.UOW = UOW;
+            this.ExamProgramValidator = ExamProgramValidator;
+        }
         public Task<int> Count(ExamProgramFilter filter)
         {
-            throw new NotImplementedException();
+            return UOW.ExamProgramRepository.Count(filter);
         }
 
-        public Task<ExamProgram> Create(ExamProgram examProgram)
+        public async Task<ExamProgram> Get(Guid Id)
         {
-            throw new NotImplementedException();
+            return await UOW.ExamProgramRepository.Get(Id);
         }
 
-        public Task<ExamProgram> Delete(ExamProgram examProgram)
+        public async Task<ExamProgram> Create(ExamProgram examProgram)
         {
-            throw new NotImplementedException();
+            if (!await ExamProgramValidator.Create(examProgram))
+                return examProgram;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    examProgram.Id = new Guid();
+
+                    await UOW.ExamProgramRepository.Create(examProgram);
+                    await UOW.Commit();
+                    return await Get(examProgram.Id);
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    examProgram.AddError(nameof(ExamProgramService), nameof(Create), CommonEnum.ErrorCode.SystemError);
+                    return examProgram;
+                }
+            }
+        }
+
+        public async Task<ExamProgram> Delete(ExamProgram examProgram)
+        {
+            if (!await ExamProgramValidator.Delete(examProgram))
+                return examProgram;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    await UOW.ExamProgramRepository.Delete(examProgram.Id);
+                    await UOW.Commit();
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    examProgram.AddError(nameof(ExamProgramService), nameof(Delete), CommonEnum.ErrorCode.SystemError);
+                }
+            }
+            return examProgram;
         }
 
         public Task<List<ExamProgram>> List(ExamProgramFilter filter)
         {
-            throw new NotImplementedException();
+            return UOW.ExamProgramRepository.List(filter);
         }
 
-        public Task<ExamProgram> Update(ExamProgram examProgram)
+        public async Task<ExamProgram> Update(ExamProgram examProgram)
         {
-            throw new NotImplementedException();
+            if (!await ExamProgramValidator.Update(examProgram))
+                return examProgram;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    await UOW.ExamProgramRepository.Update(examProgram);
+                    await UOW.Commit();
+                    return examProgram;
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    examProgram.AddError(nameof(ExamProgramService), nameof(Update), CommonEnum.ErrorCode.SystemError);
+                    return examProgram;
+                }
+            }
         }
+
+        public async Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram)
+        {
+            if (!await ExamProgramValidator.Update(examProgram))
+                return examProgram;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    // Đặt tất cả các ExamProgram về false
+                    List<ExamProgram> exams = await UOW.ExamProgramRepository.List(new ExamProgramFilter
+                    {
+                        Name = new StringFilter { NotEqual = examProgram.Name },
+                        SemesterCode = new StringFilter { NotEqual = examProgram.SemesterCode }
+                    });
+                    foreach(var e in exams)
+                    {
+                        e.IsCurrent = false;
+                        await UOW.ExamProgramRepository.Update(e);
+                    }
 
         public async Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram)
         {

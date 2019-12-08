@@ -4,6 +4,7 @@ using ExamReg.Apps.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExamReg.Apps.Services.MExamProgram
@@ -18,7 +19,6 @@ namespace ExamReg.Apps.Services.MExamProgram
     {
         public enum ERROR
         {
-            IdNotFound,
             ExamProgramExisted,
             NotExisted,
             StringEmpty,
@@ -87,26 +87,35 @@ namespace ExamReg.Apps.Services.MExamProgram
                 ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeEmpty);
                 return false;
             }
-            else if (ExamProgram.SemesterCode != null)
+            else if (ExamProgram.SemesterCode != null && Regex.IsMatch(ExamProgram.SemesterCode, @"^\d{4}_\d{4}_\d") == false)
             {
                 ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeInValid);
                 return false;
             }
             return true;
         }
-            public async Task<bool> Create(ExamProgram examProgram)
+        public async Task<bool> Create(ExamProgram examProgram)
         {
-            throw new NotImplementedException();
+            bool IsValid = true;
+            IsValid &= await ValidateNotExist(examProgram);
+            IsValid &= ValidateStringLength(examProgram);
+            return IsValid;
         }
 
         public async Task<bool> Delete(ExamProgram examProgram)
         {
-            throw new NotImplementedException();
+            bool IsValid = true;
+            IsValid &= await ValidateExist(examProgram);
+            return IsValid;
         }
 
         public async Task<bool> Update(ExamProgram examProgram)
         {
-            throw new NotImplementedException();
+            bool IsValid = true;
+
+            IsValid &= await ValidateExist(examProgram);
+            IsValid &= ValidateStringLength(examProgram);
+            return IsValid;
         }
     }
 }

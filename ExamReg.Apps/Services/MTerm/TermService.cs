@@ -25,35 +25,101 @@ namespace ExamReg.Apps.Services.MTerm
     public class TermService : ITermService
     {
         private IUOW UOW;
+        private ITermValidator TermValidator;
 
-        public TermService(IUOW UOW)
+        public TermService(IUOW UOW, ITermValidator TermValidator)
         {
             this.UOW = UOW;
+            this.TermValidator = TermValidator;
         }
 
         public async Task<int> Count(TermFilter filter)
         {
-            throw new NotImplementedException();
+            return await UOW.TermRepository.Count(filter);
         }
 
         public async Task<List<Term>> List(TermFilter filter)
         {
             return await UOW.TermRepository.List(filter);
         }
+        public async Task<Term> Get(Guid termId)
+        {
+            return await UOW.TermRepository.Get(termId);
+        }
 
         public async Task<Term> Create(Term term)
         {
-            throw new NotImplementedException();
+            if (!await TermValidator.Create(term))
+                return term;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    term.Id = new Guid();
+
+                    await UOW.TermRepository.Create(term);
+                    await UOW.Commit();
+                    return await Get(term.Id);
+                }
+                catch(Exception e)
+                {
+                    await UOW.Rollback();
+                    term.AddError(nameof(TermService), nameof(Create), CommonEnum.ErrorCode.SystemError);
+                    return term;
+                }
+            }
         }
 
         public async Task<Term> Update(Term term)
         {
-            throw new NotImplementedException();
+            if (term == null) return null;
+            if (!await TermValidator.Delete(term))
+                return term;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    TermFilter filter = new TermFilter
+                    {
+                        SubjectName = new StringFilter { Equal = term.SubjectName },
+                        SemesterCode = new StringFilter { Equal = term.SemesterCode },
+                    };
+
+                    term = await UOW.TermRepository.Get(filter);
+                    await UOW.TermRepository.Update(term);
+                    await UOW.Commit();
+                    return await UOW.TermRepository.Get(term.Id);
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    term.AddError(nameof(TermService), nameof(Create), CommonEnum.ErrorCode.SystemError);
+                    return term;
+                }
+            }
         }
 
         public async Task<Term> Delete(Term term)
         {
-            throw new NotImplementedException();
+            if (!await TermValidator.Delete(term))
+                return term;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    await UOW.TermRepository.Delete(term.Id);
+                    await UOW.Commit();
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    term.AddError(nameof(TermService), nameof(Create), CommonEnum.ErrorCode.SystemError);
+                }
+            }
+            return term;
         }
 
         public async Task<List<Term>> ImportExcel(byte[] file)

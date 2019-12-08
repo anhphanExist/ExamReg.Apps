@@ -4,6 +4,7 @@ using ExamReg.Apps.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExamReg.Apps.Services.MTerm
@@ -23,7 +24,9 @@ namespace ExamReg.Apps.Services.MTerm
             TermExisted,
             NotExisted,
             StringEmpty,
-            StringLimited
+            StringLimited,
+            SemesterCodeEmpty,
+            SemesterCodeInValid
         }
         private IUOW UOW;
 
@@ -49,8 +52,25 @@ namespace ExamReg.Apps.Services.MTerm
             }
             return true;
         }
+        private async Task<bool> ValidateExist(Term Term)
+        {
+            TermFilter filter = new TermFilter
+            {
+                Take = Int32.MaxValue,
+                SubjectName = new StringFilter { Equal = Term.SubjectName },
+                SemesterCode = new StringFilter { Equal = Term.SemesterCode }
+            };
 
-        private async Task<bool> ValidateId(Term Term)
+            int count = await UOW.TermRepository.Count(filter);
+            if (count == 0)
+            {
+                Term.AddError(nameof(TermValidator), nameof(Term), ERROR.NotExisted);
+                return false;
+            }
+            return true;
+        }
+
+        /*private async Task<bool> ValidateId(Term Term)
         {
             TermFilter filter = new TermFilter
             {
@@ -65,21 +85,55 @@ namespace ExamReg.Apps.Services.MTerm
                 Term.AddError(nameof(TermValidator), nameof(Term.Id), ERROR.IdNotFound);
 
             return count == 1;
+        }*/
+
+        private bool ValidateStringLength(Term term)
+        {
+            if (string.IsNullOrEmpty(term.SubjectName))
+            {
+                term.AddError(nameof(TermValidator), nameof(term), ERROR.StringEmpty);
+                return false;
+            }
+            else if (term.SubjectName != null && (term.SubjectName.Length > 100))
+            {
+                term.AddError(nameof(TermValidator), nameof(term), ERROR.StringLimited);
+                return false;
+            }
+            if (string.IsNullOrEmpty(term.SemesterCode))
+            {
+                term.AddError(nameof(TermValidator), nameof(term.SemesterCode), ERROR.SemesterCodeEmpty);
+                return false;
+            }
+            else if (term.SemesterCode != null && Regex.IsMatch(term.SemesterCode, @"^\d{4}_\d{4}_\d") == false)
+            {
+                term.AddError(nameof(TermValidator), nameof(term.SemesterCode), ERROR.SemesterCodeInValid);
+                return false;
+            }
+            return true;
         }
 
         public async Task<bool> Create(Term term)
         {
-            throw new NotImplementedException();
+            bool IsValid = true;
+            IsValid &= await ValidateNotExist(term);
+            IsValid &= ValidateStringLength(term);
+            return IsValid;
         }
 
         public async Task<bool> Delete(Term term)
         {
-            throw new NotImplementedException();
+            bool IsValid = true;
+            IsValid &= await ValidateExist(term);
+            return IsValid;
         }
 
         public async Task<bool> Update(Term term)
         {
-            throw new NotImplementedException();
+            bool IsValid = true;
+
+            IsValid &= await ValidateExist(term);
+            IsValid &= ValidateStringLength(term);
+            return IsValid;
         }
     }
 }
