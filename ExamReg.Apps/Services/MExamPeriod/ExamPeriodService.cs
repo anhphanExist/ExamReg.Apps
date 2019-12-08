@@ -49,7 +49,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
 
         public async Task<ExamPeriod> Update(ExamPeriod examPeriod)
         {
-            // Thêm validator
+            // Validator chưa làm
             if (!await ExamPeriodValidator.Update(examPeriod))
                 return examPeriod;
 

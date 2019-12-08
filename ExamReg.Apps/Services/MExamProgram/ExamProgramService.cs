@@ -46,10 +46,34 @@ namespace ExamReg.Apps.Services.MExamProgram
             throw new NotImplementedException();
         }
 
-        public Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram)
+        public async Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram)
         {
-            // Đặt tất cả các ExamProgram về false và đặt ExamProgram trong params thành true
-            throw new NotImplementedException();
+            // Không cần validator
+            // Đặt tất cả các ExamProgram có current==true về false và đặt ExamProgram trong params thành true
+            using (UOW.Begin())
+            {
+                try
+                {
+                    ExamProgram currentExamProgram = await UOW.ExamProgramRepository.Get(new ExamProgramFilter
+                    {
+                        IsCurrent = true
+                    });
+                    currentExamProgram.IsCurrent = false;
+                    examProgram = await UOW.ExamProgramRepository.Get(examProgram.Id);
+                    examProgram.IsCurrent = true;
+
+                    await UOW.ExamProgramRepository.Update(currentExamProgram);
+                    await UOW.ExamProgramRepository.Update(examProgram);
+                    await UOW.Commit();
+                    return examProgram;
+                }
+                catch (Exception)
+                {
+                    await UOW.Rollback();
+                    examProgram.AddError(nameof(ExamProgramService), nameof(SetCurrentExamProgram), CommonEnum.ErrorCode.SystemError);
+                    return examProgram;
+                }
+            }
         }
 
         public async Task<ExamProgram> GetCurrentExamProgram()

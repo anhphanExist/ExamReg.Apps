@@ -15,7 +15,8 @@ namespace ExamReg.Apps.Services.MExamPeriod
     {
         public async Task<bool> Update(ExamPeriod examPeriod)
         {
-            throw new NotImplementedException();
+            bool isValid = true;
+            return isValid;
         }
     }
 }

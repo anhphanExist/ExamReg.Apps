@@ -11,7 +11,6 @@ namespace ExamReg.Apps.Services.MSemester
     {
         Task<List<Semester>> List(SemesterFilter filter);
         Task<Semester> Create(Semester semester);
-        Task<Semester> Update(Semester semester);
         Task<Semester> Delete(Semester semester);
     }
     public class SemesterService : ISemesterService
@@ -27,11 +26,6 @@ namespace ExamReg.Apps.Services.MSemester
         }
 
         public async Task<List<Semester>> List(SemesterFilter filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Semester> Update(Semester semester)
         {
             throw new NotImplementedException();
         }
