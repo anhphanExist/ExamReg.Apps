@@ -10,6 +10,7 @@ namespace ExamReg.DataInit.Resources
         public List<string> UserCodes { get; private set; }
         public UserInit(ExamRegContext examRegContext) : base(examRegContext)
         {
+            UserCodes = new List<string>();
         }
 
         public List<string> Init(List<string> studentIds)

@@ -71,42 +71,42 @@ namespace ExamReg.DataInit
 
         private void InitStudent()
         {
-
+            studentInit.Init();
         }
 
         private void InitUser()
         {
-
+            userInit.Init(studentInit.StudentCodes);
         }
 
         private void InitSemester()
         {
-
+            semesterInit.Init();
         }
 
         private void InitTerm()
         {
-
+            termInit.Init(semesterInit.SemesterCodes);
         }
 
         private void InitStudentTerm()
         {
-
+            studentTermInit.Init(studentInit.StudentCodes, termInit.TermCodes);
         }
 
         private void InitExamProgram()
         {
-
+            examProgramInit.Init(semesterInit.SemesterCodes);
         }
 
         private void InitExamPeriod()
         {
-
+            examPeriodInit.Init(termInit.TermCodes, examProgramInit.ExamProgramCodes);
         }
 
         private void InitExamRoom()
         {
-
+            examRoomInit.Init();
         }
 
         private void InitExamRoomExamPeriod()

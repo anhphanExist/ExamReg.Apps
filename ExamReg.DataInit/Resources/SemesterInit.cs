@@ -10,6 +10,7 @@ namespace ExamReg.DataInit.Resources
         public List<string> SemesterCodes { get; private set; }
         public SemesterInit(ExamRegContext examRegContext) : base(examRegContext)
         {
+            SemesterCodes = new List<string>();
         }
 
         public List<string> Init()

@@ -10,27 +10,30 @@ namespace ExamReg.DataInit.Resources
         public List<string> ExamProgramCodes { get; private set; }
         public ExamProgramInit(ExamRegContext examRegContext) : base(examRegContext)
         {
+            ExamProgramCodes = new List<string>();
         }
 
         public List<string> Init(List<string> semesterIds)
         {
             List<string> returnList = new List<string>();
-            for (int i = 0; i < semesterIds.Count; i++)
+            List<string> examProgramList = new List<string>
             {
-                returnList.Add(string.Format("Kỳ thi chính" + ":" + semesterIds[i]));
-                returnList.Add(string.Format("Kỳ thi phụ" + ":" + semesterIds[i]));
-            }
+                "Kỳ thi chính",
+                "Kỳ thi phụ"
+            };
 
-            for (int i = 0; i < returnList.Count; i++)
+            for (int i = 0; i < examProgramList.Count; i++)
             {
-                // lấy thông tin semesterCodes để gán cho ExamProgram
-                string semesterId = returnList[i].Split(" ")[1];
-                examRegContext.ExamProgram.Add(new ExamProgramDAO
+                for (int j = 0; j < semesterIds.Count; j++)
                 {
-                    Id = CreateGuid(returnList[i]),
-                    Name = returnList[i],
-                    SemesterId = CreateGuid(semesterId)
-                });
+                    examRegContext.ExamProgram.Add(new ExamProgramDAO
+                    {
+                        Id = CreateGuid(string.Format(examProgramList[i] + ":" + semesterIds[j])),
+                        Name = string.Format(examProgramList[i] + ":" + semesterIds[j]),
+                        SemesterId = CreateGuid(semesterIds[j])
+                    });
+                    returnList.Add(string.Format(examProgramList[i] + ":" + semesterIds[j]));
+                }
             }
             ExamProgramCodes.AddRange(returnList);
             return returnList;
