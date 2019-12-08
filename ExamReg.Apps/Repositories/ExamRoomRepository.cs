@@ -152,18 +152,19 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.RoomNumber, filter.RoomNumber);
             if (filter.ExamDate != null)
             {
-                if (filter.ExamDate.Equal.HasValue)
-                    query = query.Where(q => q.ExamRoomExamPeriods
-                                    .Select(e => e.ExamPeriod.ExamDate == filter.ExamDate.Equal.Value).Contains(true));
+                query = query.Where(q => q.ExamRoomExamPeriods
+                                  .Select(e => e.ExamPeriod.ExamDate.Equals(filter.ExamDate))
+                                  .Contains(true));
                 if (filter.ExceptStartHour != null && filter.ExceptFinishHour != null)
                     query = query.Where(q => !q.ExamRoomExamPeriods
-                                    .Select(e =>
+                                     .Select(e =>
                                         (filter.ExceptStartHour.Value <= e.ExamPeriod.StartHour && e.ExamPeriod.StartHour <= filter.ExceptFinishHour.Value) ||
                                         (filter.ExceptStartHour.Value <= e.ExamPeriod.FinishHour && e.ExamPeriod.FinishHour <= filter.ExceptFinishHour.Value))
-                                    .Contains(true));
+                                     .Contains(true));
             }
             if (filter.ExceptExamDate != null)
-                query = query.Where(q => !q.ExamRoomExamPeriods.Select(e => e.ExamPeriod.ExamDate == filter.ExceptExamDate).Contains(true));
+                query = query.Where(q => !q.ExamRoomExamPeriods
+                                 .Select(e => e.ExamPeriod.ExamDate == filter.ExceptExamDate).Contains(true));
             return query;
         }
         private IQueryable<ExamRoomDAO> DynamicOrder(IQueryable<ExamRoomDAO> query, ExamRoomFilter filter)

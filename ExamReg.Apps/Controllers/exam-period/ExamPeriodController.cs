@@ -222,14 +222,14 @@ namespace ExamReg.Apps.Controllers.exam_period
             // Tức là lấy các phòng thi có ExamRoomExamPeriod của ngày ExamDate không tồn tại trong khoảng thời gian >= StartHour và <= FinishHour
             List<ExamRoom> examRooms = await ExamRoomService.ListAvailableExamRoom(new ExamRoomFilter
             {
-                ExamDate = new DateTimeFilter { Equal = examRoomRequestFilterDTO.ExamDate },
+                ExamDate = examRoomRequestFilterDTO.ExamDate,
                 ExceptStartHour = examRoomRequestFilterDTO.StartHour,
                 ExceptFinishHour = examRoomRequestFilterDTO.FinishHour 
             });
             // Tức là lấy các phòng thi có ExamRoomExamPeriod không tồn tại nếu filter theo ExamDate
             examRooms.AddRange(await ExamRoomService.ListAvailableExamRoom(new ExamRoomFilter
             {
-                ExamDate = new DateTimeFilter { NotEqual = examRoomRequestFilterDTO.ExamDate }
+                ExceptExamDate = examRoomRequestFilterDTO.ExamDate
             }));
             return examRooms.Select(s => new ExamRoomDTO
             {

@@ -28,8 +28,8 @@ namespace ExamReg.Apps.Entities
     }
     public class ExamRoomExamPeriodFilter : FilterEntity
     {
-        public GuidFilter StudentId { get; set; }
-        public IntFilter StudentNumber { get; set; }
+        public Guid? StudentId { get; set; }
+        public int? StudentNumber { get; set; }
         public GuidFilter TermId { get; set; }
         public GuidFilter ExamProgramId { get; set; }
         public GuidFilter ExamPeriodId { get; set; }
