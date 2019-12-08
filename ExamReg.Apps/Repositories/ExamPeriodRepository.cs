@@ -159,6 +159,14 @@ namespace ExamReg.Apps.Repositories
             // có thể dùng join vào với nhau để đạt performance cao hơn
             if (filter.SubjectName != null)
                 query = query.Where(q => q.Term.SubjectName, filter.SubjectName);
+            if (filter.ExamDate != null)
+            {
+                query = query.Where(q => q.ExamDate, filter.ExamDate);
+                if (filter.StartHour != null && filter.FinishHour != null)
+                    query = query.Where(q => (filter.StartHour <= q.StartHour && q.StartHour <= filter.FinishHour) ||
+                                             (filter.StartHour <= q.FinishHour && q.FinishHour <= filter.FinishHour) ||
+                                             (q.StartHour <= filter.StartHour && filter.FinishHour <= q.FinishHour));
+            }
             if (filter.ExamProgramId != null)
                 query = query.Where(q => q.ExamProgramId, filter.ExamProgramId);
             if (filter.ExamProgramName != null)

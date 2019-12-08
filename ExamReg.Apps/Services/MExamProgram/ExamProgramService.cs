@@ -111,27 +111,6 @@ namespace ExamReg.Apps.Services.MExamProgram
 
         public async Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram)
         {
-            if (!await ExamProgramValidator.Update(examProgram))
-                return examProgram;
-
-            using (UOW.Begin())
-            {
-                try
-                {
-                    // Đặt tất cả các ExamProgram về false
-                    List<ExamProgram> exams = await UOW.ExamProgramRepository.List(new ExamProgramFilter
-                    {
-                        Name = new StringFilter { NotEqual = examProgram.Name },
-                        SemesterCode = new StringFilter { NotEqual = examProgram.SemesterCode }
-                    });
-                    foreach(var e in exams)
-                    {
-                        e.IsCurrent = false;
-                        await UOW.ExamProgramRepository.Update(e);
-                    }
-
-        public async Task<ExamProgram> SetCurrentExamProgram(ExamProgram examProgram)
-        {
             // Không cần validator
             // Đặt tất cả các ExamProgram có current==true về false và đặt ExamProgram trong params thành true
             using (UOW.Begin())

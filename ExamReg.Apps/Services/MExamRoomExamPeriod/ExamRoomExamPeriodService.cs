@@ -130,7 +130,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
             List<ExamRoomExamPeriod> examRoomExamPeriods = await UOW.ExamRoomExamPeriodRepository.List(filter);
             Student student = await UOW.StudentRepository.Get(new StudentFilter
             {
-                StudentNumber = filter.StudentNumber
+                StudentNumber = new IntFilter { Equal = filter.StudentNumber }
             });
 
             using (WordDocument document = new WordDocument())

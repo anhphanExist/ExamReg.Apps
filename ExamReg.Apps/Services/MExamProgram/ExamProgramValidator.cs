@@ -69,27 +69,27 @@ namespace ExamReg.Apps.Services.MExamProgram
             }
             return true;
         }
-        private bool ValidateStringLength(ExamProgram ExamProgram)
+        private bool ValidateStringLength(ExamProgram examProgram)
         {
-            if (string.IsNullOrEmpty(ExamProgram.Name))
+            if (string.IsNullOrEmpty(examProgram.Name))
             {
-                ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.Name), ERROR.StringEmpty);
+                examProgram.AddError(nameof(ExamProgramValidator), nameof(examProgram.Name), ERROR.StringEmpty);
                 return false;
             }
-            else if (ExamProgram.Name != null && (ExamProgram.Name.Length > 100))
+            else if (examProgram.Name.Length > 100)
             {
-                ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.Name), ERROR.StringLimited);
+                examProgram.AddError(nameof(ExamProgramValidator), nameof(examProgram.Name), ERROR.StringLimited);
                 return false;
             }
 
-            if (string.IsNullOrEmpty(ExamProgram.SemesterCode))
+            if (string.IsNullOrEmpty(examProgram.SemesterCode))
             {
-                ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeEmpty);
+                examProgram.AddError(nameof(ExamProgramValidator), nameof(examProgram.SemesterCode), ERROR.SemesterCodeEmpty);
                 return false;
             }
-            else if (ExamProgram.SemesterCode != null && Regex.IsMatch(ExamProgram.SemesterCode, @"^\d{4}_\d{4}_\d") == false)
+            else if (Regex.IsMatch(examProgram.SemesterCode, @"^\d{4}_\d{4}_\d") == false)
             {
-                ExamProgram.AddError(nameof(ExamProgramValidator), nameof(ExamProgram.SemesterCode), ERROR.SemesterCodeInValid);
+                examProgram.AddError(nameof(ExamProgramValidator), nameof(examProgram.SemesterCode), ERROR.SemesterCodeInValid);
                 return false;
             }
             return true;

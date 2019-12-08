@@ -38,6 +38,9 @@ namespace ExamReg.Apps.Services.MExamPeriod
 
         public async Task<ExamPeriod> Create(ExamPeriod examPeriod)
         {
+            if (!await ExamPeriodValidator.Create(examPeriod))
+                return examPeriod;
+
             using (UOW.Begin())
             {
                 try
@@ -58,6 +61,9 @@ namespace ExamReg.Apps.Services.MExamPeriod
 
         public async Task<ExamPeriod> Delete(ExamPeriod examPeriod)
         {
+            if (!await ExamPeriodValidator.Delete(examPeriod))
+                return examPeriod;
+
             using (UOW.Begin())
             {
                 try
@@ -81,7 +87,6 @@ namespace ExamReg.Apps.Services.MExamPeriod
 
         public async Task<ExamPeriod> Update(ExamPeriod examPeriod)
         {
-            // Validator chưa làm
             if (!await ExamPeriodValidator.Update(examPeriod))
                 return examPeriod;
 

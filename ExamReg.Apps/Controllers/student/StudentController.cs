@@ -94,19 +94,18 @@ namespace ExamReg.Apps.Controllers.student
                 Birthday = studentRequestDTO.Birthday,
                 Email = studentRequestDTO.Email
             };
-            //Student res = await StudentService.Update(student);
-            //return new StudentDTO
-            //{
-            //    Id = res.Id,
-            //    StudentNumber = res.StudentNumber,
-            //    Username = res.Username,
-            //    LastName = res.LastName,
-            //    GivenName = res.GivenName,
-            //    Birthday = res.Birthday,
-            //    Email = res.Email,
-            //    Errors = res.Errors
-            //};
-            throw new NotImplementedException();
+            Student res = await StudentService.Update(student);
+            return new StudentDTO
+            {
+                Id = res.Id,
+                StudentNumber = res.StudentNumber,
+                Username = res.Username,
+                LastName = res.LastName,
+                GivenName = res.GivenName,
+                Birthday = res.Birthday,
+                Email = res.Email,
+                Errors = res.Errors
+            };
         }
 
         [Route(StudentRoute.Delete), HttpPost]

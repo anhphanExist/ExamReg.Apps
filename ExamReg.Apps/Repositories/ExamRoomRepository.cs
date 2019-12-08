@@ -158,8 +158,9 @@ namespace ExamReg.Apps.Repositories
                 if (filter.ExceptStartHour != null && filter.ExceptFinishHour != null)
                     query = query.Where(q => !q.ExamRoomExamPeriods
                                      .Select(e =>
-                                        (filter.ExceptStartHour.Value <= e.ExamPeriod.StartHour && e.ExamPeriod.StartHour <= filter.ExceptFinishHour.Value) ||
-                                        (filter.ExceptStartHour.Value <= e.ExamPeriod.FinishHour && e.ExamPeriod.FinishHour <= filter.ExceptFinishHour.Value))
+                                        (filter.ExceptStartHour <= e.ExamPeriod.StartHour && e.ExamPeriod.StartHour <= filter.ExceptFinishHour) ||
+                                        (filter.ExceptStartHour <= e.ExamPeriod.FinishHour && e.ExamPeriod.FinishHour <= filter.ExceptFinishHour) ||
+                                        (e.ExamPeriod.StartHour <= filter.ExceptStartHour && filter.ExceptFinishHour <= e.ExamPeriod.FinishHour))
                                      .Contains(true));
             }
             if (filter.ExceptExamDate != null)

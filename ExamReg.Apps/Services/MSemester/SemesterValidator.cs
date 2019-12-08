@@ -33,17 +33,17 @@ namespace ExamReg.Apps.Services.MSemester
         {
             this.UOW = UOW;
         }
-        private async Task<bool> ValidateNotExist(Semester Semester)
+        private async Task<bool> ValidateNotExist(Semester semester)
         {
             SemesterFilter filter = new SemesterFilter
             {
-                Code = new StringFilter { Equal = Semester.Code}
+                Code = new StringFilter { Equal = semester.Code }
             };
 
             int count = await UOW.SemesterRepository.Count(filter);
             if (count > 0)
             {
-                Semester.AddError(nameof(SemesterValidator), nameof(Semester), ERROR.SemesterExisted);
+                semester.AddError(nameof(SemesterValidator), nameof(semester), ERROR.SemesterExisted);
                 return false;
             }
             return true;
@@ -66,22 +66,12 @@ namespace ExamReg.Apps.Services.MSemester
 
         private bool ValidateStringLength(Semester Semester)
         {
-            if (Semester.StartYear.ToString() == null)
-            {
-                Semester.AddError(nameof(SemesterValidator), nameof(Semester.StartYear), ERROR.StringEmpty);
-                return false;
-            }
-            else if (Semester.StartYear < 0 || Semester.StartYear.ToString().Length > 4)
+            if (Semester.StartYear < 0 || Semester.StartYear.ToString().Length > 4)
             {
                 Semester.AddError(nameof(SemesterValidator), nameof(Semester.StartYear), ERROR.StartYearInvalid);
                 return false;
             }
-            if (Semester.EndYear.ToString() == null)
-            {
-                Semester.AddError(nameof(SemesterValidator), nameof(Semester.EndYear), ERROR.StringEmpty);
-                return false;
-            }
-            else if (Semester.EndYear < 0 || Semester.EndYear.ToString().Length > 4)
+            if (Semester.EndYear < 0 || Semester.EndYear.ToString().Length > 4)
             {
                 Semester.AddError(nameof(SemesterValidator), nameof(Semester.EndYear), ERROR.EndYearInvalid);
                 return false;

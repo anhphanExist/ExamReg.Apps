@@ -94,7 +94,7 @@ namespace ExamReg.Apps.Services.MTerm
                 term.AddError(nameof(TermValidator), nameof(term), ERROR.StringEmpty);
                 return false;
             }
-            else if (term.SubjectName != null && (term.SubjectName.Length > 100))
+            else if (term.SubjectName.Length > 100)
             {
                 term.AddError(nameof(TermValidator), nameof(term), ERROR.StringLimited);
                 return false;

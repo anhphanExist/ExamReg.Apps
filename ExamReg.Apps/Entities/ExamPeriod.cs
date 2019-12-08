@@ -21,6 +21,9 @@ namespace ExamReg.Apps.Entities
     public class ExamPeriodFilter : FilterEntity
     {
         public int? StudentNumber { get; set; }
+        public DateTimeFilter ExamDate { get; set; }
+        public short? StartHour { get; set; }
+        public short? FinishHour { get; set; }
         public StringFilter SubjectName { get; set; }
         public GuidFilter ExamProgramId { get; set; }
         public StringFilter ExamProgramName { get; set; }

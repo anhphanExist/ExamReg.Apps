@@ -32,68 +32,57 @@ namespace ExamReg.Apps.Services.MExamPeriod
             this.UOW = UOW;
         }
 
-        private async Task<bool> ValidateNotExist(ExamPeriod ExamPeriod)
+        private async Task<bool> ValidateNotExist(ExamPeriod examPeriod)
         {
             ExamPeriodFilter filter = new ExamPeriodFilter
             {
                 Take = Int32.MaxValue,
-                ExamDate = new DateTimeFilter { Equal = ExamPeriod.ExamDate },
-                SubjectName = new StringFilter { Equal = ExamPeriod.SubjectName },
-                ExamProgramId = new GuidFilter { Equal = ExamPeriod.ExamProgramId }
+                ExamDate = new DateTimeFilter { Equal = examPeriod.ExamDate },
+                StartHour = examPeriod.StartHour,
+                FinishHour = examPeriod.FinishHour,
+                SubjectName = new StringFilter { Equal = examPeriod.SubjectName },
+                ExamProgramId = new GuidFilter { Equal = examPeriod.ExamProgramId }
             };
 
             int count = await UOW.ExamPeriodRepository.Count(filter);
             if (count > 0)
             {
-                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod), ERROR.ExamPeriodExisted);
+                examPeriod.AddError(nameof(ExamPeriodValidator), nameof(examPeriod), ERROR.ExamPeriodExisted);
                 return false;
             }
             return true;
         }
 
-        private async Task<bool> ValidateExist(ExamPeriod ExamPeriod)
+        private async Task<bool> ValidateExist(ExamPeriod examPeriod)
         {
             ExamPeriodFilter filter = new ExamPeriodFilter
             {
                 Take = Int32.MaxValue,
-                ExamDate = new DateTimeFilter { Equal = ExamPeriod.ExamDate },
-                SubjectName = new StringFilter { Equal = ExamPeriod.SubjectName },
-                ExamProgramId = new GuidFilter { Equal = ExamPeriod.ExamProgramId }
+                ExamDate = new DateTimeFilter { Equal = examPeriod.ExamDate },
+                StartHour = examPeriod.StartHour,
+                FinishHour = examPeriod.FinishHour,
+                SubjectName = new StringFilter { Equal = examPeriod.SubjectName },
+                ExamProgramId = new GuidFilter { Equal = examPeriod.ExamProgramId }
             };
 
             int count = await UOW.ExamPeriodRepository.Count(filter);
             if (count == 0)
             {
-                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod), ERROR.NotExisted);
+                examPeriod.AddError(nameof(ExamPeriodValidator), nameof(examPeriod), ERROR.NotExisted);
                 return false;
             }
             return true;
         }
-        private bool ValidateDateTime(ExamPeriod ExamPeriod)
+        private bool ValidateDateTime(ExamPeriod examPeriod)
         {
-            if (ExamPeriod.ExamDate == null)
+            if (examPeriod.StartHour < 0 || examPeriod.StartHour >= 24)
             {
-                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod), ERROR.DateEmpty);
+                examPeriod.AddError(nameof(ExamPeriodValidator), nameof(examPeriod.StartHour), ERROR.StartHourInvalid);
                 return false;
             }
-            if (ExamPeriod.StartHour.ToString() == null)
+            if (examPeriod.FinishHour < 0 || examPeriod.FinishHour >= 24)
             {
-                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod.StartHour), ERROR.StringEmpty);
-                return false;
-            }
-            else if (ExamPeriod.StartHour < 0 || ExamPeriod.StartHour.ToString().Length > 2)
-            {
-                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod.StartHour), ERROR.StartHourInvalid);
-                return false;
-            }
-            if (ExamPeriod.FinishHour.ToString() == null)
-            {
-                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod.FinishHour), ERROR.StringEmpty);
-                return false;
-            }
-            else if (ExamPeriod.FinishHour < 0 || ExamPeriod.FinishHour.ToString().Length > 2)
-            {
-                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod.FinishHour), ERROR.FinishHourInvalid);
+                examPeriod.AddError(nameof(ExamPeriodValidator), nameof(examPeriod.FinishHour), ERROR.FinishHourInvalid);
                 return false;
             }
             return true;

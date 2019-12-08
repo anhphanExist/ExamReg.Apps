@@ -102,7 +102,7 @@ namespace ExamReg.Apps.Controllers.exam_register
         {
             ExamPeriodFilter filter = new ExamPeriodFilter
             {
-                StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
+                StudentNumber = CurrentContext.StudentNumber ,
                 ExamProgramId = new GuidFilter { Equal = examPeriodRequestFilterDTO.ExamProgramId },
                 ExamProgramName = new StringFilter { Equal = examPeriodRequestFilterDTO.ExamProgramName }
             };

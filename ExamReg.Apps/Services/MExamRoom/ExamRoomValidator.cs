@@ -33,64 +33,61 @@ namespace ExamReg.Apps.Services.MExamRoom
             this.UOW = UOW;
         }
 
-        private async Task<bool> ValidateNotExist(ExamRoom ExamRoom)
+        private async Task<bool> ValidateNotExist(ExamRoom examRoom)
         {
             ExamRoomFilter filter = new ExamRoomFilter
             {
                 Take = Int32.MaxValue,
-                RoomNumber = new ShortFilter { Equal = ExamRoom.RoomNumber }
+                RoomNumber = new ShortFilter { Equal = examRoom.RoomNumber },
+                AmphitheaterName = new StringFilter { Equal = examRoom.AmphitheaterName }
             };
 
             int count = await UOW.ExamRoomRepository.Count(filter);
             if (count > 0)
             {
-                ExamRoom.AddError(nameof(ExamRoomValidator), nameof(ExamRoom), ERROR.ExamRoomExisted);
+                examRoom.AddError(nameof(ExamRoomValidator), nameof(examRoom), ERROR.ExamRoomExisted);
                 return false;
             }
             return true;
         }
 
-        private async Task<bool> ValidateExist(ExamRoom ExamRoom)
+        private async Task<bool> ValidateExist(ExamRoom examRoom)
         {
             ExamRoomFilter filter = new ExamRoomFilter
             {
                 Take = Int32.MaxValue,
-                RoomNumber = new ShortFilter { Equal = ExamRoom.RoomNumber }
+                RoomNumber = new ShortFilter { Equal = examRoom.RoomNumber },
+                AmphitheaterName = new StringFilter { Equal = examRoom.AmphitheaterName }
             };
 
             int count = await UOW.ExamRoomRepository.Count(filter);
             if (count == 0)
             {
-                ExamRoom.AddError(nameof(ExamRoomValidator), nameof(ExamRoom), ERROR.NotExisted);
+                examRoom.AddError(nameof(ExamRoomValidator), nameof(examRoom), ERROR.NotExisted);
                 return false;
             }
             return true;
         }
-        private bool ValidateStringLength(ExamRoom ExamRoom)
+        private bool ValidateStringLength(ExamRoom examRoom)
         {
-            if (ExamRoom.RoomNumber.ToString() == null)
+            if (examRoom.RoomNumber < 0)
             {
-                ExamRoom.AddError(nameof(ExamRoomValidator), nameof(ExamRoom), ERROR.RoomNumberEmpty);
+                examRoom.AddError(nameof(ExamRoomValidator), nameof(examRoom), ERROR.RoomNumberInvalid);
                 return false;
             }
-            else if (ExamRoom.RoomNumber < 0)
+            if (examRoom.ComputerNumber <= 0)
             {
-                ExamRoom.AddError(nameof(ExamRoomValidator), nameof(ExamRoom), ERROR.RoomNumberInvalid);
+                examRoom.AddError(nameof(ExamRoomValidator), nameof(examRoom), ERROR.ComputerNumberInvalid);
                 return false;
             }
-            if (ExamRoom.ComputerNumber < 0)
+            if (string.IsNullOrEmpty(examRoom.AmphitheaterName))
             {
-                ExamRoom.AddError(nameof(ExamRoomValidator), nameof(ExamRoom), ERROR.ComputerNumberInvalid);
+                examRoom.AddError(nameof(ExamRoomValidator), nameof(examRoom), ERROR.AmphitheaterNameEmpty);
                 return false;
             }
-            if (string.IsNullOrEmpty(ExamRoom.AmphitheaterName))
+            else if (examRoom.AmphitheaterName.Length > 100)
             {
-                ExamRoom.AddError(nameof(ExamRoomValidator), nameof(ExamRoom), ERROR.AmphitheaterNameEmpty);
-                return false;
-            }
-            else if (ExamRoom.AmphitheaterName != null & ExamRoom.AmphitheaterName.Length > 100)
-            {
-                ExamRoom.AddError(nameof(ExamRoomValidator), nameof(ExamRoom), ERROR.AmphitheaterNameInvalid);
+                examRoom.AddError(nameof(ExamRoomValidator), nameof(examRoom), ERROR.AmphitheaterNameInvalid);
                 return false;
             }
             return true;

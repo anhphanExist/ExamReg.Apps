@@ -78,7 +78,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
-                StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
+                StudentNumber = CurrentContext.StudentNumber,
                 ExamProgramName = new StringFilter { Equal = examRoomExamPeriodRequestFilterDTO.ExamProgramName },
                 OrderBy = ExamOrder.ExamDate,
                 OrderType = OrderType.ASC
@@ -108,7 +108,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         {
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
-                StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
+                StudentNumber = CurrentContext.StudentNumber,
                 ExamProgramName = new StringFilter { Equal = examRoomExamPeriodRequestFilterDTO.ExamProgramName },
                 OrderBy = ExamOrder.ExamDate,
                 OrderType = OrderType.ASC

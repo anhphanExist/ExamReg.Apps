@@ -93,7 +93,7 @@ namespace ExamReg.Apps.Services.MStudent
                 student.AddError(nameof(StudentValidator), nameof(student.GivenName), ERROR.StringEmpty);
                 return false;
             }                  
-            else if (student.GivenName != null && (student.GivenName.Length > 100))
+            else if (student.GivenName.Length > 100)
             {
                 student.AddError(nameof(StudentValidator), nameof(student.GivenName), ERROR.StringLimited);
                 return false;
@@ -104,31 +104,19 @@ namespace ExamReg.Apps.Services.MStudent
                 student.AddError(nameof(StudentValidator), nameof(student.LastName), ERROR.StringEmpty);
                 return false;
             }                   
-            else if (student.LastName != null && (student.LastName.Length > 100))
+            else if (student.LastName.Length > 100)
             {
                 student.AddError(nameof(StudentValidator), nameof(student.LastName), ERROR.StringLimited);
                 return false;
-            }                   
-
-            if (student.Birthday == null)
-            {
-                student.AddError(nameof(StudentValidator), nameof(student.Birthday), ERROR.BirthdayInvalid);
-                return false;
             }
                     
-            if (student.Email == null || (student.Email.Length > 100))
+            if (student.Email.Length > 100)
             {
                 student.AddError(nameof(StudentValidator), nameof(student.Email), ERROR.EmailInvalid);
                 return false;
-            }
-                    
-            if (student.Password == null)
-            {
-                student.AddError(nameof(StudentValidator), nameof(student.Password), ERROR.InvalidPassword);
-                return false;
             }                                
 
-        return true;
+            return true;
         }
 
         /*private bool ValidateNewPassword(Student student, string newPassword)
