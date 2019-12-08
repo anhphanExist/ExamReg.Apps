@@ -11,8 +11,8 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
 {
     public interface IExamRoomExamPeriodService : IServiceScoped
     {
+        Task<ExamRoomExamPeriod> Get(Guid examPeriodId, Guid examRoomId);
         Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter);
-        Task<ExamRoomExamPeriod> Create(Guid examPeriodId);
         Task<ExamRoomExamPeriod> Delete(ExamRoomExamPeriod examRoomExamPeriod);
         Task<byte[]> ExportStudent(ExamRoomExamPeriodFilter filter);
         Task<byte[]> PrintExamRegisterResult(ExamRoomExamPeriodFilter filter);
@@ -24,15 +24,33 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
         {
             this.UOW = UOW;
         }
-
-        public Task<ExamRoomExamPeriod> Create(Guid examPeriodId)
+        public async Task<ExamRoomExamPeriod> Get(Guid examRoomId, Guid examPeriodId)
         {
-            throw new NotImplementedException();
+            ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
+            {
+                ExamPeriodId = new GuidFilter { Equal = examPeriodId},
+                ExamRoomId = new GuidFilter { Equal = examRoomId}
+
+            };
+            return await UOW.ExamRoomExamPeriodRepository.Get(filter);
         }
-
-        public Task<ExamRoomExamPeriod> Delete(ExamRoomExamPeriod examRoomExamPeriod)
+     
+        public async Task<ExamRoomExamPeriod> Delete(ExamRoomExamPeriod examRoomExamPeriod)
         {
-            throw new NotImplementedException();
+            using (UOW.Begin())
+            {
+                try
+                {
+                    await UOW.ExamRoomExamPeriodRepository.Delete(examRoomExamPeriod.ExamRoomId, examRoomExamPeriod.ExamPeriodId);
+                    await UOW.Commit();
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    examRoomExamPeriod.AddError(nameof(ExamRoomExamPeriodService), nameof(Delete), CommonEnum.ErrorCode.SystemError);
+                }
+            }
+            return examRoomExamPeriod;
         }
 
         public async Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter)
