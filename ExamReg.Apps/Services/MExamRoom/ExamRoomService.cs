@@ -15,7 +15,7 @@ namespace ExamReg.Apps.Services.MExamRoom
         Task<ExamRoom> Create(ExamRoom examRoom);
         Task<ExamRoom> Update(ExamRoom examRoom);
         Task<ExamRoom> Delete(ExamRoom examRoom);
-        Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter examRoomFilter);
+        Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter filter);
     }
     public class ExamRoomService : IExamRoomService
     {
@@ -107,9 +107,10 @@ namespace ExamReg.Apps.Services.MExamRoom
             }
         }
 
-        public async Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter examRoomFilter)
+        public async Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter filter)
         {
             // Lấy tất cả các phòng thi trống ứng với StartHour, FinishHour, ExamDate
+            List<ExamRoom> examRooms = await UOW.ExamRoomRepository.List(filter);
             throw new NotImplementedException();
         }
     }
