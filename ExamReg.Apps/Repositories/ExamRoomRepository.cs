@@ -38,7 +38,7 @@ namespace ExamReg.Apps.Repositories
         public async Task<bool> Create(ExamRoom examRoom)
         {
             ExamRoomDAO examRoomDAO = examRegContext.ExamRoom.Where(e => e.Id.Equals(examRoom.Id)).FirstOrDefault();
-            if(examRoomDAO == null)
+            if (examRoomDAO == null)
             {
                 examRoomDAO = new ExamRoomDAO()
                 {
@@ -147,9 +147,23 @@ namespace ExamReg.Apps.Repositories
             if (filter.AmphitheaterName != null)
                 query = query.Where(q => q.AmphitheaterName, filter.AmphitheaterName);
             if (filter.ComputerNumber != null)
-                query = query.Where(q => q.Id, filter.ComputerNumber);
+                query = query.Where(q => q.ComputerNumber, filter.ComputerNumber);
             if (filter.RoomNumber != null)
                 query = query.Where(q => q.RoomNumber, filter.RoomNumber);
+            if (filter.ExamDate != null)
+            {
+                if (filter.ExamDate.Equal.HasValue)
+                    query = query.Where(q => q.ExamRoomExamPeriods
+                                    .Select(e => e.ExamPeriod.ExamDate == filter.ExamDate.Equal.Value).Contains(true));
+                if (filter.ExceptStartHour != null && filter.ExceptFinishHour != null)
+                    query = query.Where(q => !q.ExamRoomExamPeriods
+                                    .Select(e =>
+                                        (filter.ExceptStartHour.Value <= e.ExamPeriod.StartHour && e.ExamPeriod.StartHour <= filter.ExceptFinishHour.Value) ||
+                                        (filter.ExceptStartHour.Value <= e.ExamPeriod.FinishHour && e.ExamPeriod.FinishHour <= filter.ExceptFinishHour.Value))
+                                    .Contains(true));
+            }
+            if (filter.ExceptExamDate != null)
+                query = query.Where(q => !q.ExamRoomExamPeriods.Select(e => e.ExamPeriod.ExamDate == filter.ExceptExamDate).Contains(true));
             return query;
         }
         private IQueryable<ExamRoomDAO> DynamicOrder(IQueryable<ExamRoomDAO> query, ExamRoomFilter filter)

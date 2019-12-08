@@ -19,9 +19,10 @@ namespace ExamReg.Apps.Entities
         public StringFilter AmphitheaterName { get; set; }
         public ShortFilter RoomNumber { get; set; }
         public IntFilter ComputerNumber { get; set; }
-        public DateTimeFilter ExamDate { get; set; }
-        public ShortFilter StartHour { get; set; }
-        public ShortFilter FinishHour { get; set; }
+        public DateTime? ExamDate { get; set; }
+        public DateTime? ExceptExamDate { get; set; }
+        public short? ExceptStartHour { get; set; }
+        public short? ExceptFinishHour { get; set; }
         public ExamRoomOrder OrderBy { get; set; }
         public ExamRoomFilter() : base()
         {

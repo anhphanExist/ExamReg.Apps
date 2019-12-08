@@ -1,5 +1,6 @@
 ﻿using ExamReg.Apps.Common;
 using ExamReg.Apps.Entities;
+using ExamReg.Apps.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,15 @@ namespace ExamReg.Apps.Services.MExamRoom
         Task<ExamRoom> Create(ExamRoom examRoom);
         Task<ExamRoom> Update(ExamRoom examRoom);
         Task<ExamRoom> Delete(ExamRoom examRoom);
-        Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter examRoomFilter);
+        Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter filter);
     }
     public class ExamRoomService : IExamRoomService
     {
+        private IUOW UOW;
+        public ExamRoomService(IUOW UOW)
+        {
+            this.UOW = UOW;
+        }
         public Task<int> Count(ExamRoomFilter filter)
         {
             throw new NotImplementedException();
@@ -43,9 +49,10 @@ namespace ExamReg.Apps.Services.MExamRoom
             throw new NotImplementedException();
         }
 
-        public Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter examRoomFilter)
+        public async Task<List<ExamRoom>> ListAvailableExamRoom(ExamRoomFilter filter)
         {
             // Lấy tất cả các phòng thi trống ứng với StartHour, FinishHour, ExamDate
+            List<ExamRoom> examRooms = await UOW.ExamRoomRepository.List(filter);
             throw new NotImplementedException();
         }
     }

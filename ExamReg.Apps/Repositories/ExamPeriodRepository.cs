@@ -151,10 +151,16 @@ namespace ExamReg.Apps.Repositories
             if (filter == null)
                 return query.Where(q => 1 == 0);
             if (filter.StudentNumber != null)
-                query = query.Where(q => q.ExamRoomExamPeriods.Select(e => e.ExamRegisters.Select(r => r.Student.StudentNumber)), filter.StudentNumber);
-                // có thể dùng join vào với nhau để đạt performance cao hơn
+                query = query.Where(q => q.ExamRoomExamPeriods.SelectMany(e => e.ExamRegisters.Select(r => r.Student.StudentNumber)), filter.StudentNumber);
+            // có thể dùng join vào với nhau để đạt performance cao hơn
             if (filter.ExamDate != null)
+            {
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
+                if (filter.StartHour != null)
+                    query = query.Where(q => q.StartHour, filter.StartHour);
+                if (filter.FinishHour != null)
+                    query = query.Where(q => q.FinishHour, filter.FinishHour);
+            }
             if (filter.SubjectName != null)
                 query = query.Where(q => q.Term.SubjectName, filter.SubjectName);
             if (filter.ExamProgramId != null)

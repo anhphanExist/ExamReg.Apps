@@ -218,14 +218,19 @@ namespace ExamReg.Apps.Controllers.exam_period
         [Route(ExamPeriodRoute.ListAvailableExamRoom), HttpPost]
         public async Task<List<ExamRoomDTO>> ListAvailableExamRoom([FromBody] ExamRoomFilterDTO examRoomRequestFilterDTO)
         {
+            // Lấy tất cả các phòng thi trống trong khoảng thời gian từ StartHour đến FinishHour của ngày ExamDate
+            // Tức là lấy các phòng thi có ExamRoomExamPeriod của ngày ExamDate không tồn tại trong khoảng thời gian >= StartHour và <= FinishHour
             List<ExamRoom> examRooms = await ExamRoomService.ListAvailableExamRoom(new ExamRoomFilter
             {
                 ExamDate = new DateTimeFilter { Equal = examRoomRequestFilterDTO.ExamDate },
-                StartHour = new ShortFilter { Equal = examRoomRequestFilterDTO.StartHour },
-                FinishHour = new ShortFilter { Equal = examRoomRequestFilterDTO.FinishHour },
-                OrderBy = ExamRoomOrder.AmphitheaterName,
-                OrderType = OrderType.ASC
+                ExceptStartHour = examRoomRequestFilterDTO.StartHour,
+                ExceptFinishHour = examRoomRequestFilterDTO.FinishHour 
             });
+            // Tức là lấy các phòng thi có ExamRoomExamPeriod không tồn tại nếu filter theo ExamDate
+            examRooms.AddRange(await ExamRoomService.ListAvailableExamRoom(new ExamRoomFilter
+            {
+                ExamDate = new DateTimeFilter { NotEqual = examRoomRequestFilterDTO.ExamDate }
+            }));
             return examRooms.Select(s => new ExamRoomDTO
             {
                 Id = s.Id,
@@ -234,7 +239,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 AmphitheaterName = s.AmphitheaterName,
                 ComputerNumber = s.ComputerNumber,
                 Errors = s.Errors
-            }).ToList();
+            }).OrderBy(e => e.AmphitheaterName).ToList();
         }
     }
 }
