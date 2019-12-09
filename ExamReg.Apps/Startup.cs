@@ -103,8 +103,8 @@ namespace ExamReg.Apps
                         new AdminRequirement()));
             });
 
-            services.AddSingleton<IAuthorizationHandler, StudentHandler>();
-            services.AddSingleton<IAuthorizationHandler, AdminHandler>();
+            services.AddScoped<IAuthorizationHandler, StudentHandler>();
+            services.AddScoped<IAuthorizationHandler, AdminHandler>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
