@@ -86,7 +86,8 @@ namespace ExamReg.Apps
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateLifetime = true,
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 
