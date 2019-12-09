@@ -21,7 +21,7 @@ namespace ExamReg.Apps.Controllers.exam_register
         public const string ListTerm = Default + "/list-term";
         public const string ListCurrentExamPeriod = Default + "/list-current-exam-period";
         public const string RegisterExam = Default + "/register-exam";
-        public const string GetCurrentExamProgram = Default + "/get-current-exam-program";
+        public const string GetCurrentExamProgram = Default + "/register-get-current-exam-program";
     }
 
     [Authorize(Policy = "CanRegisterExam")]

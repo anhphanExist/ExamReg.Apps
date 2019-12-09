@@ -18,7 +18,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
     {
         private const string Default = Base + "/exam-register-result";
         public const string GetStudentInfo = Default + "/get-student-info";
-        public const string GetCurrentExamProgram = Default + "/get-current-exam-program";
+        public const string GetCurrentExamProgram = Default + "/result-get-current-exam-program";
         public const string ListExamRoomExamPeriod = Default + "/list";
         public const string PrintExamRegisterResult = Default + "/print";
     }

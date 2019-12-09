@@ -16,7 +16,7 @@ namespace ExamReg.Apps.Controllers.watcher
     {
         private const string Default = Base + "/watcher";
         public const string List = Default + "/list";
-        public const string GetCurrentExamProgram = Default + "/get-current-exam-program";
+        public const string GetCurrentExamProgram = Default + "/watcher-get-current-exam-program";
         public const string ExportStudent = Default + "/export-student/{examPeriodId}/{examRoomId}";
     }
     [Authorize(Policy = "CanManage")]

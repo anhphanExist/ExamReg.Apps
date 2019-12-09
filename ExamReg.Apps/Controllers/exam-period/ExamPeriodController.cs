@@ -19,7 +19,7 @@ namespace ExamReg.Apps.Controllers.exam_period
         public const string Create = Default + "/create";
         public const string Update = Default + "/update";
         public const string Delete = Default + "/delete";
-        public const string GetCurrentExamProgram = Default + "/get-current-exam-program";
+        public const string GetCurrentExamProgram = Default + "/period-get-current-exam-program";
         public const string ListTerm = Default + "/list-term";
         public const string ListAvailableExamRoom = Default + "/list-available-exam-room";
     }

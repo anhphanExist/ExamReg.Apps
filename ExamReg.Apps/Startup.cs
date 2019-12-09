@@ -115,6 +115,7 @@ namespace ExamReg.Apps
                     Title = "Test API",
                     Description = "ASP.NET Core Web API"
                 });
+                c.CustomSchemaIds(i => i.FullName);
             });
         }
 
