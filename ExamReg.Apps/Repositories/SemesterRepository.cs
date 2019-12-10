@@ -171,8 +171,12 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
                 query = query.Where(q => q.IsFirstHalf == (codeData[2] == "1" ? true : false));
             }
+            if (filter.StartYear != null)
+                query = query.Where(q => q.StartYear, filter.StartYear);
+            if (filter.EndYear != null)
+                query = query.Where(q => q.EndYear, filter.EndYear);
             if (filter.IsFirstHalf != null)
-                query = query.Where(c => c.IsFirstHalf == filter.IsFirstHalf);      
+            query = query.Where(c => c.IsFirstHalf == filter.IsFirstHalf);
 
             return query;
         }

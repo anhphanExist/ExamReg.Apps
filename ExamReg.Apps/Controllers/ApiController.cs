@@ -13,7 +13,7 @@ namespace ExamReg.Apps.Controllers
     {
         protected const string Base = "api/ExamReg/APPS";
     }
-    
+
     [Authorize]
     public class ApiController : ControllerBase
     {

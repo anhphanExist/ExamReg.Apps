@@ -46,7 +46,7 @@ namespace ExamReg.Apps.Services.MExamProgram
             {
                 try
                 {
-                    examProgram.Id = new Guid();
+                    examProgram.Id = Guid.NewGuid();
 
                     await UOW.ExamProgramRepository.Create(examProgram);
                     await UOW.Commit();

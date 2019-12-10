@@ -132,7 +132,7 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.Name, filter.Name);
             if (filter.SemesterCode != null)
             {
-                string[] codeData = filter.SemesterCode.Equal.Split(".");
+                string[] codeData = filter.SemesterCode.Equal.Split("_");
                 query = query.Where(q => q.Semester.StartYear, new ShortFilter { Equal = short.Parse(codeData[0]) });
                 query = query.Where(q => q.Semester.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
                 query = query.Where(q => q.Semester.IsFirstHalf == (codeData[2] == "1" ? true : false));

@@ -43,7 +43,7 @@ namespace ExamReg.Apps.Services.MExamRoom
             {
                 try
                 {
-                    examRoom.Id = new Guid();
+                    examRoom.Id = Guid.NewGuid();
 
                     await UOW.ExamRoomRepository.Create(examRoom);
                     await UOW.Commit();

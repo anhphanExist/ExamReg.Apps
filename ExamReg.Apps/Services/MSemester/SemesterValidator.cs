@@ -37,7 +37,9 @@ namespace ExamReg.Apps.Services.MSemester
         {
             SemesterFilter filter = new SemesterFilter
             {
-                Code = new StringFilter { Equal = semester.Code }
+                StartYear = new ShortFilter { Equal = semester.StartYear },
+                EndYear = new ShortFilter { Equal = semester.EndYear },
+                IsFirstHalf = semester.IsFirstHalf
             };
 
             int count = await UOW.SemesterRepository.Count(filter);
@@ -52,7 +54,9 @@ namespace ExamReg.Apps.Services.MSemester
         {
             SemesterFilter filter = new SemesterFilter
             {
-                Code = new StringFilter { Equal = Semester.Code }
+                StartYear = new ShortFilter { Equal = Semester.StartYear },
+                EndYear = new ShortFilter { Equal = Semester.EndYear },
+                IsFirstHalf = Semester.IsFirstHalf
             };
 
             int count = await UOW.SemesterRepository.Count(filter);
