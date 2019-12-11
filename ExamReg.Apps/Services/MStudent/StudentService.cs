@@ -432,6 +432,7 @@ namespace ExamReg.Apps.Services.MStudent
                 {
                     await UOW.StudentTermRepository.BulkMerge(studentTerms);
                     await UOW.Commit();
+                    return excelTemplates;
                 }
                 catch(Exception e)
                 {
@@ -439,7 +440,6 @@ namespace ExamReg.Apps.Services.MStudent
                     throw new MessageException(e);
                 }
             }
-            throw new NotImplementedException();
         }
 
         public async Task<List<StudentTerm>> LoadStudentTermFromExcel(byte[] file)
