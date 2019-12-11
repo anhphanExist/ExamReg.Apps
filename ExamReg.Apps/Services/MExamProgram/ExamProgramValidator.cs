@@ -19,6 +19,7 @@ namespace ExamReg.Apps.Services.MExamProgram
     {
         public enum ERROR
         {
+            IdNotFound,
             ExamProgramExisted,
             NotExisted,
             StringEmpty,
@@ -56,7 +57,6 @@ namespace ExamReg.Apps.Services.MExamProgram
         {
             ExamProgramFilter filter = new ExamProgramFilter
             {
-                Take = Int32.MaxValue,
                 Name = new StringFilter { Equal = ExamProgram.Name },
                 SemesterCode = new StringFilter { Equal = ExamProgram.SemesterCode }
             };
@@ -68,6 +68,19 @@ namespace ExamReg.Apps.Services.MExamProgram
                 return false;
             }
             return true;
+        }
+        public async Task<bool> ValidateId(ExamProgram examProgram)
+        {
+            ExamProgramFilter filter = new ExamProgramFilter
+            {
+                Id = new GuidFilter { Equal = examProgram.Id},
+            };
+            int count = await UOW.ExamProgramRepository.Count(filter);
+
+            if (count == 0)
+                examProgram.AddError(nameof(ExamProgramValidator), nameof(examProgram), ERROR.IdNotFound);
+
+            return count == 1;
         }
         private bool ValidateStringLength(ExamProgram examProgram)
         {
@@ -113,7 +126,7 @@ namespace ExamReg.Apps.Services.MExamProgram
         {
             bool IsValid = true;
 
-            IsValid &= await ValidateExist(examProgram);
+            IsValid &= await ValidateId(examProgram);
             IsValid &= ValidateStringLength(examProgram);
             return IsValid;
         }

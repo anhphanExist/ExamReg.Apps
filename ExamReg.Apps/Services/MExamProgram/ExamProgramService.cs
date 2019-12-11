@@ -48,9 +48,17 @@ namespace ExamReg.Apps.Services.MExamProgram
                 {
                     examProgram.Id = Guid.NewGuid();
 
+                    SemesterFilter filter = new SemesterFilter
+                    {
+                        Code = new StringFilter { Equal = examProgram.SemesterCode}
+                    };
+
+                    Semester semester = await UOW.SemesterRepository.Get(filter);
+                    examProgram.SemesterId = semester.Id;
+
                     await UOW.ExamProgramRepository.Create(examProgram);
                     await UOW.Commit();
-                    return await Get(examProgram.Id);
+                    return examProgram;
                 }
                 catch (Exception e)
                 {
@@ -96,6 +104,14 @@ namespace ExamReg.Apps.Services.MExamProgram
             {
                 try
                 {
+                    SemesterFilter filter = new SemesterFilter
+                    {
+                        Code = new StringFilter { Equal = examProgram.SemesterCode }
+                    };
+
+                    Semester semester = await UOW.SemesterRepository.Get(filter);
+                    examProgram.SemesterId = semester.Id;
+
                     await UOW.ExamProgramRepository.Update(examProgram);
                     await UOW.Commit();
                     return examProgram;

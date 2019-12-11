@@ -128,6 +128,8 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
+            if (filter.Id != null)
+                query = query.Where(q => q.Id, filter.Id);
             if (filter.Name != null)
                 query = query.Where(q => q.Name, filter.Name);
             if (filter.SemesterCode != null)
