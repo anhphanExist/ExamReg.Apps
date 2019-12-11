@@ -17,7 +17,7 @@ namespace ExamReg.Apps.Controllers.exam_register
 {
     public class ExamRegisterRoute : Root
     {
-        private const string Default = Base + "/exam-register-result";
+        private const string Default = Base + "/exam-register";
         public const string ListTerm = Default + "/list-term";
         public const string ListCurrentExamPeriod = Default + "/list-current-exam-period";
         public const string RegisterExam = Default + "/register-exam";
