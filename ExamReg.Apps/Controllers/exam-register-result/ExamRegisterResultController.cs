@@ -74,12 +74,13 @@ namespace ExamReg.Apps.Controllers.exam_register_result
 
         // Lấy danh sách môn thi và phòng thi của sinh viên
         [Route(ExamRegisterResultRoute.ListExamRoomExamPeriod), HttpPost]
-        public async Task<List<ExamRoomExamPeriodDTO>> ListExamRoomExamPeriod(ExamRoomExamPeriodFilterDTO examRoomExamPeriodRequestFilterDTO)
+        public async Task<List<ExamRoomExamPeriodDTO>> ListExamRoomExamPeriod()
         {
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
                 StudentNumber = CurrentContext.StudentNumber,
-                ExamProgramName = new StringFilter { Equal = examRoomExamPeriodRequestFilterDTO.ExamProgramName },
+                ExamProgramId = new GuidFilter { Equal = currentExamProgram.Id },
                 OrderBy = ExamOrder.ExamDate,
                 OrderType = OrderType.ASC
             };
@@ -104,12 +105,13 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         }
 
         [Route(ExamRegisterResultRoute.PrintExamRegisterResult), HttpGet]
-        public async Task<FileResult> PrintExamRegisterResult(ExamRoomExamPeriodFilterDTO examRoomExamPeriodRequestFilterDTO)
+        public async Task<FileResult> PrintExamRegisterResult()
         {
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             ExamRoomExamPeriodFilter filter = new ExamRoomExamPeriodFilter
             {
                 StudentNumber = CurrentContext.StudentNumber,
-                ExamProgramName = new StringFilter { Equal = examRoomExamPeriodRequestFilterDTO.ExamProgramName },
+                ExamProgramId = new GuidFilter { Equal = currentExamProgram.Id },
                 OrderBy = ExamOrder.ExamDate,
                 OrderType = OrderType.ASC
             };

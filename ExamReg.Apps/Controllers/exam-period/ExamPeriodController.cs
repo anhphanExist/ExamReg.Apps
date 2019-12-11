@@ -47,8 +47,10 @@ namespace ExamReg.Apps.Controllers.exam_period
         [Route(ExamPeriodRoute.List), HttpPost]
         public async Task<List<ExamPeriodDTO>> List()
         {
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             List<ExamPeriod> examPeriods = await ExamPeriodService.List(new ExamPeriodFilter
             {
+                ExamProgramId = new GuidFilter { Equal = currentExamProgram.Id },
                 OrderBy = ExamPeriodOrder.SubjectName,
                 OrderType = OrderType.ASC
             });
