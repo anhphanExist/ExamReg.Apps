@@ -159,6 +159,9 @@ namespace ExamReg.Apps.Repositories
                         case ExamProgramOrder.SemesterCode:
                             query = query.OrderBy(q => q.Semester.StartYear);
                             break;
+                        case ExamProgramOrder.IsCurrent:
+                            query = query.OrderBy(q => q.IsCurrent);
+                            break;
                         default:
                             query = query.OrderBy(q => q.CX);
                             break;
@@ -172,6 +175,9 @@ namespace ExamReg.Apps.Repositories
                             break;
                         case ExamProgramOrder.SemesterCode:
                             query = query.OrderByDescending(q => q.Semester.StartYear);
+                            break;
+                        case ExamProgramOrder.IsCurrent:
+                            query = query.OrderByDescending(q => q.IsCurrent);
                             break;
                         default:
                             query = query.OrderByDescending(q => q.CX);

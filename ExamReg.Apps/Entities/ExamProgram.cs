@@ -29,6 +29,7 @@ namespace ExamReg.Apps.Entities
     public enum ExamProgramOrder
     {
         Name,
-        SemesterCode
+        SemesterCode,
+        IsCurrent
     }
 }

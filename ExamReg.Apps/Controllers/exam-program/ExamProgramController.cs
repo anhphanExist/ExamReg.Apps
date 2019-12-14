@@ -41,8 +41,8 @@ namespace ExamReg.Apps.Controllers.exam_program
         {
             List<ExamProgram> examPrograms = await ExamProgramService.List(new ExamProgramFilter
             {
-                OrderBy = ExamProgramOrder.SemesterCode,
-                OrderType = OrderType.ASC
+                OrderBy = ExamProgramOrder.IsCurrent,
+                OrderType = OrderType.DESC
             });
             return examPrograms.Select(e => new ExamProgramDTO
             {
