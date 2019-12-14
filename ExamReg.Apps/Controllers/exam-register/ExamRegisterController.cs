@@ -17,7 +17,7 @@ namespace ExamReg.Apps.Controllers.exam_register
 {
     public class ExamRegisterRoute : Root
     {
-        private const string Default = Base + "/exam-register-result";
+        private const string Default = Base + "/exam-register";
         public const string ListTerm = Default + "/list-term";
         public const string ListCurrentExamPeriod = Default + "/list-current-exam-period";
         public const string RegisterExam = Default + "/register-exam";
@@ -66,6 +66,7 @@ namespace ExamReg.Apps.Controllers.exam_register
         [Route(ExamRegisterRoute.ListTerm), HttpPost]
         public async Task<List<TermDTO>> ListTerm([FromBody] TermFilterDTO termRequestFilterDTO)
         {
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             TermFilter filter = new TermFilter
             {
                 StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
@@ -79,18 +80,21 @@ namespace ExamReg.Apps.Controllers.exam_register
                 SemesterId = r.SemesterId,
                 SubjectName = r.SubjectName,
                 SemesterCode = r.SemesterCode,
-                ExamPeriods = r.ExamPeriods.Select(e => new ExamPeriodDTO
-                {
-                    Id = e.Id,
-                    ExamProgramId = e.ExamProgramId,
-                    TermId = e.TermId,
-                    SubjectName = e.SubjectName,
-                    StartHour = e.StartHour,
-                    FinishHour = e.FinishHour,
-                    ExamDate = e.ExamDate,
-                    ExamProgramName = e.ExamProgramName,
-                    Errors = e.Errors
-                }).ToList(),
+                ExamPeriods = r.ExamPeriods
+                    .Where(e => e.ExamProgramId.Equals(currentExamProgram.Id))
+                    .Select(e => new ExamPeriodDTO
+                    {
+                        Id = e.Id,
+                        ExamProgramId = e.ExamProgramId,
+                        TermId = e.TermId,
+                        SubjectName = e.SubjectName,
+                        StartHour = e.StartHour,
+                        FinishHour = e.FinishHour,
+                        ExamDate = e.ExamDate,
+                        ExamProgramName = e.ExamProgramName,
+                        Errors = e.Errors
+                    })
+                    .ToList(),
                 IsQualified = r.QualifiedStudents.Where(q => q.StudentNumber == CurrentContext.StudentNumber).Any(),
                 Errors = r.Errors
             }).ToList();
@@ -98,13 +102,13 @@ namespace ExamReg.Apps.Controllers.exam_register
 
         // Hiển thị các ca thi hiện tại của môn thi mà sinh viên đã đăng ký
         [Route(ExamRegisterRoute.ListCurrentExamPeriod), HttpPost]
-        public async Task<List<ExamPeriodDTO>> ListCurrentExamPeriod([FromBody] ExamPeriodFilterDTO examPeriodRequestFilterDTO)
+        public async Task<List<ExamPeriodDTO>> ListCurrentExamPeriod()
         {
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             ExamPeriodFilter filter = new ExamPeriodFilter
             {
-                StudentNumber = CurrentContext.StudentNumber ,
-                ExamProgramId = new GuidFilter { Equal = examPeriodRequestFilterDTO.ExamProgramId },
-                ExamProgramName = new StringFilter { Equal = examPeriodRequestFilterDTO.ExamProgramName }
+                StudentNumber = CurrentContext.StudentNumber,
+                ExamProgramId = new GuidFilter { Equal = currentExamProgram.Id }
             };
             List<ExamPeriod> res = await ExamPeriodService.List(filter);
             return res.Select(r => new ExamPeriodDTO

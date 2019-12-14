@@ -30,13 +30,18 @@ namespace ExamReg.Apps.Controllers.watcher
             ) : base(CurrentContext)
         {
             this.ExamRoomExamPeriodService = ExamRoomExamPeriodService;
+            this.ExamProgramService = ExamProgramService;
         }
 
         // Lấy danh sách tất cả thông tin của các ca thi ứng với phòng thi và môn thi
         [Route(WatcherRoute.List), HttpPost]
         public async Task<List<WatcherDTO>> List()
         {
-            List<ExamRoomExamPeriod> examRoomExamPeriods = await ExamRoomExamPeriodService.List(new ExamRoomExamPeriodFilter());
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
+            List<ExamRoomExamPeriod> examRoomExamPeriods = await ExamRoomExamPeriodService.List(new ExamRoomExamPeriodFilter
+            {
+                ExamProgramId = new GuidFilter { Equal = currentExamProgram.Id }
+            });
             List<WatcherDTO> res = new List<WatcherDTO>();
             examRoomExamPeriods.ForEach(r => res.Add(new WatcherDTO
             {
