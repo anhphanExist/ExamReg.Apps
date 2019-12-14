@@ -40,12 +40,10 @@ namespace ExamReg.Apps.Controllers.term
         }
 
         [Route(TermRoute.List), HttpPost]
-        public async Task<List<TermDTO>> List([FromBody] TermFilterDTO termRequestFilterDTO)
+        public async Task<List<TermDTO>> List()
         {
             List<Term> res = await TermService.List(new TermFilter
             {
-                SemesterId = new GuidFilter { Equal = termRequestFilterDTO.SemesterId },
-                SemesterCode = new StringFilter { Equal = termRequestFilterDTO.SemesterCode },
                 OrderBy = TermOrder.SubjectName,
                 OrderType = OrderType.ASC
             });

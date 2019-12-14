@@ -136,9 +136,10 @@ namespace ExamReg.Apps
 
             // global cors policy
             app.UseCors(x => x
-                .AllowAnyOrigin()
+                .WithOrigins("http://localhost:8080")
+                .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowCredentials());
 
             app.UseHttpsRedirection();
             app.UseMiddleware<ErrorHandlingMiddleware>();
