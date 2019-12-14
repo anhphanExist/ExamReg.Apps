@@ -46,6 +46,18 @@ namespace ExamReg.Apps.Services.MTerm
         {
             return await UOW.TermRepository.Get(termId);
         }
+        public async Task<Term> GetSemesterId(Term term)
+        {
+            SemesterFilter filter = new SemesterFilter
+            {
+                Code = new StringFilter { Equal = term.SemesterCode }
+            };
+
+            Semester semester = await UOW.SemesterRepository.Get(filter);
+            term.SemesterId = semester.Id;
+
+            return term;
+        }
 
         public async Task<Term> Create(Term term)
         {
@@ -56,11 +68,13 @@ namespace ExamReg.Apps.Services.MTerm
             {
                 try
                 {
-                    term.Id = new Guid();
+                    term.Id = Guid.NewGuid();
+
+                    term = await GetSemesterId(term);
 
                     await UOW.TermRepository.Create(term);
                     await UOW.Commit();
-                    return await Get(term.Id);
+                    return term;
                 }
                 catch(Exception e)
                 {
@@ -73,24 +87,18 @@ namespace ExamReg.Apps.Services.MTerm
 
         public async Task<Term> Update(Term term)
         {
-            if (term == null) return null;
-            if (!await TermValidator.Delete(term))
+            if (!await TermValidator.Update(term))
                 return term;
 
             using (UOW.Begin())
             {
                 try
                 {
-                    TermFilter filter = new TermFilter
-                    {
-                        SubjectName = new StringFilter { Equal = term.SubjectName },
-                        SemesterCode = new StringFilter { Equal = term.SemesterCode },
-                    };
+                    term = await GetSemesterId(term);
 
-                    term = await UOW.TermRepository.Get(filter);
                     await UOW.TermRepository.Update(term);
                     await UOW.Commit();
-                    return await UOW.TermRepository.Get(term.Id);
+                    return term;
                 }
                 catch (Exception e)
                 {

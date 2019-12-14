@@ -39,7 +39,6 @@ namespace ExamReg.Apps.Services.MTerm
         {
             TermFilter filter = new TermFilter
             {
-                Take = Int32.MaxValue,
                 SubjectName = new StringFilter { Equal = Term.SubjectName },
                 SemesterCode = new StringFilter { Equal = Term.SemesterCode }
             };
@@ -70,22 +69,19 @@ namespace ExamReg.Apps.Services.MTerm
             return true;
         }
 
-        /*private async Task<bool> ValidateId(Term Term)
+        private async Task<bool> ValidateId(Term Term)
         {
             TermFilter filter = new TermFilter
             {
-                Skip = 0,
-                Take = int.MaxValue,
-                OrderBy = TermOrder.SubjectName,
-                OrderType = OrderType.ASC
+                Id = new GuidFilter { Equal = Term.Id}
             };
             int count = await UOW.TermRepository.Count(filter);
 
             if (count == 0)
-                Term.AddError(nameof(TermValidator), nameof(Term.Id), ERROR.IdNotFound);
+                Term.AddError(nameof(TermValidator), nameof(Term), ERROR.IdNotFound);
 
             return count == 1;
-        }*/
+        }
 
         private bool ValidateStringLength(Term term)
         {
@@ -131,7 +127,7 @@ namespace ExamReg.Apps.Services.MTerm
         {
             bool IsValid = true;
 
-            IsValid &= await ValidateExist(term);
+            IsValid &= await ValidateId(term);
             IsValid &= ValidateStringLength(term);
             return IsValid;
         }

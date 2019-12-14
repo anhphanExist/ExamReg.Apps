@@ -18,6 +18,7 @@ namespace ExamReg.Apps.Repositories
         Task<bool> Delete(Guid Id);
         Task<int> Count(ExamProgramFilter filter);
         Task<List<ExamProgram>> List(ExamProgramFilter filter);
+        Task<bool> Active(Guid Id);
     }
     public class ExamProgramRepository : IExamProgramRepository
     {
@@ -124,6 +125,19 @@ namespace ExamReg.Apps.Repositories
 
             return true;
         }
+        
+        public async Task<bool> Active(Guid Id)
+        {
+            await examRegContext.ExamProgram
+                .Where(e => e.IsCurrent.Equals(true))
+                .UpdateFromQueryAsync(e => new ExamProgramDAO { IsCurrent = false });
+
+            await examRegContext.ExamProgram
+                .Where(e => e.Id.Equals(Id))
+                .UpdateFromQueryAsync(e => new ExamProgramDAO { IsCurrent = true });
+
+            return true;
+        }
         private IQueryable<ExamProgramDAO> DynamicFilter(IQueryable<ExamProgramDAO> query, ExamProgramFilter filter)
         {
             if (filter == null)
@@ -139,8 +153,8 @@ namespace ExamReg.Apps.Repositories
                 query = query.Where(q => q.Semester.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
                 query = query.Where(q => q.Semester.IsFirstHalf == (codeData[2] == "1" ? true : false));
             }
-            if (filter.IsCurrent != null)
-                query = query.Where(q => q.IsCurrent == filter.IsCurrent);
+            if (filter.IsCurrent.HasValue)
+                query = query.Where(q => q.IsCurrent.Equals(filter.IsCurrent.Value));
             return query;
         }
 

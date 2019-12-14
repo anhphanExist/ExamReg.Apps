@@ -219,19 +219,23 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
+            //query = query.Where(q => q.Semester.Id, filter.SemesterId);
+            if (filter.SemesterCode != null)
+            {
+                string[] codeData = filter.SemesterCode.Equal.Split("_");
+                query = query.Where(q => q.Semester.StartYear, new ShortFilter { Equal = short.Parse(codeData[0]) });
+                query = query.Where(q => q.Semester.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
+                query = query.Where(q => q.Semester.IsFirstHalf == (codeData[2] == "1" ? true : false));
+            }
+            if (filter.Id != null)
+                query = query.Where(q => q.Id, filter.Id);
             if (filter.StudentNumber != null)
                 query = query.Where(q => q.StudentTerms.Select(s => s.Student.StudentNumber), filter.StudentNumber);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
             if (filter.SemesterId != null)
                 query = query.Where(q => q.SemesterId, filter.SemesterId);
-            if (filter.SemesterCode != null)
-            {
-                string[] codeData = filter.SemesterCode.Equal.Split(".");
-                query = query.Where(q => q.Semester.StartYear, new ShortFilter { Equal = short.Parse(codeData[0]) });
-                query = query.Where(q => q.Semester.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
-                query = query.Where(q => q.Semester.IsFirstHalf == (codeData[2] == "1" ? true : false));
-            }
+            
             return query;
         }
 

@@ -31,9 +31,32 @@ namespace ExamReg.Apps.Services.MExamPeriod
         {
             return await UOW.ExamPeriodRepository.Count(filter);
         }
-        public async Task<ExamPeriod> Get(Guid Id)
+        /*public async Task<ExamPeriod> Get(Guid Id)
         {
             return await UOW.ExamPeriodRepository.Get(Id);
+        }*/
+        public async Task<ExamPeriod> GetTermIdExamProgramId(ExamPeriod examPeriod)
+        {
+            ExamProgramFilter filter = new ExamProgramFilter
+            {
+                Name = new StringFilter { Equal = examPeriod.ExamProgramName},
+            };
+
+            ExamProgram examProgram = await UOW.ExamProgramRepository.Get(filter);
+
+            examPeriod.ExamProgramId = examProgram.Id;
+
+            TermFilter termfilter = new TermFilter
+            {
+                SubjectName = new StringFilter { Equal = examPeriod.SubjectName},
+                SemesterId = new GuidFilter { Equal = examProgram.SemesterId}
+            };
+
+            Term term = await UOW.TermRepository.Get(termfilter);
+
+            examPeriod.TermId = term.Id;
+
+            return examPeriod;
         }
 
         public async Task<ExamPeriod> Create(ExamPeriod examPeriod)
@@ -46,9 +69,12 @@ namespace ExamReg.Apps.Services.MExamPeriod
                 try
                 {
                     examPeriod.Id = Guid.NewGuid();
+
+                    examPeriod = await GetTermIdExamProgramId(examPeriod);
+
                     await UOW.ExamPeriodRepository.Create(examPeriod);
                     await UOW.Commit();
-                    return await Get(examPeriod.Id);
+                    return examPeriod;
                 }
                 catch(Exception e)
                 {
@@ -94,9 +120,11 @@ namespace ExamReg.Apps.Services.MExamPeriod
             {
                 try
                 {
+                    examPeriod = await GetTermIdExamProgramId(examPeriod);
+
                     await UOW.ExamPeriodRepository.Update(examPeriod);
                     await UOW.Commit();
-                    return await UOW.ExamPeriodRepository.Get(examPeriod.Id);
+                    return examPeriod;
                 }
                 catch (Exception)
                 {

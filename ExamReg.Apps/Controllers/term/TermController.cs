@@ -45,7 +45,6 @@ namespace ExamReg.Apps.Controllers.term
             List<Term> res = await TermService.List(new TermFilter
             {
                 SemesterId = new GuidFilter { Equal = termRequestFilterDTO.SemesterId },
-                SemesterCode = new StringFilter { Equal = termRequestFilterDTO.SemesterCode },
                 OrderBy = TermOrder.SubjectName,
                 OrderType = OrderType.ASC
             });
