@@ -83,16 +83,18 @@ namespace ExamReg.Apps.Repositories
         public async Task<ExamProgram> Get(ExamProgramFilter filter)
         {
             IQueryable<ExamProgramDAO> query = examRegContext.ExamProgram.AsNoTracking();
-            ExamProgramDAO examProgramDAO = DynamicFilter(query, filter).FirstOrDefault();
+            query = DynamicFilter(query, filter);
 
-            return new ExamProgram()
+            List<ExamProgram> list = await query.Select(e => new ExamProgram()
             {
-                Id = examProgramDAO.Id,
-                Name = examProgramDAO.Name,
-                SemesterId = examProgramDAO.SemesterId,
-                SemesterCode = string.Format(examProgramDAO.Semester.StartYear + "_" + examProgramDAO.Semester.EndYear + "_" + (examProgramDAO.Semester.IsFirstHalf ? 1 : 2)),
-                IsCurrent = examProgramDAO.IsCurrent
-            };
+                Id = e.Id,
+                Name = e.Name,
+                SemesterId = e.SemesterId,
+                SemesterCode = string.Format(e.Semester.StartYear + "_" + e.Semester.EndYear + "_" + (e.Semester.IsFirstHalf ? 1 : 2)),
+                IsCurrent = e.IsCurrent
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<List<ExamProgram>> List(ExamProgramFilter filter)
