@@ -166,13 +166,17 @@ namespace ExamReg.Apps.Repositories
                 return query.Where(q => 1 == 0);
             if (filter.Code != null)
             {
-                string[] codeData = filter.Code.Equal.Split(".");
+                string[] codeData = filter.Code.Equal.Split("_");
                 query = query.Where(q => q.StartYear, new ShortFilter { Equal = short.Parse(codeData[0]) });
                 query = query.Where(q => q.EndYear, new ShortFilter { Equal = short.Parse(codeData[1]) });
                 query = query.Where(q => q.IsFirstHalf == (codeData[2] == "1" ? true : false));
             }
+            if (filter.StartYear != null)
+                query = query.Where(q => q.StartYear, filter.StartYear);
+            if (filter.EndYear != null)
+                query = query.Where(q => q.EndYear, filter.EndYear);
             if (filter.IsFirstHalf != null)
-                query = query.Where(c => c.IsFirstHalf == filter.IsFirstHalf);      
+            query = query.Where(c => c.IsFirstHalf == filter.IsFirstHalf);
 
             return query;
         }

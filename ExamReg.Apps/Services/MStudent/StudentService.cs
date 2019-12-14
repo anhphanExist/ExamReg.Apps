@@ -114,15 +114,9 @@ namespace ExamReg.Apps.Services.MStudent
             {
                 try
                 {
-                    StudentFilter studentFilter = new StudentFilter
-                    {
-                        StudentNumber = new IntFilter { Equal = student.StudentNumber }
-                    };
-                    Student existingStudent = await UOW.StudentRepository.Get(studentFilter);
-
-                    await UOW.StudentRepository.Update(existingStudent);
+                    await UOW.StudentRepository.Update(student);
                     await UOW.Commit();
-                    return existingStudent;
+                    return await UOW.StudentRepository.Get(student.Id);
                 }
                 catch (Exception e)
                 {

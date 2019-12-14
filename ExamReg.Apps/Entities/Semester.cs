@@ -16,6 +16,8 @@ namespace ExamReg.Apps.Entities
     }
     public class SemesterFilter : FilterEntity
     {
+        public ShortFilter StartYear { get; set; }
+        public ShortFilter EndYear { get; set; }
         public StringFilter Code { get; set; }
         public bool? IsFirstHalf { get; set; }
         public SemesterOrder OrderBy { get; set; }

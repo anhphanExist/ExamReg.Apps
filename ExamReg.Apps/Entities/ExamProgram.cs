@@ -16,6 +16,7 @@ namespace ExamReg.Apps.Entities
     }
     public class ExamProgramFilter : FilterEntity
     {
+        public GuidFilter Id { get; set; }
         public StringFilter Name { get; set; }
         public StringFilter SemesterCode { get; set; }
         public bool? IsCurrent { get; set; }

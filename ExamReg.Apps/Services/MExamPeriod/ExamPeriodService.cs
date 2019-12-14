@@ -45,7 +45,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
             {
                 try
                 {
-                    examPeriod.Id = new Guid();
+                    examPeriod.Id = Guid.NewGuid();
                     await UOW.ExamPeriodRepository.Create(examPeriod);
                     await UOW.Commit();
                     return await Get(examPeriod.Id);

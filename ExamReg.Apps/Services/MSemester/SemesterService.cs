@@ -36,7 +36,7 @@ namespace ExamReg.Apps.Services.MSemester
             {
                 try
                 {
-                    semester.Id = new Guid();
+                    semester.Id = Guid.NewGuid();
 
                     await UOW.SemesterRepository.Create(semester);
                     await UOW.Commit();

@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\ExamReg.Apps",
+    "\\ExamReg.DataInit",
+    "\\ExamReg.DataInit\\bin",
+    "\\ExamReg.DataInit\\bin\\Debug",
+    "\\ExamReg.DataInit\\bin\\Release\\netcoreapp2.2",
+    "\\ExamReg.DataInit\\obj\\Release"
+  ],
+  "SelectedNode": "\\ExamReg.DataInit\\bin\\Debug",
+  "PreviewInSolutionExplorer": false
+}
