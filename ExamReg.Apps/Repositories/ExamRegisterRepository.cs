@@ -36,25 +36,26 @@ namespace ExamReg.Apps.Repositories
         public async Task<ExamRegister> Get(ExamRegisterFilter filter)
         {
             IQueryable<ExamRegisterDAO> query = examRegContext.ExamRegister.AsNoTracking();
-            ExamRegisterDAO examRegisterDAO = DynamicFilter(query, filter).FirstOrDefault();
-            if (examRegisterDAO == null)
-                return null;
-            return new ExamRegister
+            query = DynamicFilter(query, filter);
+
+            List<ExamRegister> list = await query.Select(e => new ExamRegister()
             {
-                StudentId = examRegisterDAO.StudentId,
-                StudentNumber = examRegisterDAO.Student.StudentNumber,
-                ExamPeriodId = examRegisterDAO.ExamPeriodId,
-                ExamDate = examRegisterDAO.Exam.ExamPeriod.ExamDate,
-                StartHour = examRegisterDAO.Exam.ExamPeriod.StartHour,
-                FinishHour = examRegisterDAO.Exam.ExamPeriod.FinishHour,
-                SubjectName = examRegisterDAO.Exam.ExamPeriod.Term.SubjectName,
-                ExamProgramId = examRegisterDAO.Exam.ExamPeriod.ExamProgramId,
-                ExamProgramName = examRegisterDAO.Exam.ExamPeriod.ExamProgram.Name,
-                ExamRoomId = examRegisterDAO.ExamRoomId,
-                ExamRoomNumber = examRegisterDAO.Exam.ExamRoom.RoomNumber,
-                ExamRoomAmphitheaterName = examRegisterDAO.Exam.ExamRoom.AmphitheaterName,
-                ExamRoomComputerNumber = examRegisterDAO.Exam.ExamRoom.ComputerNumber
-            };
+                StudentId = e.StudentId,
+                StudentNumber = e.Student.StudentNumber,
+                ExamPeriodId = e.ExamPeriodId,
+                ExamDate = e.Exam.ExamPeriod.ExamDate,
+                StartHour = e.Exam.ExamPeriod.StartHour,
+                FinishHour = e.Exam.ExamPeriod.FinishHour,
+                SubjectName = e.Exam.ExamPeriod.Term.SubjectName,
+                ExamProgramId = e.Exam.ExamPeriod.ExamProgramId,
+                ExamProgramName = e.Exam.ExamPeriod.ExamProgram.Name,
+                ExamRoomId = e.ExamRoomId,
+                ExamRoomNumber = e.Exam.ExamRoom.RoomNumber,
+                ExamRoomAmphitheaterName = e.Exam.ExamRoom.AmphitheaterName,
+                ExamRoomComputerNumber = e.Exam.ExamRoom.ComputerNumber
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<bool> Create(ExamRegister examRegister)

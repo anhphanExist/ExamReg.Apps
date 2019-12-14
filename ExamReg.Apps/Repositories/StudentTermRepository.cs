@@ -71,15 +71,20 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<StudentTerm> Get(StudentTermFilter filter)
         {
-            IQueryable<StudentTermDAO> studentTermDAOs = examRegContext.StudentTerm.AsNoTracking();
-            StudentTermDAO studentTermDAO = DynamicFilter(studentTermDAOs, filter).FirstOrDefault();
+            if (filter == null)
+                return null;
 
-            return new StudentTerm()
+            IQueryable<StudentTermDAO> query = examRegContext.StudentTerm.AsNoTracking();
+            query = DynamicFilter(query, filter);
+
+            List<StudentTerm> list = await query.Select(s => new StudentTerm()
             {
-                StudentId = studentTermDAO.StudentId,
-                TermId = studentTermDAO.TermId,
-                IsQualified = studentTermDAO.IsQualified
-            };
+                StudentId = s.StudentId,
+                TermId = s.TermId,
+                IsQualified = s.IsQualified
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<List<StudentTerm>> List(StudentTermFilter filter)

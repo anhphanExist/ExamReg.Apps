@@ -122,17 +122,16 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return null;
+
             IQueryable<TermDAO> query = examRegContext.Term.AsNoTracking();
-            TermDAO termDAO = DynamicFilter(query, filter).FirstOrDefault();
-            if (termDAO == null)
-                return null;
-            return new Term()
+            query = DynamicFilter(query, filter);
+            List<Term> list = await query.Select(t => new Term()
             {
-                Id = termDAO.Id,
-                SubjectName = termDAO.SubjectName,
-                SemesterId = termDAO.SemesterId,
-                SemesterCode = string.Format(termDAO.Semester.StartYear + "_" + termDAO.Semester.EndYear + "_" + (termDAO.Semester.IsFirstHalf ? 1 : 2)),
-                ExamPeriods = termDAO.ExamPeriods.Select(e => new ExamPeriod
+                Id = t.Id,
+                SubjectName = t.SubjectName,
+                SemesterId = t.SemesterId,
+                SemesterCode = string.Format(t.Semester.StartYear + "_" + t.Semester.EndYear + "_" + (t.Semester.IsFirstHalf ? 1 : 2)),
+                ExamPeriods = t.ExamPeriods.Select(e => new ExamPeriod
                 {
                     Id = e.Id,
                     ExamDate = e.ExamDate,
@@ -143,7 +142,7 @@ namespace ExamReg.Apps.Repositories
                     TermId = e.TermId,
                     SubjectName = e.Term.SubjectName
                 }).ToList(),
-                QualifiedStudents = termDAO.StudentTerms.Select(s => new Student
+                QualifiedStudents = t.StudentTerms.Select(s => new Student
                 {
                     Id = s.StudentId,
                     StudentNumber = s.Student.StudentNumber,
@@ -152,7 +151,9 @@ namespace ExamReg.Apps.Repositories
                     Email = s.Student.Email,
                     Birthday = s.Student.Birthday
                 }).ToList()
-            };
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<List<Term>> List(TermFilter filter)

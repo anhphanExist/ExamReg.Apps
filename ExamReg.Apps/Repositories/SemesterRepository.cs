@@ -101,18 +101,20 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Semester> Get(SemesterFilter filter)
         {
+            if (filter == null) return null;
+
             IQueryable<SemesterDAO> query = examRegContext.Semester.AsNoTracking();
-            SemesterDAO semesterDAO = DynamicFilter(query, filter).FirstOrDefault();
-            if (semesterDAO == null)
-                return null;
-            return new Semester()
+            query = DynamicFilter(query, filter);
+            List<Semester> list = await query.Select(s => new Semester()
             {
-                Id = semesterDAO.Id,
-                Code = string.Format(semesterDAO.StartYear + "_" + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
-                StartYear = semesterDAO.StartYear,
-                EndYear = semesterDAO.EndYear,
-                IsFirstHalf = semesterDAO.IsFirstHalf
-            };
+                Id = s.Id,
+                Code = string.Format(s.StartYear + "_" + s.EndYear + "_" + (s.IsFirstHalf ? 1 : 2)),
+                StartYear = s.StartYear,
+                EndYear = s.EndYear,
+                IsFirstHalf = s.IsFirstHalf
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<List<Semester>> List(SemesterFilter filter)

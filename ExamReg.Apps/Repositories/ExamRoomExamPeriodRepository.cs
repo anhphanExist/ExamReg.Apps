@@ -62,25 +62,24 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter)
         {
-            IQueryable<ExamRoomExamPeriodDAO> examRoomExamPeriodDAOs = examRegContext.ExamRoomExamPeriod.AsNoTracking();
-            ExamRoomExamPeriodDAO examRoomExamPeriodDAO = DynamicFilter(examRoomExamPeriodDAOs, filter).FirstOrDefault();
-            if (examRoomExamPeriodDAO == null)
-                return null;
-            return new ExamRoomExamPeriod()
+            IQueryable<ExamRoomExamPeriodDAO> examRoomExamPeriodDAO = examRegContext.ExamRoomExamPeriod.AsNoTracking();
+            examRoomExamPeriodDAO = DynamicFilter(examRoomExamPeriodDAO, filter);
+
+            List<ExamRoomExamPeriod> list = await examRoomExamPeriodDAO.Select(e => new ExamRoomExamPeriod()
             {
-                ExamProgramId = examRoomExamPeriodDAO.ExamPeriod.ExamProgramId,
-                ExamRoomId = examRoomExamPeriodDAO.ExamRoomId,
-                ExamPeriodId = examRoomExamPeriodDAO.ExamPeriodId,
-                TermId = examRoomExamPeriodDAO.ExamPeriod.TermId,
-                ExamProgramName = examRoomExamPeriodDAO.ExamPeriod.ExamProgram.Name,
-                ExamDate = examRoomExamPeriodDAO.ExamPeriod.ExamDate,
-                StartHour = examRoomExamPeriodDAO.ExamPeriod.StartHour,
-                FinishHour = examRoomExamPeriodDAO.ExamPeriod.FinishHour,
-                SubjectName = examRoomExamPeriodDAO.ExamPeriod.Term.SubjectName,
-                ExamRoomNumber = examRoomExamPeriodDAO.ExamRoom.RoomNumber,
-                ExamRoomAmphitheaterName = examRoomExamPeriodDAO.ExamRoom.AmphitheaterName,
-                ExamRoomComputerNumber = examRoomExamPeriodDAO.ExamRoom.ComputerNumber,
-                Students = examRoomExamPeriodDAO.ExamRegisters.Select(r => new Student
+                ExamProgramId = e.ExamPeriod.ExamProgramId,
+                ExamRoomId = e.ExamRoomId,
+                ExamPeriodId = e.ExamPeriodId,
+                TermId = e.ExamPeriod.TermId,
+                ExamProgramName = e.ExamPeriod.ExamProgram.Name,
+                ExamDate = e.ExamPeriod.ExamDate,
+                StartHour = e.ExamPeriod.StartHour,
+                FinishHour = e.ExamPeriod.FinishHour,
+                SubjectName = e.ExamPeriod.Term.SubjectName,
+                ExamRoomNumber = e.ExamRoom.RoomNumber,
+                ExamRoomAmphitheaterName = e.ExamRoom.AmphitheaterName,
+                ExamRoomComputerNumber = e.ExamRoom.ComputerNumber,
+                Students = e.ExamRegisters.Select(r => new Student
                 {
                     Id = r.StudentId,
                     Username = r.Student.Users.FirstOrDefault().Username,
@@ -91,7 +90,9 @@ namespace ExamReg.Apps.Repositories
                     Birthday = r.Student.Birthday,
                     Email = r.Student.Email
                 }).OrderBy(st => st.GivenName).ToList()
-            };
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter)
