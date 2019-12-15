@@ -51,7 +51,7 @@ namespace ExamReg.Apps.Services.MTerm
             }
             return true;
         }
-        private async Task<bool> ValidateExist(Term Term)
+        /*private async Task<bool> ValidateExist(Term Term)
         {
             TermFilter filter = new TermFilter
             {
@@ -67,7 +67,7 @@ namespace ExamReg.Apps.Services.MTerm
                 return false;
             }
             return true;
-        }
+        }*/
 
         private async Task<bool> ValidateId(Term Term)
         {
@@ -119,7 +119,7 @@ namespace ExamReg.Apps.Services.MTerm
         public async Task<bool> Delete(Term term)
         {
             bool IsValid = true;
-            IsValid &= await ValidateExist(term);
+            IsValid &= await ValidateId(term);
             return IsValid;
         }
 

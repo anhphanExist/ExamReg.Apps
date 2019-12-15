@@ -167,6 +167,8 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
+            if (filter.Id != null)
+                query = query.Where(q => q.Id, filter.Id);
             if (filter.Code != null)
             {
                 string[] codeData = filter.Code.Equal.Split("_");

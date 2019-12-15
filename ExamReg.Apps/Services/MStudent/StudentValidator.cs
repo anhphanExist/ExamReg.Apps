@@ -69,23 +69,6 @@ namespace ExamReg.Apps.Services.MStudent
             return true;
         }
 
-        /*private async Task<bool> ValidateId(Student student)
-        {
-            StudentFilter filter = new StudentFilter
-            {
-                Skip = 0,
-                Take = int.MaxValue,
-                OrderBy = StudentOrder.StudentNumber,
-                OrderType = OrderType.ASC
-            };
-            int count = await UOW.StudentRepository.Count(filter);
-
-            if (count == 0)
-                student.AddError(nameof(StudentValidator), nameof(student.Id), ERROR.IdNotFound);
-
-            return count == 1;
-        }*/
-
         private bool ValidateStringLength(Student student)
         {
             if (string.IsNullOrEmpty(student.GivenName))
@@ -118,26 +101,6 @@ namespace ExamReg.Apps.Services.MStudent
 
             return true;
         }
-
-        /*private bool ValidateNewPassword(Student student, string newPassword)
-        {
-            if (newPassword == null)
-            {
-                student.AddError(nameof(student), nameof(newPassword), ERROR.InvalidPassword);
-                return true;
-            }
-            else if (newPassword.Length <= 0)
-            {
-                student.AddError(nameof(student), nameof(newPassword), ERROR.StringEmpty);
-                return false;
-            }
-            else if (newPassword.Length > 500)
-            {
-                student.AddError(nameof(student), nameof(newPassword), ERROR.StringLimited);
-                return false;
-            }
-            return true;
-        }*/
 
         public async Task<bool> Create(Student student)
         {
