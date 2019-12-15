@@ -18,6 +18,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
     {
         public enum ERROR
         {
+            IdNotFound,
             ExamPeriodExisted,
             NotExisted,
             DateEmpty,
@@ -73,6 +74,19 @@ namespace ExamReg.Apps.Services.MExamPeriod
             }
             return true;
         }
+        private async Task<bool> ValidateId(ExamPeriod ExamPeriod)
+        {
+            ExamPeriodFilter filter = new ExamPeriodFilter
+            {
+                Id = new GuidFilter { Equal = ExamPeriod.Id }
+            };
+            int count = await UOW.ExamPeriodRepository.Count(filter);
+
+            if (count == 0)
+                ExamPeriod.AddError(nameof(ExamPeriodValidator), nameof(ExamPeriod), ERROR.IdNotFound);
+
+            return count == 1;
+        }
         private bool ValidateDateTime(ExamPeriod examPeriod)
         {
             if (examPeriod.StartHour < 0 || examPeriod.StartHour >= 24)
@@ -106,7 +120,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
         {
             bool IsValid = true;
 
-            IsValid &= await ValidateExist(examPeriod);
+            IsValid &= await ValidateId(examPeriod);
             IsValid &= ValidateDateTime(examPeriod);
             return IsValid;
         }

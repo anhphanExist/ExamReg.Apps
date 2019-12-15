@@ -18,6 +18,7 @@ namespace ExamReg.Apps.Services.MExamRoom
     {
         public enum ERROR
         {
+            IdNotFound,
             ExamRoomExisted,
             NotExisted,
             AmphitheaterNameEmpty,
@@ -68,6 +69,20 @@ namespace ExamReg.Apps.Services.MExamRoom
             }
             return true;
         }
+        public async Task<bool> ValidateId(ExamRoom examRoom)
+        {
+            ExamRoomFilter filter = new ExamRoomFilter
+            {
+                Id = new GuidFilter { Equal = examRoom.Id}
+            };
+
+            int count = await UOW.ExamRoomRepository.Count(filter);
+
+            if (count == 0)
+                examRoom.AddError(nameof(ExamRoomValidator), nameof(examRoom), ERROR.IdNotFound);
+
+            return count == 1;
+        }
         private bool ValidateStringLength(ExamRoom examRoom)
         {
             if (examRoom.RoomNumber < 0)
@@ -111,7 +126,7 @@ namespace ExamReg.Apps.Services.MExamRoom
         {
             bool IsValid = true;
 
-            IsValid &= await ValidateExist(examRoom);
+            IsValid &= await ValidateId(examRoom);
             IsValid &= ValidateStringLength(examRoom);
             return IsValid;
         }

@@ -51,20 +51,23 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<User> Get(UserFilter filter)
         {
+            if (filter == null) return null;
+
             IQueryable<UserDAO> users = examRegContext.User.AsNoTracking();
-            UserDAO userDAO = DynamicFilter(users, filter).FirstOrDefault();
-            if (userDAO == null)
-                return null;
-            return new User
+            users = DynamicFilter(users, filter);
+
+            List<User> list = await users.Select(u => new User
             {
-                Id = userDAO.Id,
-                Password = userDAO.Password,
-                Username = userDAO.Username,
-                IsAdmin = userDAO.IsAdmin,
-                StudentId = userDAO.StudentId,
-                StudentGivenName = userDAO.Student.GivenName,
-                StudentLastName = userDAO.Student.LastName
-            };
+                Id = u.Id,
+                Password = u.Password,
+                Username = u.Username,
+                IsAdmin = u.IsAdmin,
+                StudentId = u.StudentId,
+                StudentGivenName = u.Student.GivenName,
+                StudentLastName = u.Student.LastName
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<List<User>> List(UserFilter filter)

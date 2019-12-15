@@ -136,20 +136,20 @@ namespace ExamReg.Apps.Repositories
         {
             if (filter == null) return null;
             IQueryable<StudentDAO> students = examRegContext.Student.AsNoTracking();
-            StudentDAO studentDAO = DynamicFilter(students, filter).FirstOrDefault();
-            if (studentDAO == null)
-                return null;
-            return new Student()
+            students = DynamicFilter(students, filter);
+            List<Student> list = await students.Select(s => new Student()
             {
-                Id = studentDAO.Id,
-                Username = studentDAO.Users.FirstOrDefault().Username,
-                Password = studentDAO.Users.FirstOrDefault().Password,
-                StudentNumber = studentDAO.StudentNumber,
-                LastName = studentDAO.LastName,
-                GivenName = studentDAO.GivenName,
-                Birthday = studentDAO.Birthday,
-                Email = studentDAO.Email
-            };
+                Id = s.Id,
+                Username = s.Users.FirstOrDefault().Username,
+                Password = s.Users.FirstOrDefault().Password,
+                StudentNumber = s.StudentNumber,
+                LastName = s.LastName,
+                GivenName = s.GivenName,
+                Birthday = s.Birthday,
+                Email = s.Email
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<List<Student>> List(StudentFilter filter)

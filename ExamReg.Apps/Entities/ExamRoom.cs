@@ -16,6 +16,7 @@ namespace ExamReg.Apps.Entities
     }
     public class ExamRoomFilter : FilterEntity
     {
+        public GuidFilter Id { get; set; }
         public StringFilter AmphitheaterName { get; set; }
         public ShortFilter RoomNumber { get; set; }
         public IntFilter ComputerNumber { get; set; }

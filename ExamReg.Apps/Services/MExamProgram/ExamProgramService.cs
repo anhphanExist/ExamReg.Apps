@@ -36,6 +36,18 @@ namespace ExamReg.Apps.Services.MExamProgram
         {
             return await UOW.ExamProgramRepository.Get(Id);
         }
+        public async Task<ExamProgram> GetSemesterId(ExamProgram examProgram)
+        {
+            SemesterFilter filter = new SemesterFilter
+            {
+                Code = new StringFilter { Equal = examProgram.SemesterCode }
+            };
+
+            Semester semester = await UOW.SemesterRepository.Get(filter);
+            examProgram.SemesterId = semester.Id;
+
+            return examProgram;
+        }
 
         public async Task<ExamProgram> Create(ExamProgram examProgram)
         {
@@ -48,13 +60,7 @@ namespace ExamReg.Apps.Services.MExamProgram
                 {
                     examProgram.Id = Guid.NewGuid();
 
-                    SemesterFilter filter = new SemesterFilter
-                    {
-                        Code = new StringFilter { Equal = examProgram.SemesterCode}
-                    };
-
-                    Semester semester = await UOW.SemesterRepository.Get(filter);
-                    examProgram.SemesterId = semester.Id;
+                    examProgram = await GetSemesterId(examProgram);
 
                     await UOW.ExamProgramRepository.Create(examProgram);
                     await UOW.Commit();
@@ -104,13 +110,7 @@ namespace ExamReg.Apps.Services.MExamProgram
             {
                 try
                 {
-                    SemesterFilter filter = new SemesterFilter
-                    {
-                        Code = new StringFilter { Equal = examProgram.SemesterCode }
-                    };
-
-                    Semester semester = await UOW.SemesterRepository.Get(filter);
-                    examProgram.SemesterId = semester.Id;
+                    examProgram = await GetSemesterId(examProgram);
 
                     await UOW.ExamProgramRepository.Update(examProgram);
                     await UOW.Commit();
@@ -133,18 +133,17 @@ namespace ExamReg.Apps.Services.MExamProgram
             {
                 try
                 {
-                    ExamProgram currentExamProgram = await UOW.ExamProgramRepository.Get(new ExamProgramFilter
+                    /*ExamProgram currentExamProgram = await UOW.ExamProgramRepository.Get(new ExamProgramFilter
                     {
+                        Id = new GuidFilter { NotEqual = examProgram.Id },
                         IsCurrent = true
                     });
-                    currentExamProgram.IsCurrent = false;
-                    examProgram = await UOW.ExamProgramRepository.Get(examProgram.Id);
-                    examProgram.IsCurrent = true;
+                    
+                    await this.UOW.ExamProgramRepository.Deactive(examProgram.Id);*/
 
-                    await UOW.ExamProgramRepository.Update(currentExamProgram);
-                    await UOW.ExamProgramRepository.Update(examProgram);
+                    await UOW.ExamProgramRepository.Active(examProgram.Id);
                     await UOW.Commit();
-                    return examProgram;
+                    return await Get(examProgram.Id);
                 }
                 catch (Exception)
                 {
