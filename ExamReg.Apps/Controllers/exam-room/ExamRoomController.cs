@@ -96,10 +96,7 @@ namespace ExamReg.Apps.Controllers.exam_room
         {
             ExamRoom examRoom = new ExamRoom
             {
-                Id = examRoomRequestDTO.Id,
-                RoomNumber = examRoomRequestDTO.RoomNumber,
-                AmphitheaterName = examRoomRequestDTO.AmphitheaterName,
-                ComputerNumber = examRoomRequestDTO.ComputerNumber
+                Id = examRoomRequestDTO.Id
             };
             ExamRoom res = await ExamRoomService.Delete(examRoom);
             return new ExamRoomDTO
