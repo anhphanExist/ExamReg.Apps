@@ -198,12 +198,12 @@ namespace ExamReg.Apps.Controllers.exam_period
         }
 
         [Route(ExamPeriodRoute.ListTerm), HttpPost]
-        public async Task<List<TermDTO>> ListTerm([FromBody] TermFilterDTO termRequestFilterDTO)
+        public async Task<List<TermDTO>> ListTerm()
         {
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             List<Term> terms = await TermService.List(new TermFilter
             {
-                SemesterId = new GuidFilter { Equal = termRequestFilterDTO.SemesterId },
-                SemesterCode = new StringFilter { Equal = termRequestFilterDTO.SemesterCode },
+                SemesterId = new GuidFilter { Equal = currentExamProgram.SemesterId },
                 OrderBy = TermOrder.SubjectName,
                 OrderType = OrderType.ASC
             });
