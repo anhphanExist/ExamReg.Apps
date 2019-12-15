@@ -68,23 +68,23 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamPeriod> Get(Guid Id)
         {
-            ExamPeriodDAO examPeriodDAO = examRegContext.ExamPeriod
+            IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod
                 .AsNoTracking()
-                .Where(t => t.Id.Equals(Id))
-                .FirstOrDefault();
-            if (examPeriodDAO == null)
-                return null;
-            return new ExamPeriod()
+                .Where(t => t.Id.Equals(Id));
+
+            List<ExamPeriod> list = await query.Select(e => new ExamPeriod()
             {
-                Id = examPeriodDAO.Id,
-                ExamDate = examPeriodDAO.ExamDate,
-                StartHour = examPeriodDAO.StartHour,
-                FinishHour = examPeriodDAO.FinishHour,
-                TermId = examPeriodDAO.TermId,
-                SubjectName = examPeriodDAO.Term.SubjectName,
-                ExamProgramId = examPeriodDAO.ExamProgramId,
-                ExamProgramName = examPeriodDAO.ExamProgram.Name
-            };
+                Id = e.Id,
+                ExamDate = e.ExamDate,
+                StartHour = e.StartHour,
+                FinishHour = e.FinishHour,
+                TermId = e.TermId,
+                SubjectName = e.Term.SubjectName,
+                ExamProgramId = e.ExamProgramId,
+                ExamProgramName = e.ExamProgram.Name
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<ExamPeriod> Get(ExamPeriodFilter filter)
