@@ -231,7 +231,10 @@ namespace ExamReg.Apps.Repositories
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.StudentNumber != null)
-                query = query.Where(q => q.StudentTerms.Select(s => s.Student.StudentNumber), filter.StudentNumber);
+            {
+                if (filter.StudentNumber.Equal.HasValue)
+                    query = query.Where(q => q.StudentTerms.Select(s => s.Student.StudentNumber == filter.StudentNumber.Equal.Value).Contains(true));
+            }
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
             if (filter.SemesterId != null)

@@ -54,7 +54,7 @@ namespace ExamReg.Apps.Controllers.watcher
                 ExamRoomAmphitheaterName = r.ExamRoomAmphitheaterName,
                 ExamRoomComputerNumber = r.ExamRoomComputerNumber,
                 CurrentNumberOfStudentRegistered = r.Students.Count,
-                ExamDate = r.ExamDate,
+                ExamDate = r.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = r.StartHour,
                 FinishHour = r.FinishHour,
                 SubjectName = r.SubjectName,

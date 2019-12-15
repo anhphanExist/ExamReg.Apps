@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -49,7 +50,7 @@ namespace ExamReg.Apps.Controllers.student
                 Username = s.Username,
                 LastName = s.LastName,
                 GivenName = s.GivenName,
-                Birthday = s.Birthday,
+                Birthday = s.Birthday.ToString("dd-MM-yyyy"),
                 Email = s.Email,
                 Errors = s.Errors
             }));
@@ -65,7 +66,7 @@ namespace ExamReg.Apps.Controllers.student
                 Username = studentRequestDTO.Username,
                 LastName = studentRequestDTO.LastName,
                 GivenName = studentRequestDTO.GivenName,
-                Birthday = studentRequestDTO.Birthday,
+                Birthday = DateTime.ParseExact(studentRequestDTO.Birthday, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 Email = studentRequestDTO.Email
             };
             Student res = await StudentService.Create(newStudent);
@@ -76,7 +77,7 @@ namespace ExamReg.Apps.Controllers.student
                 Username = res.Username,
                 LastName = res.LastName,
                 GivenName = res.GivenName,
-                Birthday = res.Birthday,
+                Birthday = res.Birthday.ToString("dd-MM-yyyy"),
                 Email = res.Email,
                 Errors = res.Errors
             };
@@ -91,7 +92,7 @@ namespace ExamReg.Apps.Controllers.student
                 StudentNumber = studentRequestDTO.StudentNumber,
                 LastName = studentRequestDTO.LastName,
                 GivenName = studentRequestDTO.GivenName,
-                Birthday = studentRequestDTO.Birthday,
+                Birthday = DateTime.ParseExact(studentRequestDTO.Birthday, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 Email = studentRequestDTO.Email
             };
             Student res = await StudentService.Update(student);
@@ -102,7 +103,7 @@ namespace ExamReg.Apps.Controllers.student
                 Username = res.Username,
                 LastName = res.LastName,
                 GivenName = res.GivenName,
-                Birthday = res.Birthday,
+                Birthday = res.Birthday.ToString("dd-MM-yyyy"),
                 Email = res.Email,
                 Errors = res.Errors
             };
@@ -124,7 +125,7 @@ namespace ExamReg.Apps.Controllers.student
                 Username = res.Username,
                 LastName = res.LastName,
                 GivenName = res.GivenName,
-                Birthday = res.Birthday,
+                Birthday = res.Birthday.ToString("dd-MM-yyyy"),
                 Email = res.Email,
                 Errors = res.Errors
             };
@@ -145,7 +146,7 @@ namespace ExamReg.Apps.Controllers.student
                 Username = res.Username,
                 LastName = res.LastName,
                 GivenName = res.GivenName,
-                Birthday = res.Birthday,
+                Birthday = res.Birthday.ToString("dd-MM-yyyy"),
                 Email = res.Email,
                 Errors = res.Errors
             };
