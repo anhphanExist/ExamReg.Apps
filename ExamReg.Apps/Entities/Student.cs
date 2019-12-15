@@ -19,6 +19,7 @@ namespace ExamReg.Apps.Entities
     }
     public class StudentFilter : FilterEntity
     {
+        public GuidFilter Id { get; set; }
         public IntFilter StudentNumber { get; set; }
         public StringFilter LastName { get; set; }
         public StringFilter GivenName { get; set; }

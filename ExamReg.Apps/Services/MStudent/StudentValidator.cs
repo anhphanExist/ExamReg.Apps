@@ -52,12 +52,11 @@ namespace ExamReg.Apps.Services.MStudent
             return true;
         }
 
-        private async Task<bool> ValidateExist(Student student)
+        private async Task<bool> ValidateId(Student student)
         {
             StudentFilter filter = new StudentFilter
             {
-                Take = Int32.MaxValue,
-                StudentNumber = new IntFilter { Equal = student.StudentNumber }
+                Id = new GuidFilter { Equal = student.Id}
             };
 
             int count = await UOW.StudentRepository.Count(filter);
@@ -113,7 +112,7 @@ namespace ExamReg.Apps.Services.MStudent
         public async Task<bool> Delete(Student student)
         {
             bool IsValid = true;
-            IsValid &= await ValidateExist(student);
+            IsValid &= await ValidateId(student);
             return IsValid;
         }
 
@@ -132,7 +131,7 @@ namespace ExamReg.Apps.Services.MStudent
         {
             bool IsValid = true;
 
-            IsValid &= await ValidateExist(student);
+            IsValid &= await ValidateId(student);
             IsValid &= ValidateStringLength(student);
             return IsValid;
         }
