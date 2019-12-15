@@ -118,7 +118,7 @@ namespace ExamReg.Apps.Services.MExamProgram
         public async Task<bool> Delete(ExamProgram examProgram)
         {
             bool IsValid = true;
-            IsValid &= await ValidateExist(examProgram);
+            IsValid &= await ValidateId(examProgram);
             return IsValid;
         }
 

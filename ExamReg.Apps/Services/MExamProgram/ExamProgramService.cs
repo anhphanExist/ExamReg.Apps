@@ -84,6 +84,7 @@ namespace ExamReg.Apps.Services.MExamProgram
             {
                 try
                 {
+                    examProgram = await UOW.ExamProgramRepository.Get(examProgram.Id);
                     await UOW.ExamProgramRepository.Delete(examProgram.Id);
                     await UOW.Commit();
                 }

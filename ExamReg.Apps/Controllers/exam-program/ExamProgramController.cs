@@ -101,10 +101,7 @@ namespace ExamReg.Apps.Controllers.exam_program
         {
             ExamProgram examProgram = new ExamProgram
             {
-                Id = examProgramRequestDTO.Id,
-                Name = examProgramRequestDTO.Name,
-                SemesterCode = examProgramRequestDTO.SemesterCode,
-                IsCurrent = examProgramRequestDTO.IsCurrent
+                Id = examProgramRequestDTO.Id
             };
             ExamProgram res = await ExamProgramService.Delete(examProgram);
             return new ExamProgramDTO
