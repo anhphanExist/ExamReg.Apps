@@ -14,7 +14,7 @@ namespace ExamReg.Apps.Controllers.watcher
         public string ExamRoomAmphitheaterName { get; set; }
         public int ExamRoomComputerNumber { get; set; }
         public int CurrentNumberOfStudentRegistered { get; set; }
-        public DateTime ExamDate { get; set; }
+        public string ExamDate { get; set; }
         public short StartHour { get; set; }
         public short FinishHour { get; set; }
         public string SubjectName { get; set; }

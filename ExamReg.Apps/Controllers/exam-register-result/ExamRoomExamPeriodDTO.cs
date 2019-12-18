@@ -13,7 +13,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         public string ExamRoomAmphitheaterName { get; set; }
         public int CurrentNumberOfStudentRegistered { get; set; }
         public int ExamRoomComputerNumber { get; set; }
-        public DateTime ExamDate { get; set; }
+        public string ExamDate { get; set; }
         public short StartHour { get; set; }
         public short FinishHour { get; set; }
         public string SubjectName { get; set; }

@@ -92,7 +92,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
                 TermId = r.TermId,
                 ExamProgramId = r.ExamProgramId,
                 ExamProgramName = r.ExamProgramName,
-                ExamDate = r.ExamDate,
+                ExamDate = r.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = r.StartHour,
                 FinishHour = r.FinishHour,
                 ExamRoomNumber = r.ExamRoomNumber,

@@ -6,7 +6,9 @@ using ExamReg.Apps.Services.MExamRoom;
 using ExamReg.Apps.Services.MTerm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -57,7 +59,7 @@ namespace ExamReg.Apps.Controllers.exam_period
             return examPeriods.Select(e => new ExamPeriodDTO
             {
                 Id = e.Id,
-                ExamDate = e.ExamDate,
+                ExamDate = e.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = e.StartHour,
                 FinishHour = e.FinishHour,
                 SubjectName = e.SubjectName,
@@ -80,7 +82,7 @@ namespace ExamReg.Apps.Controllers.exam_period
         {
             ExamPeriod newExamPeriod = new ExamPeriod
             {
-                ExamDate = examPeriodRequestDTO.ExamDate,
+                ExamDate = DateTime.ParseExact(examPeriodRequestDTO.ExamDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
                 SubjectName = examPeriodRequestDTO.SubjectName,
@@ -90,7 +92,7 @@ namespace ExamReg.Apps.Controllers.exam_period
             return new ExamPeriodDTO
             {
                 Id = res.Id,
-                ExamDate = res.ExamDate,
+                ExamDate = res.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
                 SubjectName = res.SubjectName,
@@ -114,7 +116,7 @@ namespace ExamReg.Apps.Controllers.exam_period
             ExamPeriod examPeriod = new ExamPeriod
             {
                 Id = examPeriodRequestDTO.Id,
-                ExamDate = examPeriodRequestDTO.ExamDate,
+                ExamDate = DateTime.ParseExact(examPeriodRequestDTO.ExamDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
                 SubjectName = examPeriodRequestDTO.SubjectName,
@@ -132,7 +134,7 @@ namespace ExamReg.Apps.Controllers.exam_period
             return new ExamPeriodDTO
             {
                 Id = res.Id,
-                ExamDate = res.ExamDate,
+                ExamDate = res.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
                 SubjectName = res.SubjectName,
@@ -155,17 +157,12 @@ namespace ExamReg.Apps.Controllers.exam_period
         {
             ExamPeriod examPeriod = new ExamPeriod
             {
-                Id = examPeriodRequestDTO.Id,
-                ExamDate = examPeriodRequestDTO.ExamDate,
-                StartHour = examPeriodRequestDTO.StartHour,
-                FinishHour = examPeriodRequestDTO.FinishHour,
-                SubjectName = examPeriodRequestDTO.SubjectName,
-                ExamProgramName = examPeriodRequestDTO.ExamProgramName
+                Id = examPeriodRequestDTO.Id
             };
             ExamPeriod res = await ExamPeriodService.Delete(examPeriod);
             return new ExamPeriodDTO
             {
-                ExamDate = res.ExamDate,
+                ExamDate = res.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
                 SubjectName = res.SubjectName,
@@ -198,12 +195,12 @@ namespace ExamReg.Apps.Controllers.exam_period
         }
 
         [Route(ExamPeriodRoute.ListTerm), HttpPost]
-        public async Task<List<TermDTO>> ListTerm([FromBody] TermFilterDTO termRequestFilterDTO)
+        public async Task<List<TermDTO>> ListTerm()
         {
+            ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             List<Term> terms = await TermService.List(new TermFilter
             {
-                SemesterId = new GuidFilter { Equal = termRequestFilterDTO.SemesterId },
-                SemesterCode = new StringFilter { Equal = termRequestFilterDTO.SemesterCode },
+                SemesterId = new GuidFilter { Equal = currentExamProgram.SemesterId },
                 OrderBy = TermOrder.SubjectName,
                 OrderType = OrderType.ASC
             });

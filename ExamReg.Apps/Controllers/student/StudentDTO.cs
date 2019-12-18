@@ -10,7 +10,7 @@ namespace ExamReg.Apps.Controllers.student
         public string LastName { get; set; }
         public string GivenName { get; set; }
         public string Username { get; set; }
-        public DateTime Birthday { get; set; }
+        public string Birthday { get; set; }
         public string Email { get; set; }
     }
 }

@@ -64,14 +64,13 @@ namespace ExamReg.Apps.Controllers.exam_register
 
         // Hiển thị các môn thi cho sinh viên chọn ca thi
         [Route(ExamRegisterRoute.ListTerm), HttpPost]
-        public async Task<List<TermDTO>> ListTerm([FromBody] TermFilterDTO termRequestFilterDTO)
+        public async Task<List<TermDTO>> ListTerm()
         {
             ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
             TermFilter filter = new TermFilter
             {
                 StudentNumber = new IntFilter { Equal = CurrentContext.StudentNumber },
-                SemesterId = new GuidFilter { Equal = termRequestFilterDTO.SemesterId },
-                SemesterCode = new StringFilter { Equal = termRequestFilterDTO.SemesterCode }
+                SemesterId = new GuidFilter { Equal = currentExamProgram.SemesterId }
             };
             List<Term> res = await TermService.List(filter);
             return res.Select(r => new TermDTO
@@ -90,7 +89,7 @@ namespace ExamReg.Apps.Controllers.exam_register
                         SubjectName = e.SubjectName,
                         StartHour = e.StartHour,
                         FinishHour = e.FinishHour,
-                        ExamDate = e.ExamDate,
+                        ExamDate = e.ExamDate.ToString("dd-MM-yyyy"),
                         ExamProgramName = e.ExamProgramName,
                         Errors = e.Errors
                     })
@@ -117,7 +116,7 @@ namespace ExamReg.Apps.Controllers.exam_register
                 TermId = r.TermId,
                 ExamProgramId = r.ExamProgramId,
                 SubjectName = r.SubjectName,
-                ExamDate = r.ExamDate,
+                ExamDate = r.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = r.StartHour,
                 FinishHour = r.FinishHour,
                 ExamProgramName = r.ExamProgramName,
@@ -129,10 +128,10 @@ namespace ExamReg.Apps.Controllers.exam_register
         [Route(ExamRegisterRoute.RegisterExam), HttpPost]
         public async Task RegisterExam([FromBody] RegisterRequestDTO registerRequestDTO)
         {
-            Parallel.ForEach(registerRequestDTO.ExamPeriods, async examPeriod =>
+            foreach(ExamPeriodDTO examPeriodDTO in registerRequestDTO.ExamPeriods)
             {
-                await StudentService.RegisterExam(CurrentContext.StudentId, examPeriod.Id, examPeriod.TermId);
-            });
+                await StudentService.RegisterExam(CurrentContext.StudentId, examPeriodDTO.Id, examPeriodDTO.TermId);
+            }
         }
     }
 }
