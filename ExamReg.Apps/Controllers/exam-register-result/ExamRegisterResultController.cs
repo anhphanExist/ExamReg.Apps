@@ -51,7 +51,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
                 StudentNumber = res.StudentNumber,
                 LastName = res.LastName,
                 GivenName = res.GivenName,
-                Birthday = res.Birthday,
+                Birthday = res.Birthday.ToString("dd-MM-yyyy"),
                 Email = res.Email,
                 Errors = res.Errors
             };

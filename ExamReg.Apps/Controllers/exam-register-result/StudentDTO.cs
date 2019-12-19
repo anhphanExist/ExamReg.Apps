@@ -10,7 +10,7 @@ namespace ExamReg.Apps.Controllers.exam_register_result
         public int StudentNumber { get; set; }
         public string LastName { get; set; }
         public string GivenName { get; set; }
-        public DateTime Birthday { get; set; }
+        public string Birthday { get; set; }
         public string Email { get; set; }
     }
 }
