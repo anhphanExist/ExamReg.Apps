@@ -14,6 +14,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<bool> Update(Student student);
         Task<bool> Delete(Student student);
         Task<bool> Import(List<Student> students);
+        Task<bool> Register(List<ExamPeriod> examPeriods);
     }
     public class StudentValidator : IStudentValidator
     {
@@ -172,6 +173,24 @@ namespace ExamReg.Apps.Services.MStudent
             IsValid &= await ValidateExist(student);
             IsValid &= ValidateStringLength(student);
             return IsValid;
+        }
+
+        public async Task<bool> Register(List<ExamPeriod> examPeriods)
+        {
+            for (int i = 0; i < examPeriods.Count - 1; i++)
+            {
+                for (int j = i + 1; j < examPeriods.Count; j++)
+                {
+                    if (examPeriods[i].ExamDate.Equals(examPeriods[j].ExamDate))
+                    {
+                        if (examPeriods[i].StartHour <= examPeriods[j].StartHour && examPeriods[j].StartHour <= examPeriods[i].FinishHour ||
+                            examPeriods[i].StartHour <= examPeriods[j].FinishHour && examPeriods[j].FinishHour <= examPeriods[i].FinishHour ||
+                            examPeriods[j].StartHour <= examPeriods[i].StartHour && examPeriods[i].FinishHour <= examPeriods[j].FinishHour)
+                            return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

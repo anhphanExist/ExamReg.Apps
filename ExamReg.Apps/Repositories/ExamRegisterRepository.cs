@@ -73,11 +73,7 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Guid studentId, Guid examPeriodId)
         {
-            ExamRegisterDAO examRegisterDAO = examRegContext.ExamRegister
-                .Where(e => e.StudentId.Equals(studentId) && e.ExamPeriodId.Equals(examPeriodId))
-                .FirstOrDefault();
-            examRegContext.ExamRegister.Remove(examRegisterDAO);
-            await examRegContext.SaveChangesAsync();
+            await examRegContext.ExamRegister.Where(e => e.StudentId.Equals(studentId) && e.ExamPeriodId.Equals(examPeriodId)).DeleteFromQueryAsync();
             return true;
         }
 

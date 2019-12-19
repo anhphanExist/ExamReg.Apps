@@ -26,6 +26,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<byte[]> GenerateStudentTermTemplate();
         Task<byte[]> ExportStudentTerm();
         Task<bool> RegisterExam(Guid studentId, Guid examPeriodId, Guid termId);
+        Task<bool> Register(Guid studentId, List<ExamPeriod> examPeriods);
     }
     public class StudentService : IStudentService
     {
@@ -547,6 +548,20 @@ namespace ExamReg.Apps.Services.MStudent
                 // trả về dữ liệu dạng byte
                 return excel.GetAsByteArray();
             }
+        }
+
+        public async Task<bool> Register(Guid studentId, List<ExamPeriod> examPeriods)
+        {
+            // Kiểm tra xem có ca thi bị trùng không
+            if (!await StudentValidator.Register(examPeriods))
+                return false;
+
+            foreach (ExamPeriod examPeriod in examPeriods)
+            {
+                if (!await RegisterExam(studentId, examPeriod.Id, examPeriod.TermId))
+                    return false;
+            }
+            return true;
         }
 
         public async Task<bool> RegisterExam(Guid studentId, Guid examPeriodId, Guid termId)
