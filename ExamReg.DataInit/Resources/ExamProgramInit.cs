@@ -22,7 +22,30 @@ namespace ExamReg.DataInit.Resources
                 "Kỳ thi phụ"
             };
 
-            for (int i = 0; i < examProgramList.Count; i++)
+            // Thêm riêng lẻ 1 examProgram thành IsCurrent = true
+            examRegContext.ExamProgram.Add(new ExamProgramDAO
+            {
+                Id = CreateGuid(string.Format(examProgramList[0] + ":" + semesterIds[0])),
+                Name = string.Format(examProgramList[0] + ":" + semesterIds[0]),
+                SemesterId = CreateGuid(semesterIds[0]),
+                IsCurrent = true
+            });
+            returnList.Add(string.Format(examProgramList[0] + ":" + semesterIds[0]));
+
+            // Thêm sao cho đống còn lại IsCurrent = false
+            for (int j = 1; j < semesterIds.Count; j++)
+            {
+                examRegContext.ExamProgram.Add(new ExamProgramDAO
+                {
+                    Id = CreateGuid(string.Format(examProgramList[0] + ":" + semesterIds[j])),
+                    Name = string.Format(examProgramList[0] + ":" + semesterIds[j]),
+                    SemesterId = CreateGuid(semesterIds[0]),
+                    IsCurrent = false
+                });
+                returnList.Add(string.Format(examProgramList[0] + ":" + semesterIds[j]));
+            }
+
+            for (int i = 1; i < examProgramList.Count; i++)
             {
                 for (int j = 0; j < semesterIds.Count; j++)
                 {
@@ -30,7 +53,8 @@ namespace ExamReg.DataInit.Resources
                     {
                         Id = CreateGuid(string.Format(examProgramList[i] + ":" + semesterIds[j])),
                         Name = string.Format(examProgramList[i] + ":" + semesterIds[j]),
-                        SemesterId = CreateGuid(semesterIds[j])
+                        SemesterId = CreateGuid(semesterIds[j]),
+                        IsCurrent = false
                     });
                     returnList.Add(string.Format(examProgramList[i] + ":" + semesterIds[j]));
                 }

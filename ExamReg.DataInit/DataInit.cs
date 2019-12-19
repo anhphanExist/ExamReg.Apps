@@ -111,12 +111,12 @@ namespace ExamReg.DataInit
 
         private void InitExamRoomExamPeriod()
         {
-
+            examRoomExamPeriodInit.Init(examPeriodInit.ExamPeriodCodes, examRoomInit.ExamRoomCodes);
         }
 
         private void InitExamRegister()
         {
-
+            //examRegisterInit.Init()
         }
     }
 }
