@@ -25,7 +25,7 @@ namespace ExamReg.Apps.Services.MStudent
         Task<List<StudentTerm>> ImportExcelStudentTerm(byte[] file);
         Task<byte[]> GenerateStudentTermTemplate();
         Task<byte[]> ExportStudentTerm();
-        Task RegisterExam(Guid studentId, Guid examPeriodId, Guid termId);
+        Task<bool> RegisterExam(Guid studentId, Guid examPeriodId, Guid termId);
     }
     public class StudentService : IStudentService
     {
@@ -549,7 +549,7 @@ namespace ExamReg.Apps.Services.MStudent
             }
         }
 
-        public async Task RegisterExam(Guid studentId, Guid examPeriodId, Guid termId)
+        public async Task<bool> RegisterExam(Guid studentId, Guid examPeriodId, Guid termId)
         {
             // nếu sinh viên đã đăng ký thi 1 ca thi của môn đó trước đó thì phải xoá đi đăng ký lại nếu đăng ký ca thi mới của môn đó
             // đếm số lượng exam register để biết sinh viên đã đăng ký ca thi nào đó của môn học đó chưa
@@ -576,7 +576,8 @@ namespace ExamReg.Apps.Services.MStudent
             // Loại exam có số lượng student đạt max, nếu list exam trống thì báo lỗi
             exams.RemoveAll(e => e.Students.Count == e.ExamRoomComputerNumber);
             if (exams.Count == 0)
-                throw new MessageException("Đăng ký thất bại! Có ca thi đã đủ sinh viên đăng ký thi, vui lòng đăng kí ca thi khác");
+                return false;
+                
 
             // Tiếp tục quy trình nếu list exam còn chỗ trống
             ExamRoomExamPeriod examToRegisterIn = exams
@@ -591,6 +592,7 @@ namespace ExamReg.Apps.Services.MStudent
             };
             await UOW.ExamRegisterRepository.Create(examRegister);
             
+            return true;
         }
     }
 }
