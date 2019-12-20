@@ -4,6 +4,7 @@ using ExamReg.Apps.Repositories;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -160,6 +161,7 @@ namespace ExamReg.Apps.Services.MStudent
 
             // Lấy dữ liệu đã tồn tại trong database
             List<Student> students = await UOW.StudentRepository.List(new StudentFilter());
+            List<Student> newStudents = new List<Student>();
             List<User> users = await UOW.UserRepository.List(new UserFilter());
             List<User> newUsers = new List<User>();
 
@@ -241,7 +243,7 @@ namespace ExamReg.Apps.Services.MStudent
                     await UOW.Commit();
                     return excelTemplates;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     await UOW.Rollback();
                     throw new MessageException("StudentService.ImportExcel.SystemError");
@@ -277,7 +279,7 @@ namespace ExamReg.Apps.Services.MStudent
                             StudentNumber = int.Parse(studentNumber),
                             LastName = lastName,
                             GivenName = givenName,
-                            Birthday = DateTime.Parse(birthday),
+                            Birthday = DateTime.ParseExact(birthday, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                             Email = worksheet.Cells[i, 6].Value?.ToString().Trim(),
                         };
                         excelTemplates.Add(excelTemplate);
