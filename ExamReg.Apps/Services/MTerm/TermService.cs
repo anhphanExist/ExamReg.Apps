@@ -17,7 +17,7 @@ namespace ExamReg.Apps.Services.MTerm
         Task<Term> Create(Term term);
         Task<Term> Update(Term term);
         Task<Term> Delete(Term term);
-        Task<List<Term>> ImportExcel(byte[] file);
+        Task<bool> ImportExcel(byte[] file);
         Task<byte[]> GenerateTemplate();
         Task<byte[]> Export();
     }
@@ -130,10 +130,12 @@ namespace ExamReg.Apps.Services.MTerm
             return term;
         }
 
-        public async Task<List<Term>> ImportExcel(byte[] file)
+        public async Task<bool> ImportExcel(byte[] file)
         {
             // Chuyển hoá dữ liệu excel từ byte về Term BO
             List<Term> excelTemplates = await LoadFromExcel(file);
+            if (!(excelTemplates.Count > 0))
+                return false;
 
             // Lấy list dữ liệu đã tồn tại trong database
             List<Term> terms = await UOW.TermRepository.List(new TermFilter());
@@ -188,7 +190,7 @@ namespace ExamReg.Apps.Services.MTerm
                 }
                 catch (Exception e)
                 {
-                    throw new MessageException(e);
+                    return false;
                 }
             }
 
@@ -201,12 +203,12 @@ namespace ExamReg.Apps.Services.MTerm
                     var resTerms = await UOW.TermRepository.BulkInsert(newTerms);
                     var resSemesters = await UOW.SemesterRepository.BulkInsert(newSemesters);
                     await UOW.Commit();
-                    return excelTemplates;
+                    return true;
                 }
                 catch (Exception)
                 {
                     await UOW.Rollback();
-                    throw new MessageException("TermService.ImportExcel.SystemError");
+                    return false;
                 }
             }
         }
@@ -219,23 +221,30 @@ namespace ExamReg.Apps.Services.MTerm
             {
                 using (var package = new ExcelPackage(ms))
                 {
-                    // lấy worksheet đầu tiên
-                    var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                    try
                     {
-                        // bỏ qua các dòng không chứa đủ thông tin
-                        string subjectName = worksheet.Cells[i, 2].Value?.ToString().Trim();
-                        string semesterCode = worksheet.Cells[i, 3].Value?.ToString().Trim();
-                        if (string.IsNullOrEmpty(subjectName) ||
-                            string.IsNullOrEmpty(semesterCode))
-                            continue;
-                        // thêm dòng đủ thông tin vào biến
-                        Term excelTemplate = new Term
+                        // lấy worksheet đầu tiên
+                        var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                        for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                         {
-                            SubjectName = subjectName,
-                            SemesterCode = semesterCode
-                        };
-                        excelTemplates.Add(excelTemplate);
+                            // bỏ qua các dòng không chứa đủ thông tin
+                            string subjectName = worksheet.Cells[i, 2].Value?.ToString().Trim();
+                            string semesterCode = worksheet.Cells[i, 3].Value?.ToString().Trim();
+                            if (string.IsNullOrEmpty(subjectName) ||
+                                string.IsNullOrEmpty(semesterCode))
+                                continue;
+                            // thêm dòng đủ thông tin vào biến
+                            Term excelTemplate = new Term
+                            {
+                                SubjectName = subjectName,
+                                SemesterCode = semesterCode
+                            };
+                            excelTemplates.Add(excelTemplate);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        return new List<Term>();
                     }
                 }
             }

@@ -118,11 +118,23 @@ namespace ExamReg.Apps.Controllers.term
         }
 
         [Route(TermRoute.Import), HttpPost]
-        public async Task<List<Term>> ImportExcel()
+        public async Task<ImportResponseDTO> ImportExcel()
         {
             MemoryStream memoryStream = new MemoryStream();
             Request.Body.CopyTo(memoryStream);
-            return await TermService.ImportExcel(memoryStream.ToArray());
+            if(await TermService.ImportExcel(memoryStream.ToArray()))
+            {
+                return new ImportResponseDTO
+                {
+                    Message = "Nhập dữ liệu thành công",
+                    Errors = new List<string>()
+                };
+            }
+            return new ImportResponseDTO
+            {
+                Message = "Nhập dữ liệu thất bại, dữ liệu nhập không hợp lệ, vui lòng kiểm tra lại",
+                Errors = new List<string> { "Import Fail" }
+            };
         }
 
         [Route(TermRoute.Export), HttpGet]

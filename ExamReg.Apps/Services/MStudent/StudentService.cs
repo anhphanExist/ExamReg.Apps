@@ -20,10 +20,10 @@ namespace ExamReg.Apps.Services.MStudent
         Task<Student> Update(Student student);
         Task<Student> Delete(Student student);
         Task<Student> ResetPassword(Student student);
-        Task<List<Student>> ImportExcelStudent(byte[] file);
+        Task<bool> ImportExcelStudent(byte[] file);
         Task<byte[]> GenerateStudentTemplate();
         Task<byte[]> ExportStudent();
-        Task<List<StudentTerm>> ImportExcelStudentTerm(byte[] file);
+        Task<bool> ImportExcelStudentTerm(byte[] file);
         Task<byte[]> GenerateStudentTermTemplate();
         Task<byte[]> ExportStudentTerm();
         Task<bool> RegisterExam(Guid studentId, Guid examPeriodId, Guid termId);
@@ -154,11 +154,12 @@ namespace ExamReg.Apps.Services.MStudent
             }
         }
 
-        public async Task<List<Student>> ImportExcelStudent(byte[] file)
+        public async Task<bool> ImportExcelStudent(byte[] file)
         {
             // Chuyển hoá dữ liệu excel từ byte về Student BO
             List<Student> excelTemplates = await LoadStudentFromExcel(file);
-
+            if (!(excelTemplates.Count > 0))
+                return false;
             // Lấy dữ liệu đã tồn tại trong database
             List<Student> students = await UOW.StudentRepository.List(new StudentFilter());
             List<Student> newStudents = new List<Student>();
@@ -182,7 +183,7 @@ namespace ExamReg.Apps.Services.MStudent
                     {
                         student = new Student
                         {
-                            Id = new Guid(),
+                            Id = Guid.NewGuid(),
                             StudentNumber = template.StudentNumber,
                             GivenName = template.GivenName,
                             LastName = template.LastName,
@@ -194,7 +195,7 @@ namespace ExamReg.Apps.Services.MStudent
                         students.Add(student);
                         user = new User
                         {
-                            Id = new Guid(),
+                            Id = Guid.NewGuid(),
                             Username = student.Username,
                             Password = student.Password,
                             IsAdmin = false,
@@ -208,7 +209,7 @@ namespace ExamReg.Apps.Services.MStudent
                     {
                         user = new User
                         {
-                            Id = new Guid(),
+                            Id = Guid.NewGuid(),
                             Username = student.Username,
                             Password = student.Password,
                             IsAdmin = false,
@@ -228,7 +229,7 @@ namespace ExamReg.Apps.Services.MStudent
                 }
                 catch (Exception e)
                 {
-                    throw new MessageException(e);
+                    return false;
                 }
             }
 
@@ -241,12 +242,12 @@ namespace ExamReg.Apps.Services.MStudent
                     await UOW.StudentRepository.BulkMerge(students);
                     await UOW.UserRepository.BulkInsert(newUsers);
                     await UOW.Commit();
-                    return excelTemplates;
+                    return true;
                 }
                 catch (Exception e)
                 {
                     await UOW.Rollback();
-                    throw new MessageException("StudentService.ImportExcel.SystemError");
+                    return false;
                 }
             }
         }
@@ -259,30 +260,37 @@ namespace ExamReg.Apps.Services.MStudent
             {
                 using (var package = new ExcelPackage(ms))
                 {
-                    // lấy worksheet đầu tiên
-                    var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                    try
                     {
-                        // bỏ qua các dòng không chứa đủ thông tin
-                        string studentNumber = worksheet.Cells[i, 2].Value?.ToString().Trim();
-                        string lastName = worksheet.Cells[i, 3].Value?.ToString().Trim();
-                        string givenName = worksheet.Cells[i, 4].Value?.ToString().Trim();
-                        string birthday = worksheet.Cells[i, 5].Value?.ToString().Trim();
-                        if (string.IsNullOrEmpty(studentNumber) ||
-                            string.IsNullOrEmpty(lastName) ||
-                            string.IsNullOrEmpty(givenName) ||
-                            string.IsNullOrEmpty(birthday))
-                            continue;
-                        // thêm dòng đủ thông tin vào biến
-                        Student excelTemplate = new Student
+                        // lấy worksheet đầu tiên
+                        var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                        for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                         {
-                            StudentNumber = int.Parse(studentNumber),
-                            LastName = lastName,
-                            GivenName = givenName,
-                            Birthday = DateTime.ParseExact(birthday, "dd-MM-yyyy", CultureInfo.InvariantCulture),
-                            Email = worksheet.Cells[i, 6].Value?.ToString().Trim(),
-                        };
-                        excelTemplates.Add(excelTemplate);
+                            // bỏ qua các dòng không chứa đủ thông tin
+                            string studentNumber = worksheet.Cells[i, 2].Value?.ToString().Trim();
+                            string lastName = worksheet.Cells[i, 3].Value?.ToString().Trim();
+                            string givenName = worksheet.Cells[i, 4].Value?.ToString().Trim();
+                            string birthday = worksheet.Cells[i, 5].Value?.ToString().Trim();
+                            if (string.IsNullOrEmpty(studentNumber) ||
+                                string.IsNullOrEmpty(lastName) ||
+                                string.IsNullOrEmpty(givenName) ||
+                                string.IsNullOrEmpty(birthday))
+                                continue;
+                            // thêm dòng đủ thông tin vào biến
+                            Student excelTemplate = new Student
+                            {
+                                StudentNumber = int.Parse(studentNumber),
+                                LastName = lastName,
+                                GivenName = givenName,
+                                Birthday = DateTime.ParseExact(birthday, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                                Email = worksheet.Cells[i, 6].Value?.ToString().Trim(),
+                            };
+                            excelTemplates.Add(excelTemplate);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        return new List<Student>();
                     }
                 }
             }
@@ -370,11 +378,12 @@ namespace ExamReg.Apps.Services.MStudent
             }
         }
 
-        public async Task<List<StudentTerm>> ImportExcelStudentTerm(byte[] file)
+        public async Task<bool> ImportExcelStudentTerm(byte[] file)
         {
             // Chuyển hoá dữ liệu excel từ byte về Student Term BO
             List<StudentTerm> excelTemplates = await LoadStudentTermFromExcel(file);
-
+            if (!(excelTemplates.Count > 0))
+                return false;
             // Lấy dữ liệu đã tồn tại trong database
             List<StudentTerm> studentTerms = await UOW.StudentTermRepository.List(new StudentTermFilter());
             List<Student> students = await UOW.StudentRepository.List(new StudentFilter());
@@ -383,44 +392,50 @@ namespace ExamReg.Apps.Services.MStudent
             // Duyệt qua các student BO trong excel để gán dữ liệu excel vào dữ liệu database
             foreach (StudentTerm template in excelTemplates)
             {
-                // kiểm tra dữ liệu đã tồn tại hay chưa
-                StudentTerm studentTerm = studentTerms
-                    .Where(st =>
-                        st.SubjectName.Equals(template.SubjectName) &&
-                        st.StudentNumber.Equals(template.StudentNumber)
-                    )
-                    .FirstOrDefault();
-                Student student = students
-                    .Where(s => s.StudentNumber.Equals(template.StudentNumber))
-                    .FirstOrDefault();
-                Term term = terms
-                    .Where(t => t.SubjectName.Equals(template.SubjectName))
-                    .FirstOrDefault();
-                // studentTerm chưa tồn tại thì tạo mới, đã tồn tại thì cập nhật
-                if (studentTerm == null)
+                try
                 {
-                    // studentTerm nhập láo dữ liệu không tồn tại thì next
-                    if (student == null || term == null)
+                    // kiểm tra dữ liệu đã tồn tại hay chưa
+                    StudentTerm studentTerm = studentTerms
+                        .Where(st =>
+                            st.SubjectName.Equals(template.SubjectName) &&
+                            st.StudentNumber.Equals(template.StudentNumber)
+                        )
+                        .FirstOrDefault();
+                    Student student = students
+                        .Where(s => s.StudentNumber.Equals(template.StudentNumber))
+                        .FirstOrDefault();
+                    Term term = terms
+                        .Where(t => t.SubjectName.Equals(template.SubjectName))
+                        .FirstOrDefault();
+                    // studentTerm chưa tồn tại thì tạo mới, đã tồn tại thì cập nhật
+                    if (studentTerm == null)
                     {
-                        continue;
+                        // studentTerm nhập láo dữ liệu không tồn tại thì next
+                        if (student == null || term == null)
+                        {
+                            continue;
+                        }
+                        studentTerm = new StudentTerm
+                        {
+                            StudentId = student.Id,
+                            StudentNumber = student.StudentNumber,
+                            StudentLastName = student.LastName,
+                            StudentGivenName = student.GivenName,
+                            TermId = term.Id,
+                            SubjectName = term.SubjectName,
+                            IsQualified = template.IsQualified
+                        };
+                        studentTerms.Add(studentTerm);
                     }
-                    studentTerm = new StudentTerm
+                    else
                     {
-                        StudentId = student.Id,
-                        StudentNumber = student.StudentNumber,
-                        StudentLastName = student.LastName,
-                        StudentGivenName = student.GivenName,
-                        TermId = term.Id,
-                        SubjectName = term.SubjectName,
-                        IsQualified = template.IsQualified
-                    };
-                    studentTerms.Add(studentTerm);
+                        studentTerm.IsQualified = template.IsQualified;
+                    }
                 }
-                else
+                catch(Exception e)
                 {
-                    studentTerm.IsQualified = template.IsQualified;
+                    return false;
                 }
-                
             }
 
             using (UOW.Begin())
@@ -429,12 +444,12 @@ namespace ExamReg.Apps.Services.MStudent
                 {
                     await UOW.StudentTermRepository.BulkMerge(studentTerms);
                     await UOW.Commit();
-                    return excelTemplates;
+                    return true;
                 }
                 catch(Exception e)
                 {
                     await UOW.Rollback();
-                    throw new MessageException(e);
+                    return false;
                 }
             }
         }
@@ -447,30 +462,37 @@ namespace ExamReg.Apps.Services.MStudent
             {
                 using (var package = new ExcelPackage(ms))
                 {
-                    // lấy worksheet đầu tiên
-                    var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                    try
                     {
-                        // bỏ qua các dòng không chứa đủ thông tin
-                        string studentNumber = worksheet.Cells[i, 2].Value?.ToString().Trim();
-                        string lastName = worksheet.Cells[i, 3].Value?.ToString().Trim();
-                        string givenName = worksheet.Cells[i, 4].Value?.ToString().Trim();
-                        string subjectName = worksheet.Cells[i, 5].Value?.ToString().Trim();
-                        string isQualified = worksheet.Cells[i, 6].Value?.ToString().Trim();
-                        if (string.IsNullOrEmpty(studentNumber) ||
-                            string.IsNullOrEmpty(lastName) ||
-                            string.IsNullOrEmpty(givenName) ||
-                            string.IsNullOrEmpty(subjectName))
-                            continue;
-                        // thêm dòng đủ thông tin vào biến
-                        StudentTerm excelTemplate = new StudentTerm
+                        // lấy worksheet đầu tiên
+                        var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                        for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                         {
-                            StudentNumber = int.Parse(studentNumber),
-                            StudentLastName = lastName,
-                            StudentGivenName = givenName,
-                            SubjectName = subjectName,
-                            IsQualified = !string.IsNullOrEmpty(isQualified)
-                        };
+                            // bỏ qua các dòng không chứa đủ thông tin
+                            string studentNumber = worksheet.Cells[i, 2].Value?.ToString().Trim();
+                            string lastName = worksheet.Cells[i, 3].Value?.ToString().Trim();
+                            string givenName = worksheet.Cells[i, 4].Value?.ToString().Trim();
+                            string subjectName = worksheet.Cells[i, 5].Value?.ToString().Trim();
+                            string isQualified = worksheet.Cells[i, 6].Value?.ToString().Trim();
+                            if (string.IsNullOrEmpty(studentNumber) ||
+                                string.IsNullOrEmpty(lastName) ||
+                                string.IsNullOrEmpty(givenName) ||
+                                string.IsNullOrEmpty(subjectName))
+                                continue;
+                            // thêm dòng đủ thông tin vào biến
+                            StudentTerm excelTemplate = new StudentTerm
+                            {
+                                StudentNumber = int.Parse(studentNumber),
+                                StudentLastName = lastName,
+                                StudentGivenName = givenName,
+                                SubjectName = subjectName,
+                                IsQualified = !string.IsNullOrEmpty(isQualified)
+                            };
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        return new List<StudentTerm>();
                     }
                 }
             }
