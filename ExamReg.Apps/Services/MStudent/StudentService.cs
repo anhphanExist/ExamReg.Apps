@@ -355,7 +355,7 @@ namespace ExamReg.Apps.Services.MStudent
                         students[i].StudentNumber,
                         students[i].LastName,
                         students[i].GivenName,
-                        students[i].Birthday,
+                        students[i].Birthday.ToString("dd-MM-yyyy"),
                         students[i].Email,
                         students[i].Username,
                         students[i].Password
@@ -540,7 +540,7 @@ namespace ExamReg.Apps.Services.MStudent
                         studentTerms[i].StudentLastName,
                         studentTerms[i].StudentGivenName,
                         studentTerms[i].SubjectName,
-                        studentTerms[i].IsQualified
+                        studentTerms[i].IsQualified ? "x" : ""
                     });
                 }
                 // tạo worksheet

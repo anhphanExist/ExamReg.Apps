@@ -81,7 +81,11 @@ namespace ExamReg.Apps.Repositories
             {
                 StudentId = s.StudentId,
                 TermId = s.TermId,
-                IsQualified = s.IsQualified
+                IsQualified = s.IsQualified,
+                SubjectName = s.Term.SubjectName,
+                StudentGivenName = s.Student.GivenName,
+                StudentLastName = s.Student.LastName,
+                StudentNumber = s.Student.StudentNumber
             }).ToListAsync();
 
             return list.FirstOrDefault();
@@ -98,8 +102,11 @@ namespace ExamReg.Apps.Repositories
             {
                 StudentId = s.StudentId,
                 TermId = s.TermId,
-                IsQualified = s.IsQualified
-
+                IsQualified = s.IsQualified,
+                SubjectName = s.Term.SubjectName,
+                StudentGivenName = s.Student.GivenName,
+                StudentLastName = s.Student.LastName,
+                StudentNumber = s.Student.StudentNumber
             }).ToListAsync();
             return list;
 

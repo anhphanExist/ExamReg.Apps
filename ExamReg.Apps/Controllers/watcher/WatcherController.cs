@@ -87,8 +87,18 @@ namespace ExamReg.Apps.Controllers.watcher
                 ExamPeriodId = new GuidFilter { Equal = examPeriodId },
                 ExamRoomId = new GuidFilter { Equal = examRoomId }
             };
+            ExamRoomExamPeriod examRoomExamPeriod = await ExamRoomExamPeriodService.Get(filter);
+            
             byte[] data = await ExamRoomExamPeriodService.ExportStudent(filter);
-            return File(data, "application/octet-stream", "Exam" + examPeriodId.ToString() + "_" + examRoomId.ToString() + ".xlsx");
+            return File(data, "application/octet-stream", "Exam" 
+                + examRoomExamPeriod.ExamProgramName + "_" 
+                + examRoomExamPeriod.ExamDate + "_"
+                + examRoomExamPeriod.StartHour + "h_"
+                + examRoomExamPeriod.FinishHour + "h_"
+                + examRoomExamPeriod.SubjectName + "_"
+                + examRoomExamPeriod.ExamRoomAmphitheaterName + "_"
+                + examRoomExamPeriod.ExamRoomNumber
+                +".xlsx");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ExamReg.Apps.Common
             int headerLine = headers.Count;
 
             // lấy độ dài của header
-            string headerRange = $"A{headerLine}:" + Char.ConvertFromUtf32(headers[0].Length + 64) + headerLine;
+            string headerRange = $"A1:" + Char.ConvertFromUtf32(headers[0].Length + 64) + headerLine;
 
             // load header từ array vào cell
             worksheet.Cells[headerRange].LoadFromArrays(headers);

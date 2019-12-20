@@ -16,6 +16,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
     public interface IExamRoomExamPeriodService : IServiceScoped
     {
         Task<ExamRoomExamPeriod> Get(Guid examPeriodId, Guid examRoomId);
+        Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter);
         Task<List<ExamRoomExamPeriod>> List(ExamRoomExamPeriodFilter filter);
         Task<ExamRoomExamPeriod> Delete(ExamRoomExamPeriod examRoomExamPeriod);
         Task<byte[]> ExportStudent(ExamRoomExamPeriodFilter filter);
@@ -36,6 +37,11 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                 ExamRoomId = new GuidFilter { Equal = examRoomId}
 
             };
+            return await UOW.ExamRoomExamPeriodRepository.Get(filter);
+        }
+
+        public async Task<ExamRoomExamPeriod> Get(ExamRoomExamPeriodFilter filter)
+        {
             return await UOW.ExamRoomExamPeriodRepository.Get(filter);
         }
      
@@ -91,7 +97,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                         examRoomExamPeriod.ExamRoomNumber.ToString(),
                         examRoomExamPeriod.ExamRoomAmphitheaterName,
                         examRoomExamPeriod.ExamRoomComputerNumber.ToString(),
-                        examRoomExamPeriod.ExamDate.Date.ToString("dd/MM/yyyy"),
+                        examRoomExamPeriod.ExamDate.ToString("dd-MM-yyyy"),
                         examRoomExamPeriod.StartHour.ToString(),
                         examRoomExamPeriod.FinishHour.ToString(),
                         examRoomExamPeriod.Students.Count.ToString()
@@ -114,7 +120,7 @@ namespace ExamReg.Apps.Services.MExamRoomExamPeriod
                         examRoomExamPeriod.Students[i].StudentNumber,
                         examRoomExamPeriod.Students[i].LastName,
                         examRoomExamPeriod.Students[i].GivenName,
-                        examRoomExamPeriod.Students[i].Birthday
+                        examRoomExamPeriod.Students[i].Birthday.ToString("dd-MM-yyyy")
                     });
                 }
                 // tạo worksheet
