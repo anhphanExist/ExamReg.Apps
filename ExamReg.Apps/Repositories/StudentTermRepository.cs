@@ -53,20 +53,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Guid studentId, Guid TermId)
         {
-            try
-            {
-                StudentTermDAO studentTermDAO = examRegContext.StudentTerm
-                    .Where(s => (s.StudentId.Equals(studentId) && s.TermId.Equals(TermId)))
-                    .FirstOrDefault();
-
-                examRegContext.StudentTerm.Remove(studentTermDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            await examRegContext.StudentTerm.Where(s => (s.StudentId.Equals(studentId) && s.TermId.Equals(TermId))).DeleteFromQueryAsync();
+            return true;
         }
 
         public async Task<StudentTerm> Get(StudentTermFilter filter)
