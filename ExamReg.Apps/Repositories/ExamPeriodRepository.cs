@@ -153,10 +153,10 @@ namespace ExamReg.Apps.Repositories
         public async Task<bool> Update(ExamPeriod examPeriod)
         {
             // Xoá ExamRegister của ExamRoomExamPeriod của ExamPeriod
-            await examRegContext.ExamRoomExamPeriod
+            await examRegContext.ExamRegister
                 .Where(e => e.ExamPeriodId == examPeriod.Id)
                 .DeleteFromQueryAsync();
-            await examRegContext.ExamRegister
+            await examRegContext.ExamRoomExamPeriod
                 .Where(e => e.ExamPeriodId == examPeriod.Id)
                 .DeleteFromQueryAsync();
 
@@ -187,6 +187,7 @@ namespace ExamReg.Apps.Repositories
             if (filter.ExamDate != null)
             {
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
+                // Lấy exam Period bị trùng lịch trong khoảng thời gian start đến finish hour
                 if (filter.StartHour != null && filter.FinishHour != null)
                     query = query.Where(q => (filter.StartHour <= q.StartHour && q.StartHour <= filter.FinishHour) ||
                                              (filter.StartHour <= q.FinishHour && q.FinishHour <= filter.FinishHour) ||

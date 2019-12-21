@@ -94,6 +94,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
             {
                 try
                 {
+                    examPeriod = await UOW.ExamPeriodRepository.Get(examPeriod.Id);
                     await UOW.ExamPeriodRepository.Delete(examPeriod.Id);
                     await UOW.Commit();
                 }
@@ -120,13 +121,13 @@ namespace ExamReg.Apps.Services.MExamPeriod
             {
                 try
                 {
-                    examPeriod = await GetTermIdExamProgramId(examPeriod);
+                    //examPeriod = await GetTermIdExamProgramId(examPeriod);
 
                     await UOW.ExamPeriodRepository.Update(examPeriod);
                     await UOW.Commit();
-                    return examPeriod;
+                    return await UOW.ExamPeriodRepository.Get(examPeriod.Id);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     await UOW.Rollback();
                     examPeriod.AddError(nameof(ExamPeriodService), nameof(Update), CommonEnum.ErrorCode.SystemError);

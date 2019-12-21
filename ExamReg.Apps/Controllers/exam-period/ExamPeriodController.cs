@@ -86,7 +86,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
                 SubjectName = examPeriodRequestDTO.SubjectName,
-                ExamProgramName = examPeriodRequestDTO.ExamProgramName
+                ExamProgramId = examPeriodRequestDTO.ExamProgramId
             };
             ExamPeriod res = await ExamPeriodService.Create(newExamPeriod);
             return new ExamPeriodDTO
@@ -116,11 +116,6 @@ namespace ExamReg.Apps.Controllers.exam_period
             ExamPeriod examPeriod = new ExamPeriod
             {
                 Id = examPeriodRequestDTO.Id,
-                ExamDate = DateTime.ParseExact(examPeriodRequestDTO.ExamDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
-                StartHour = examPeriodRequestDTO.StartHour,
-                FinishHour = examPeriodRequestDTO.FinishHour,
-                SubjectName = examPeriodRequestDTO.SubjectName,
-                ExamProgramName = examPeriodRequestDTO.ExamProgramName,
                 ExamRooms = examPeriodRequestDTO.ExamRooms.Select(e => new ExamRoom
                 {
                     Id = e.Id,
@@ -162,6 +157,8 @@ namespace ExamReg.Apps.Controllers.exam_period
             ExamPeriod res = await ExamPeriodService.Delete(examPeriod);
             return new ExamPeriodDTO
             {
+                Id = res.Id,
+                ExamProgramId = res.ExamProgramId,
                 ExamDate = res.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
@@ -221,14 +218,14 @@ namespace ExamReg.Apps.Controllers.exam_period
             // Tức là lấy các phòng thi có ExamRoomExamPeriod của ngày ExamDate không tồn tại trong khoảng thời gian >= StartHour và <= FinishHour
             List<ExamRoom> examRooms = await ExamRoomService.List(new ExamRoomFilter
             {
-                ExamDate = examRoomRequestFilterDTO.ExamDate,
+                ExamDate = DateTime.ParseExact(examRoomRequestFilterDTO.ExamDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 ExceptStartHour = examRoomRequestFilterDTO.StartHour,
                 ExceptFinishHour = examRoomRequestFilterDTO.FinishHour 
             });
             // Tức là lấy các phòng thi có ExamRoomExamPeriod không tồn tại nếu filter theo ExamDate
             examRooms.AddRange(await ExamRoomService.List(new ExamRoomFilter
             {
-                ExceptExamDate = examRoomRequestFilterDTO.ExamDate
+                ExceptExamDate = DateTime.ParseExact(examRoomRequestFilterDTO.ExamDate, "dd-MM-yyyy", CultureInfo.InvariantCulture)
             }));
             return examRooms.Select(s => new ExamRoomDTO
             {
