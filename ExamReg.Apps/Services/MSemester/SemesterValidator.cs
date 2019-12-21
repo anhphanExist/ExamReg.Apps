@@ -54,9 +54,7 @@ namespace ExamReg.Apps.Services.MSemester
         {
             SemesterFilter filter = new SemesterFilter
             {
-                StartYear = new ShortFilter { Equal = Semester.StartYear },
-                EndYear = new ShortFilter { Equal = Semester.EndYear },
-                IsFirstHalf = Semester.IsFirstHalf
+                Id = new GuidFilter { Equal = Semester.Id }
             };
 
             int count = await UOW.SemesterRepository.Count(filter);

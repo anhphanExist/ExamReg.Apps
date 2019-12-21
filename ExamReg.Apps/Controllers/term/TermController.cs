@@ -101,10 +101,7 @@ namespace ExamReg.Apps.Controllers.term
         {
             Term term = new Term
             {
-                Id = termRequestDTO.Id,
-                SubjectName = termRequestDTO.SubjectName,
-                SemesterCode = termRequestDTO.SemesterCode,
-                SemesterId = termRequestDTO.SemesterId
+                Id = termRequestDTO.Id
             };
             Term res = await TermService.Delete(term);
             return new TermDTO

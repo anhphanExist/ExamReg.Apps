@@ -119,7 +119,7 @@ namespace ExamReg.Apps.Services.MTerm
         public async Task<bool> Delete(Term term)
         {
             bool IsValid = true;
-            IsValid &= await ValidateExist(term);
+            IsValid &= await ValidateId(term);
             return IsValid;
         }
 
