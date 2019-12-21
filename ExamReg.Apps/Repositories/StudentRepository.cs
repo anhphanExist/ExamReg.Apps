@@ -178,7 +178,6 @@ namespace ExamReg.Apps.Repositories
         {
             await examRegContext.Student.Where(s => s.Id.Equals(student.Id)).UpdateFromQueryAsync(s => new StudentDAO
             {
-                StudentNumber = student.StudentNumber,
                 LastName = student.LastName,
                 GivenName = student.GivenName,
                 Birthday = student.Birthday,

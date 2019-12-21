@@ -16,6 +16,7 @@ namespace ExamReg.Apps.Entities
     }
     public class SemesterFilter : FilterEntity
     {
+        public GuidFilter Id { get; set; }
         public ShortFilter StartYear { get; set; }
         public ShortFilter EndYear { get; set; }
         public StringFilter Code { get; set; }
