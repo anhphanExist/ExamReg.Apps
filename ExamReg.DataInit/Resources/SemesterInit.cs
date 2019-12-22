@@ -17,12 +17,7 @@ namespace ExamReg.DataInit.Resources
         {
             List<string> returnList = new List<string>
             {
-                "2017_2018_1",
-                "2017_2018_2",
-                "2018_2019_1",
-                "2018_2019_2",
-                "2019_2020_1",
-                "2019_2020_2"
+                "2019_2020_1"
             };
             var rand = new Random();
 

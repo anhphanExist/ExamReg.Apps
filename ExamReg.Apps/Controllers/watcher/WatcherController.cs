@@ -87,8 +87,9 @@ namespace ExamReg.Apps.Controllers.watcher
                 ExamPeriodId = new GuidFilter { Equal = examPeriodId },
                 ExamRoomId = new GuidFilter { Equal = examRoomId }
             };
+            
             byte[] data = await ExamRoomExamPeriodService.ExportStudent(filter);
-            return File(data, "application/octet-stream", "Exam" + examPeriodId.ToString() + "_" + examRoomId.ToString() + ".xlsx");
+            return File(data, "application/octet-stream", "Exam.xlsx");
         }
     }
 }

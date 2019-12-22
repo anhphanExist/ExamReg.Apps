@@ -53,9 +53,13 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Guid Id)
         {
+            await examRegContext.ExamRegister
+                .Where(er => er.ExamPeriodId.Equals(Id))
+                .DeleteFromQueryAsync();
+
             await examRegContext.ExamRoomExamPeriod
-            .Where(s => s.ExamPeriodId.Equals(Id))
-            .DeleteFromQueryAsync();
+                .Where(s => s.ExamPeriodId.Equals(Id))
+                .DeleteFromQueryAsync();
 
             ExamPeriodDAO examPeriodDAO = examRegContext.ExamPeriod
                 .Where(e => e.Id.Equals(Id))
@@ -68,9 +72,7 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamPeriod> Get(Guid Id)
         {
-            IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod
-                .AsNoTracking()
-                .Where(t => t.Id.Equals(Id));
+            IQueryable<ExamPeriodDAO> query = examRegContext.ExamPeriod.Where(t => t.Id.Equals(Id)).AsNoTracking();
 
             List<ExamPeriod> list = await query.Select(e => new ExamPeriod()
             {
@@ -80,6 +82,14 @@ namespace ExamReg.Apps.Repositories
                 FinishHour = e.FinishHour,
                 TermId = e.TermId,
                 SubjectName = e.Term.SubjectName,
+                ExamRooms = e.ExamRoomExamPeriods.Select(r => new ExamRoom
+                {
+                    Id = r.ExamRoomId,
+                    Code = string.Format(r.ExamRoom.AmphitheaterName + "_" + r.ExamRoom.RoomNumber),
+                    AmphitheaterName = r.ExamRoom.AmphitheaterName,
+                    ComputerNumber = r.ExamRoom.ComputerNumber,
+                    RoomNumber = r.ExamRoom.RoomNumber
+                }).ToList(),
                 ExamProgramId = e.ExamProgramId,
                 ExamProgramName = e.ExamProgram.Name
             }).ToListAsync();
@@ -100,6 +110,14 @@ namespace ExamReg.Apps.Repositories
                 FinishHour = e.FinishHour,
                 TermId = e.TermId,
                 SubjectName = e.Term.SubjectName,
+                ExamRooms = e.ExamRoomExamPeriods.Select(r => new ExamRoom
+                {
+                    Id = r.ExamRoomId,
+                    Code = string.Format(r.ExamRoom.AmphitheaterName + "_" + r.ExamRoom.RoomNumber),
+                    AmphitheaterName = r.ExamRoom.AmphitheaterName,
+                    ComputerNumber = r.ExamRoom.ComputerNumber,
+                    RoomNumber = r.ExamRoom.RoomNumber
+                }).ToList(),
                 ExamProgramId = e.ExamProgramId,
                 ExamProgramName = e.ExamProgram.Name
             }).ToListAsync();
@@ -122,6 +140,14 @@ namespace ExamReg.Apps.Repositories
                 FinishHour = e.FinishHour,
                 TermId = e.TermId,
                 SubjectName = e.Term.SubjectName,
+                ExamRooms = e.ExamRoomExamPeriods.Select(r => new ExamRoom
+                {
+                    Id = r.ExamRoomId,
+                    Code = string.Format(r.ExamRoom.AmphitheaterName + "_" + r.ExamRoom.RoomNumber),
+                    AmphitheaterName = r.ExamRoom.AmphitheaterName,
+                    ComputerNumber = r.ExamRoom.ComputerNumber,
+                    RoomNumber = r.ExamRoom.RoomNumber
+                }).ToList(),
                 ExamProgramId = e.ExamProgramId,
                 ExamProgramName = e.ExamProgram.Name
             }).ToListAsync();
@@ -131,10 +157,10 @@ namespace ExamReg.Apps.Repositories
         public async Task<bool> Update(ExamPeriod examPeriod)
         {
             // Xoá ExamRegister của ExamRoomExamPeriod của ExamPeriod
-            await examRegContext.ExamRoomExamPeriod
+            await examRegContext.ExamRegister
                 .Where(e => e.ExamPeriodId == examPeriod.Id)
                 .DeleteFromQueryAsync();
-            await examRegContext.ExamRegister
+            await examRegContext.ExamRoomExamPeriod
                 .Where(e => e.ExamPeriodId == examPeriod.Id)
                 .DeleteFromQueryAsync();
 
@@ -160,11 +186,14 @@ namespace ExamReg.Apps.Repositories
                                      .Contains(true))
                                  .Contains(true));
             // có thể dùng join vào với nhau để đạt performance cao hơn
+            if (filter.TermId != null)
+                query = query.Where(q => q.TermId, filter.TermId);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.Term.SubjectName, filter.SubjectName);
             if (filter.ExamDate != null)
             {
                 query = query.Where(q => q.ExamDate, filter.ExamDate);
+                // Lấy exam Period bị trùng lịch trong khoảng thời gian start đến finish hour
                 if (filter.StartHour != null && filter.FinishHour != null)
                     query = query.Where(q => (filter.StartHour <= q.StartHour && q.StartHour <= filter.FinishHour) ||
                                              (filter.StartHour <= q.FinishHour && q.FinishHour <= filter.FinishHour) ||

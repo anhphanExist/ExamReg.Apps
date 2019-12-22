@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Z.EntityFramework.Extensions;
 
 namespace ExamReg.Apps.Repositories
 {
@@ -53,6 +54,7 @@ namespace ExamReg.Apps.Repositories
             StudentRepository = new StudentRepository(this.examRegContext, CurrentContext);
             StudentTermRepository = new StudentTermRepository(this.examRegContext, CurrentContext);
             TermRepository = new TermRepository(this.examRegContext, CurrentContext);
+            EntityFrameworkManager.ContextFactory = DbContext => examRegContext;
         }
 
         public async Task Begin()

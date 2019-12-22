@@ -53,20 +53,8 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Guid studentId, Guid TermId)
         {
-            try
-            {
-                StudentTermDAO studentTermDAO = examRegContext.StudentTerm
-                    .Where(s => (s.StudentId.Equals(studentId) && s.TermId.Equals(TermId)))
-                    .FirstOrDefault();
-
-                examRegContext.StudentTerm.Remove(studentTermDAO);
-                await examRegContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            await examRegContext.StudentTerm.Where(s => (s.StudentId.Equals(studentId) && s.TermId.Equals(TermId))).DeleteFromQueryAsync();
+            return true;
         }
 
         public async Task<StudentTerm> Get(StudentTermFilter filter)
@@ -81,7 +69,11 @@ namespace ExamReg.Apps.Repositories
             {
                 StudentId = s.StudentId,
                 TermId = s.TermId,
-                IsQualified = s.IsQualified
+                IsQualified = s.IsQualified,
+                SubjectName = s.Term.SubjectName,
+                StudentGivenName = s.Student.GivenName,
+                StudentLastName = s.Student.LastName,
+                StudentNumber = s.Student.StudentNumber
             }).ToListAsync();
 
             return list.FirstOrDefault();
@@ -98,8 +90,11 @@ namespace ExamReg.Apps.Repositories
             {
                 StudentId = s.StudentId,
                 TermId = s.TermId,
-                IsQualified = s.IsQualified
-
+                IsQualified = s.IsQualified,
+                SubjectName = s.Term.SubjectName,
+                StudentGivenName = s.Student.GivenName,
+                StudentLastName = s.Student.LastName,
+                StudentNumber = s.Student.StudentNumber
             }).ToListAsync();
             return list;
 

@@ -15,7 +15,7 @@ namespace ExamReg.Apps.Controllers.exam_period
 
     public class ExamRoomFilterDTO : FilterDTO
     {
-        public DateTime ExamDate { get; set; }
+        public string ExamDate { get; set; }
         public short StartHour { get; set; }
         public short FinishHour { get; set; }
     }

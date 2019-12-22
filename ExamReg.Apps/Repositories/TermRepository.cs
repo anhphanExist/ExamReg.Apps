@@ -178,7 +178,7 @@ namespace ExamReg.Apps.Repositories
                     TermId = e.TermId,
                     SubjectName = e.Term.SubjectName
                 }).ToList(),
-                QualifiedStudents = t.StudentTerms.Select(s => new Student
+                QualifiedStudents = t.StudentTerms.Where(s => s.IsQualified).Select(s => new Student
                 {
                     Id = s.StudentId,
                     StudentNumber = s.Student.StudentNumber,

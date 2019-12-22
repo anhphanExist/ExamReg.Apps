@@ -153,11 +153,23 @@ namespace ExamReg.Apps.Controllers.student
         }
 
         [Route(StudentRoute.ImportStudent), HttpPost]
-        public async Task<List<Student>> ImportExcelStudent()
+        public async Task<ImportResponseDTO> ImportExcelStudent()
         {
             MemoryStream memoryStream = new MemoryStream();
             Request.Body.CopyTo(memoryStream);
-            return await StudentService.ImportExcelStudent(memoryStream.ToArray());
+            if (await StudentService.ImportExcelStudent(memoryStream.ToArray()))
+            {
+                return new ImportResponseDTO
+                {
+                    Message = "Nhập dữ liệu thành công",
+                    Errors = new List<string>()
+                };
+            }
+            return new ImportResponseDTO
+            {
+                Message = "Nhập dữ liệu thất bại, dữ liệu nhập không hợp lệ, vui lòng kiểm tra lại",
+                Errors = new List<string> { "Import Fail" }
+            };
         }
 
         [Route(StudentRoute.DownloadStudentTemplate), HttpGet]
@@ -175,11 +187,23 @@ namespace ExamReg.Apps.Controllers.student
         }
 
         [Route(StudentRoute.ImportStudentTerm), HttpPost]
-        public async Task<List<StudentTerm>> ImportExcelStudentTerm()
+        public async Task<ImportResponseDTO> ImportExcelStudentTerm()
         {
             MemoryStream memoryStream = new MemoryStream();
             Request.Body.CopyTo(memoryStream);
-            return await StudentService.ImportExcelStudentTerm(memoryStream.ToArray());
+            if(await StudentService.ImportExcelStudentTerm(memoryStream.ToArray()))
+            {
+                return new ImportResponseDTO
+                {
+                    Message = "Nhập dữ liệu thành công",
+                    Errors = new List<string>()
+                };
+            }
+            return new ImportResponseDTO
+            {
+                Message = "Nhập dữ liệu thất bại, dữ liệu nhập không hợp lệ, vui lòng kiểm tra lại",
+                Errors = new List<string> { "Import Fail" }
+            };
         }
 
         [Route(StudentRoute.DownloadStudentTermTemplate), HttpGet]

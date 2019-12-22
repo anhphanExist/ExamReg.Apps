@@ -38,10 +38,10 @@ namespace ExamReg.Apps.Services.MExamPeriod
             ExamPeriodFilter filter = new ExamPeriodFilter
             {
                 Take = Int32.MaxValue,
-                ExamDate = new DateTimeFilter { Equal = examPeriod.ExamDate },
+                ExamDate = new DateTimeFilter { Equal = examPeriod.ExamDate }, // Kiểm tra trùng lịch
                 StartHour = examPeriod.StartHour,
                 FinishHour = examPeriod.FinishHour,
-                SubjectName = new StringFilter { Equal = examPeriod.SubjectName },
+                TermId = new GuidFilter { Equal = examPeriod.TermId },
                 ExamProgramId = new GuidFilter { Equal = examPeriod.ExamProgramId }
             };
 
@@ -62,7 +62,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
                 ExamDate = new DateTimeFilter { Equal = examPeriod.ExamDate },
                 StartHour = examPeriod.StartHour,
                 FinishHour = examPeriod.FinishHour,
-                SubjectName = new StringFilter { Equal = examPeriod.SubjectName },
+                TermId = new GuidFilter { Equal = examPeriod.TermId },
                 ExamProgramId = new GuidFilter { Equal = examPeriod.ExamProgramId }
             };
 
@@ -121,7 +121,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
             bool IsValid = true;
 
             IsValid &= await ValidateId(examPeriod);
-            IsValid &= ValidateDateTime(examPeriod);
+            //IsValid &= ValidateDateTime(examPeriod);
             return IsValid;
         }
     }
