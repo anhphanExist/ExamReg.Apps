@@ -129,7 +129,8 @@ namespace ExamReg.Apps.Controllers.exam_register
         [Route(ExamRegisterRoute.RegisterExam), HttpPost]
         public async Task<RegisterResponseDTO> Register([FromBody] RegisterRequestDTO registerRequestDTO)
         {
-            List<ExamPeriod> examPeriods = registerRequestDTO.ExamPeriods.Select(e => new ExamPeriod
+            
+            List<ExamPeriod> examPeriods = registerRequestDTO.ExamPeriods.Where(e => e != null).Select(e => new ExamPeriod
             {
                 Id = e.Id,
                 ExamProgramId = e.ExamProgramId,
