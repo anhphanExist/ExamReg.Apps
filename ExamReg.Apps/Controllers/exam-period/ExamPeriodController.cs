@@ -86,7 +86,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 ExamDate = DateTime.ParseExact(examPeriodRequestDTO.ExamDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
-                TermId = examPeriodRequestDTO.TermId,
+                SubjectName = examPeriodRequestDTO.SubjectName,
                 ExamProgramId = examPeriodRequestDTO.ExamProgramId
             };
             ExamPeriod res = await ExamPeriodService.Create(newExamPeriod);
