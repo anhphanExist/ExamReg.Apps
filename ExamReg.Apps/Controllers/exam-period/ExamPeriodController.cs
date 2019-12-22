@@ -62,6 +62,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 ExamDate = e.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = e.StartHour,
                 FinishHour = e.FinishHour,
+                TermId = e.TermId,
                 SubjectName = e.SubjectName,
                 ExamProgramId = e.ExamProgramId,
                 ExamProgramName = e.ExamProgramName,
@@ -85,7 +86,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 ExamDate = DateTime.ParseExact(examPeriodRequestDTO.ExamDate, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 StartHour = examPeriodRequestDTO.StartHour,
                 FinishHour = examPeriodRequestDTO.FinishHour,
-                SubjectName = examPeriodRequestDTO.SubjectName,
+                TermId = examPeriodRequestDTO.TermId,
                 ExamProgramId = examPeriodRequestDTO.ExamProgramId
             };
             ExamPeriod res = await ExamPeriodService.Create(newExamPeriod);
@@ -95,6 +96,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 ExamDate = res.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
+                TermId = res.TermId,
                 SubjectName = res.SubjectName,
                 ExamProgramId = res.ExamProgramId,
                 ExamProgramName = res.ExamProgramName,
@@ -132,6 +134,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 ExamDate = res.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
+                TermId = res.TermId,
                 SubjectName = res.SubjectName,
                 ExamProgramId = res.ExamProgramId,
                 ExamProgramName = res.ExamProgramName,
@@ -162,6 +165,7 @@ namespace ExamReg.Apps.Controllers.exam_period
                 ExamDate = res.ExamDate.ToString("dd-MM-yyyy"),
                 StartHour = res.StartHour,
                 FinishHour = res.FinishHour,
+                TermId = res.TermId,
                 SubjectName = res.SubjectName,
                 ExamProgramName = res.ExamProgramName,
                 ExamRooms = res.ExamRooms.Select(r => new ExamRoomDTO

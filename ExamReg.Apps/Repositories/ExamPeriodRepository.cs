@@ -182,6 +182,8 @@ namespace ExamReg.Apps.Repositories
                                      .Contains(true))
                                  .Contains(true));
             // có thể dùng join vào với nhau để đạt performance cao hơn
+            if (filter.TermId != null)
+                query = query.Where(q => q.TermId, filter.TermId);
             if (filter.SubjectName != null)
                 query = query.Where(q => q.Term.SubjectName, filter.SubjectName);
             if (filter.ExamDate != null)

@@ -41,7 +41,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
                 ExamDate = new DateTimeFilter { Equal = examPeriod.ExamDate }, // Kiểm tra trùng lịch
                 StartHour = examPeriod.StartHour,
                 FinishHour = examPeriod.FinishHour,
-                SubjectName = new StringFilter { Equal = examPeriod.SubjectName },
+                TermId = new GuidFilter { Equal = examPeriod.TermId },
                 ExamProgramId = new GuidFilter { Equal = examPeriod.ExamProgramId }
             };
 
@@ -62,7 +62,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
                 ExamDate = new DateTimeFilter { Equal = examPeriod.ExamDate },
                 StartHour = examPeriod.StartHour,
                 FinishHour = examPeriod.FinishHour,
-                SubjectName = new StringFilter { Equal = examPeriod.SubjectName },
+                TermId = new GuidFilter { Equal = examPeriod.TermId },
                 ExamProgramId = new GuidFilter { Equal = examPeriod.ExamProgramId }
             };
 
