@@ -219,8 +219,6 @@ namespace ExamReg.Apps.Repositories
             if (filter == null)
                 return query.Where(q => 1 == 0);
             //query = query.Where(q => q.Semester.Id, filter.SemesterId);
-            if (filter.SemesterId != null)
-                query = query.Where(q => q.SemesterId, filter.SemesterId);
             if (filter.SemesterCode != null)
             {
                 string[] codeData = filter.SemesterCode.Equal.Split("_");
@@ -237,6 +235,8 @@ namespace ExamReg.Apps.Repositories
             }
             if (filter.SubjectName != null)
                 query = query.Where(q => q.SubjectName, filter.SubjectName);
+            if (filter.SemesterId != null)
+                query = query.Where(q => q.SemesterId, filter.SemesterId);
             
             return query;
         }

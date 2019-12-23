@@ -35,29 +35,29 @@ namespace ExamReg.Apps.Services.MExamPeriod
         {
             return await UOW.ExamPeriodRepository.Get(Id);
         }*/
-        public async Task<ExamPeriod> GetTermId(ExamPeriod examPeriod)
-        {
-            ExamProgramFilter filter = new ExamProgramFilter
-            {
-                Id = new GuidFilter { Equal = examPeriod.ExamProgramId}
-            };
+        //public async Task<ExamPeriod> GetTermIdExamProgramId(ExamPeriod examPeriod)
+        //{
+        //    ExamProgramFilter filter = new ExamProgramFilter
+        //    {
+        //        Name = new StringFilter { Equal = examPeriod.ExamProgramName},
+        //    };
 
-            ExamProgram examProgram = await UOW.ExamProgramRepository.Get(filter);
+        //    ExamProgram examProgram = await UOW.ExamProgramRepository.Get(filter);
 
-            //examPeriod.ExamProgramId = examProgram.Id;
+        //    examPeriod.ExamProgramId = examProgram.Id;
 
-            TermFilter termfilter = new TermFilter
-            {
-                SubjectName = new StringFilter { Equal = examPeriod.SubjectName},
-                SemesterId = new GuidFilter { Equal = examProgram.SemesterId}
-            };
+        //    TermFilter termfilter = new TermFilter
+        //    {
+        //        SubjectName = new StringFilter { Equal = examPeriod.SubjectName},
+        //        SemesterId = new GuidFilter { Equal = examProgram.SemesterId}
+        //    };
 
-            Term term = await UOW.TermRepository.Get(termfilter);
+        //    Term term = await UOW.TermRepository.Get(termfilter);
 
-            examPeriod.TermId = term.Id;
+        //    examPeriod.TermId = term.Id;
 
-            return examPeriod;
-        }
+        //    return examPeriod;
+        //}
 
         public async Task<ExamPeriod> Create(ExamPeriod examPeriod)
         {
@@ -69,9 +69,6 @@ namespace ExamReg.Apps.Services.MExamPeriod
                 try
                 {
                     examPeriod.Id = Guid.NewGuid();
-
-                    examPeriod = await GetTermId(examPeriod);
-
                     await UOW.ExamPeriodRepository.Create(examPeriod);
                     await UOW.Commit();
                     return await UOW.ExamPeriodRepository.Get(examPeriod.Id);
@@ -121,7 +118,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
             {
                 try
                 {
-                    examPeriod = await GetTermId(examPeriod);
+                    //examPeriod = await GetTermIdExamProgramId(examPeriod);
 
                     await UOW.ExamPeriodRepository.Update(examPeriod);
                     await UOW.Commit();
