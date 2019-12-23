@@ -488,6 +488,7 @@ namespace ExamReg.Apps.Services.MStudent
                                 SubjectName = subjectName,
                                 IsQualified = !string.IsNullOrEmpty(isQualified)
                             };
+                            excelTemplates.Add(excelTemplate);
                         }
                     }
                     catch (Exception e)
