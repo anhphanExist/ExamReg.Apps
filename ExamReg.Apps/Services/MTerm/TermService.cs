@@ -159,7 +159,7 @@ namespace ExamReg.Apps.Services.MTerm
                         string[] codeData = template.SemesterCode.Split("_");
                         semester = new Semester
                         {
-                            Id = new Guid(),
+                            Id = Guid.NewGuid(),
                             Code = template.SemesterCode,
                             StartYear = short.Parse(codeData[0]),
                             EndYear = short.Parse(codeData[1]),
@@ -168,7 +168,7 @@ namespace ExamReg.Apps.Services.MTerm
                         newSemesters.Add(semester);
                         term = new Term
                         {
-                            Id = new Guid(),
+                            Id = Guid.NewGuid(),
                             SubjectName = template.SubjectName,
                             SemesterCode = semester.Code,
                             SemesterId = semester.Id
@@ -180,7 +180,7 @@ namespace ExamReg.Apps.Services.MTerm
                     {
                         term = new Term
                         {
-                            Id = new Guid(),
+                            Id = Guid.NewGuid(),
                             SubjectName = template.SubjectName,
                             SemesterCode = semester.Code,
                             SemesterId = semester.Id
