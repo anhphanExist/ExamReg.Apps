@@ -121,7 +121,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
             {
                 try
                 {
-                    //examPeriod = await GetTermId(examPeriod);
+                    examPeriod = await GetTermId(examPeriod);
 
                     await UOW.ExamPeriodRepository.Update(examPeriod);
                     await UOW.Commit();
