@@ -53,7 +53,7 @@ namespace ExamReg.Apps.Services.MExamProgram
             return true;
         }
 
-        private async Task<bool> ValidateExist(ExamProgram ExamProgram)
+        /*private async Task<bool> ValidateExist(ExamProgram ExamProgram)
         {
             ExamProgramFilter filter = new ExamProgramFilter
             {
@@ -68,7 +68,7 @@ namespace ExamReg.Apps.Services.MExamProgram
                 return false;
             }
             return true;
-        }
+        }*/
         public async Task<bool> ValidateId(ExamProgram examProgram)
         {
             ExamProgramFilter filter = new ExamProgramFilter

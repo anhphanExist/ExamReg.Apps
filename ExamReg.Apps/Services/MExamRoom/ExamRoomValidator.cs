@@ -52,7 +52,7 @@ namespace ExamReg.Apps.Services.MExamRoom
             return true;
         }
 
-        private async Task<bool> ValidateExist(ExamRoom examRoom)
+        /*private async Task<bool> ValidateExist(ExamRoom examRoom)
         {
             ExamRoomFilter filter = new ExamRoomFilter
             {
@@ -68,7 +68,7 @@ namespace ExamReg.Apps.Services.MExamRoom
                 return false;
             }
             return true;
-        }
+        }*/
         public async Task<bool> ValidateId(ExamRoom examRoom)
         {
             ExamRoomFilter filter = new ExamRoomFilter

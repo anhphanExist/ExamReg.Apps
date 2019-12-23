@@ -64,11 +64,27 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Guid Id)
         {
-            await examRegContext.Term
-            .Where(t => t.SemesterId.Equals(Id))
+            await examRegContext.ExamRegister
+            .Where(t => t.Exam.ExamPeriod.ExamProgram.SemesterId.Equals(Id))
+            .DeleteFromQueryAsync();
+
+            await examRegContext.ExamRoomExamPeriod
+            .Where(t => t.ExamPeriod.ExamProgram.SemesterId.Equals(Id))
+            .DeleteFromQueryAsync();
+
+            await examRegContext.ExamPeriod
+            .Where(t => t.ExamProgram.SemesterId.Equals(Id))
             .DeleteFromQueryAsync();
 
             await examRegContext.ExamProgram
+            .Where(t => t.SemesterId.Equals(Id))
+            .DeleteFromQueryAsync();
+
+            await examRegContext.StudentTerm
+            .Where(t => t.Term.SemesterId.Equals(Id))
+            .DeleteFromQueryAsync();
+
+            await examRegContext.Term
             .Where(t => t.SemesterId.Equals(Id))
             .DeleteFromQueryAsync();
 
@@ -83,20 +99,20 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<Semester> Get(Guid Id)
         {
-            SemesterDAO semesterDAO = examRegContext.Semester
+            IQueryable<SemesterDAO> query = examRegContext.Semester
                 .AsNoTracking()
-                .Where(s => s.Id.Equals(Id))
-                .FirstOrDefault();
-            if (semesterDAO == null)
-                return null;
-            return new Semester()
+                .Where(s => s.Id.Equals(Id));
+
+            List<Semester> list = await query.Select(s => new Semester()
             {
-                Id = semesterDAO.Id,
-                Code = string.Format(semesterDAO.StartYear + "_" + semesterDAO.EndYear + "_" + (semesterDAO.IsFirstHalf ? 1 : 2)),
-                StartYear = semesterDAO.StartYear,
-                EndYear = semesterDAO.EndYear,
-                IsFirstHalf = semesterDAO.IsFirstHalf
-            };
+                Id = s.Id,
+                Code = string.Format(s.StartYear + "_" + s.EndYear + "_" + (s.IsFirstHalf ? 1 : 2)),
+                StartYear = s.StartYear,
+                EndYear = s.EndYear,
+                IsFirstHalf = s.IsFirstHalf
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<Semester> Get(SemesterFilter filter)
@@ -105,6 +121,7 @@ namespace ExamReg.Apps.Repositories
 
             IQueryable<SemesterDAO> query = examRegContext.Semester.AsNoTracking();
             query = DynamicFilter(query, filter);
+
             List<Semester> list = await query.Select(s => new Semester()
             {
                 Id = s.Id,

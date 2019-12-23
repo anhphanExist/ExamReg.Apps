@@ -78,20 +78,20 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<ExamRoom> Get(Guid Id)
         {
-            ExamRoomDAO examRoomDAO = examRegContext.ExamRoom
+            IQueryable<ExamRoomDAO> query = examRegContext.ExamRoom
                 .AsNoTracking()
-                .Where(e => e.Id.Equals(Id))
-                .FirstOrDefault();
-            if (examRoomDAO == null)
-                return null;
-            return new ExamRoom()
+                .Where(e => e.Id.Equals(Id));
+
+            List<ExamRoom> list = await query.Select(e => new ExamRoom()
             {
-                Id = examRoomDAO.Id,
-                AmphitheaterName = examRoomDAO.AmphitheaterName,
-                ComputerNumber = examRoomDAO.ComputerNumber,
-                RoomNumber = examRoomDAO.RoomNumber,
-                Code = string.Format(examRoomDAO.AmphitheaterName + "_" + examRoomDAO.RoomNumber)
-            };
+                Id = e.Id,
+                AmphitheaterName = e.AmphitheaterName,
+                ComputerNumber = e.ComputerNumber,
+                RoomNumber = e.RoomNumber,
+                Code = string.Format(e.AmphitheaterName + "_" + e.RoomNumber)
+            }).ToListAsync();
+
+            return list.FirstOrDefault();
         }
 
         public async Task<ExamRoom> Get(ExamRoomFilter filter)

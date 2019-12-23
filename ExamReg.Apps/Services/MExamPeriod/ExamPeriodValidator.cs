@@ -54,7 +54,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
             return true;
         }
 
-        private async Task<bool> ValidateExist(ExamPeriod examPeriod)
+        /*private async Task<bool> ValidateExist(ExamPeriod examPeriod)
         {
             ExamPeriodFilter filter = new ExamPeriodFilter
             {
@@ -73,7 +73,7 @@ namespace ExamReg.Apps.Services.MExamPeriod
                 return false;
             }
             return true;
-        }
+        }*/
         private async Task<bool> ValidateId(ExamPeriod ExamPeriod)
         {
             ExamPeriodFilter filter = new ExamPeriodFilter

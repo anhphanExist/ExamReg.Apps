@@ -134,17 +134,22 @@ namespace ExamReg.Apps.Services.MExamProgram
             {
                 try
                 {
-                    /*ExamProgram currentExamProgram = await UOW.ExamProgramRepository.Get(new ExamProgramFilter
+                    ExamProgramFilter filter = new ExamProgramFilter
                     {
-                        Id = new GuidFilter { NotEqual = examProgram.Id },
                         IsCurrent = true
-                    });
-                    
-                    await this.UOW.ExamProgramRepository.Deactive(examProgram.Id);*/
+                    };
 
-                    await UOW.ExamProgramRepository.Active(examProgram.Id);
+                    ExamProgram currentExamProgram = await UOW.ExamProgramRepository.Get(filter);
+                    currentExamProgram.IsCurrent = false;
+                    await UOW.ExamProgramRepository.Update(currentExamProgram);
+
+                    examProgram = await UOW.ExamProgramRepository.Get(examProgram.Id);
+                    examProgram.IsCurrent = true;
+                    await UOW.ExamProgramRepository.Update(examProgram);
+
+                    //await UOW.ExamProgramRepository.Active(examProgram.Id);
                     await UOW.Commit();
-                    return await Get(examProgram.Id);
+                    return examProgram;
                 }
                 catch (Exception)
                 {

@@ -20,6 +20,7 @@ namespace ExamReg.Apps.Services.MSemester
     {
         public enum ERROR
         {
+            IdNotFound,
             SemesterExisted,
             NotExisted,
             StringEmpty,
@@ -50,7 +51,7 @@ namespace ExamReg.Apps.Services.MSemester
             }
             return true;
         }
-        private async Task<bool> ValidateExist(Semester Semester)
+        private async Task<bool> ValidateId(Semester Semester)
         {
             SemesterFilter filter = new SemesterFilter
             {
@@ -59,11 +60,9 @@ namespace ExamReg.Apps.Services.MSemester
 
             int count = await UOW.SemesterRepository.Count(filter);
             if (count == 0)
-            {
-                Semester.AddError(nameof(SemesterValidator), nameof(Semester), ERROR.NotExisted);
-                return false;
-            }
-            return true;
+                Semester.AddError(nameof(SemesterValidator), nameof(Semester), ERROR.IdNotFound);
+
+            return count == 1;
         }
 
         private bool ValidateStringLength(Semester Semester)
@@ -92,7 +91,7 @@ namespace ExamReg.Apps.Services.MSemester
         public async Task<bool> Delete(Semester Semester)
         {
             bool IsValid = true;
-            IsValid &= await ValidateExist(Semester);
+            IsValid &= await ValidateId(Semester);
             return IsValid;
         }
 
@@ -100,7 +99,7 @@ namespace ExamReg.Apps.Services.MSemester
         {
             bool IsValid = true;
 
-            IsValid &= await ValidateExist(Semester);
+            IsValid &= await ValidateId(Semester);
             IsValid &= ValidateStringLength(Semester);
             return IsValid;
         }
