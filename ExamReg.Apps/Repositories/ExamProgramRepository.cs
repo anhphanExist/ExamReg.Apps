@@ -52,6 +52,10 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Guid Id)
         {
+            await examRegContext.ExamRegister.Where(t => t.Exam.ExamPeriod.ExamProgramId.Equals(Id)).DeleteFromQueryAsync();
+
+            await examRegContext.ExamRoomExamPeriod.Where(t => t.ExamPeriod.ExamProgramId.Equals(Id)).DeleteFromQueryAsync();
+
             await examRegContext.ExamPeriod
             .Where(t => t.ExamProgramId.Equals(Id))
             .DeleteFromQueryAsync();

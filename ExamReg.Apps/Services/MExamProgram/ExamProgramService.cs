@@ -140,9 +140,11 @@ namespace ExamReg.Apps.Services.MExamProgram
                     };
 
                     ExamProgram currentExamProgram = await UOW.ExamProgramRepository.Get(filter);
-                    currentExamProgram.IsCurrent = false;
-                    await UOW.ExamProgramRepository.Update(currentExamProgram);
-
+                    if (currentExamProgram != null)
+                    {
+                        currentExamProgram.IsCurrent = false;
+                        await UOW.ExamProgramRepository.Update(currentExamProgram);
+                    }
                     examProgram = await UOW.ExamProgramRepository.Get(examProgram.Id);
                     examProgram.IsCurrent = true;
                     await UOW.ExamProgramRepository.Update(examProgram);

@@ -66,7 +66,7 @@ namespace ExamReg.DataInit.Resources
                     Id = CreateGuid(item),
                     RoomNumber = Convert.ToInt16(examParts[1]),
                     AmphitheaterName = examParts[0],
-                    ComputerNumber = 5 + rand.Next(1, 5)
+                    ComputerNumber = 1
                 });
             }
 

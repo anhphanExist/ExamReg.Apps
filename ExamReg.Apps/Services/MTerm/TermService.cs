@@ -166,6 +166,7 @@ namespace ExamReg.Apps.Services.MTerm
                             IsFirstHalf = codeData[2].Equals("1") ? true : false
                         };
                         newSemesters.Add(semester);
+                        semesters.Add(semester);
                         term = new Term
                         {
                             Id = Guid.NewGuid(),
@@ -175,6 +176,7 @@ namespace ExamReg.Apps.Services.MTerm
                         };
                         
                         newTerms.Add(term);
+                        terms.Add(term);
                     }
                     else if (term == null)
                     {
@@ -186,6 +188,7 @@ namespace ExamReg.Apps.Services.MTerm
                             SemesterId = semester.Id
                         };
                         newTerms.Add(term);
+                        terms.Add(term);
                     }
                 }
                 catch (Exception e)
@@ -200,12 +203,12 @@ namespace ExamReg.Apps.Services.MTerm
                 try
                 {
                     // Merge dữ liệu vào repository
-                    var resTerms = await UOW.TermRepository.BulkInsert(newTerms);
                     var resSemesters = await UOW.SemesterRepository.BulkInsert(newSemesters);
+                    var resTerms = await UOW.TermRepository.BulkInsert(newTerms);
                     await UOW.Commit();
                     return true;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     await UOW.Rollback();
                     return false;

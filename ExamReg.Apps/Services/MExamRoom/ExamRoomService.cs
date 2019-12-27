@@ -67,6 +67,7 @@ namespace ExamReg.Apps.Services.MExamRoom
             {
                 try
                 {
+                    examRoom = await UOW.ExamRoomRepository.Get(examRoom.Id);
                     await UOW.ExamRoomRepository.Delete(examRoom.Id);
                     await UOW.Commit();
                 }

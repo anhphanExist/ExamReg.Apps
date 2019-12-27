@@ -38,6 +38,8 @@ namespace ExamReg.Apps.Controllers.watcher
         public async Task<List<WatcherDTO>> List()
         {
             ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
+            if (currentExamProgram == null)
+                return new List<WatcherDTO>();
             List<ExamRoomExamPeriod> examRoomExamPeriods = await ExamRoomExamPeriodService.List(new ExamRoomExamPeriodFilter
             {
                 ExamProgramId = new GuidFilter { Equal = currentExamProgram.Id }
@@ -67,6 +69,8 @@ namespace ExamReg.Apps.Controllers.watcher
         public async Task<ExamProgramDTO> GetCurrentExamProgram()
         {
             ExamProgram res = await ExamProgramService.GetCurrentExamProgram();
+            if (res == null)
+                return new ExamProgramDTO();
             return new ExamProgramDTO
             {
                 Id = res.Id,

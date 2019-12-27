@@ -50,6 +50,8 @@ namespace ExamReg.Apps.Controllers.exam_period
         public async Task<List<ExamPeriodDTO>> List()
         {
             ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
+            if (currentExamProgram == null)
+                return new List<ExamPeriodDTO>();
             List<ExamPeriod> examPeriods = await ExamPeriodService.List(new ExamPeriodFilter
             {
                 ExamProgramId = new GuidFilter { Equal = currentExamProgram.Id },
@@ -184,6 +186,8 @@ namespace ExamReg.Apps.Controllers.exam_period
         public async Task<ExamProgramDTO> GetCurrentExamProgram()
         {
             ExamProgram res = await ExamProgramService.GetCurrentExamProgram();
+            if (res == null)
+                return new ExamProgramDTO();
             return new ExamProgramDTO
             {
                 Id = res.Id,
@@ -199,6 +203,8 @@ namespace ExamReg.Apps.Controllers.exam_period
         public async Task<List<TermDTO>> ListTerm()
         {
             ExamProgram currentExamProgram = await ExamProgramService.GetCurrentExamProgram();
+            if (currentExamProgram == null)
+                return new List<TermDTO>();
             List<Term> terms = await TermService.List(new TermFilter
             {
                 SemesterId = new GuidFilter { Equal = currentExamProgram.SemesterId },

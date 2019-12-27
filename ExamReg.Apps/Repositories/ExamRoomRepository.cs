@@ -63,9 +63,13 @@ namespace ExamReg.Apps.Repositories
 
         public async Task<bool> Delete(Guid Id)
         {
+            await examRegContext.ExamRegister
+                .Where(t => t.ExamRoomId.Equals(Id))
+                .DeleteFromQueryAsync();
+
             await examRegContext.ExamRoomExamPeriod
-            .Where(t => t.ExamRoomId.Equals(Id))
-            .DeleteFromQueryAsync();
+                .Where(t => t.ExamRoomId.Equals(Id))
+                .DeleteFromQueryAsync();
 
             ExamRoomDAO examRoomDAO = examRegContext.ExamRoom
                 .Where(s => s.Id.Equals(Id))
